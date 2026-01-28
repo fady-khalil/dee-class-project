@@ -1,0 +1,16 @@
+.skelton-animation {
+  background: linear-gradient(90deg, #e8e8e8 0px, #f8f8f8 40px, #e8e8e8 80px);
+  background-size: 3.2rem;
+  animation: animation 2s infinite;
+  background-repeat: no-repeat;
+}
+
+@keyframes animation {
+  0% {
+    transform: translateX(0%);
+  }
+  40%,
+  100% {
+    transform: translateX(100%);
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "d-class-application",
+    "slug": "d-class-application",
+    "scheme": "deeclass",
+    "version": "1.0.01",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.deeclass.mainapp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "ExpoLocalization_supportsRTL": true
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.deeclass.app",
+      "supportsRTL": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e4c30acf-aba7-4f71-93f0-f93a242be303"
+      }
+    }
+  }
+}

@@ -1,0 +1,165 @@
+/* Common swiper styles */
+.swiper {
+  width: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Desktop course slider */
+.desktop-course-slider .swiper-slide {
+  transition: all 0.4s ease;
+}
+
+.desktop-course-slider .swiper-slide-active {
+  z-index: 2;
+}
+
+/* Titles swiper */
+.titles-swiper .swiper-slide {
+  transition: all 0.3s ease;
+  height: auto !important;
+}
+
+.titles-swiper .swiper-slide-active {
+  opacity: 1;
+}
+
+/* Mobile course slider */
+.mobile-course-slider {
+  overflow: hidden;
+  padding: 10px 0 50px;
+  width: 100%;
+}
+
+.mobile-course-slide {
+  width: 280px;
+  height: auto;
+  margin: 0 20px;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.mobile-course-card {
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.mobile-course-card:hover img {
+  transform: scale(1.08);
+}
+
+/* Category Pills/Scroller */
+.category-scroller {
+  padding-bottom: 8px;
+  margin: 0 -10px;
+  padding: 4px 10px 12px;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  position: relative;
+}
+
+.category-scroller:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 40px;
+  background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.8));
+  pointer-events: none;
+}
+
+.category-scroller:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 40px;
+  background: linear-gradient(to left, transparent, rgba(0, 0, 0, 0.8));
+  pointer-events: none;
+}
+
+.active-category {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Custom pagination for mobile slider */
+.mobile-course-slider .swiper-pagination {
+  position: relative;
+  margin-top: 20px;
+  bottom: 0;
+}
+
+.mobile-course-slider .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.3);
+  opacity: 1;
+  transition: all 0.3s ease;
+}
+
+.mobile-course-slider .swiper-pagination-bullet-active {
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  position: relative;
+}
+
+/* Hide scrollbar for category buttons */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .mobile-course-slide {
+    width: 320px;
+    margin: 0 30px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .desktop-course-slider {
+    height: 90vh;
+  }
+}
+
+@media (min-width: 1280px) {
+  .mobile-course-slide {
+    width: 380px;
+  }
+}
+
+/* Responsive height based on screen size */
+.responsive-height {
+  height: 50vh;
+}
+
+@media screen and (min-height: 750px) {
+  .responsive-height {
+    height: 40vh;
+  }
+}

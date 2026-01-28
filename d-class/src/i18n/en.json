@@ -1,0 +1,405 @@
+{
+  "navigation": {
+    "contact": "Contact us",
+    "business": "For Business",
+    "plans": "View Plans",
+    "browse": "browse",
+    "search": "What do you want to master today",
+    "sign_up": "Join Now",
+    "sign_in": "Sign In",
+    "at_work": "At Work",
+    "course_categories": "Explore Premium Learning Paths",
+    "my_progress": "My Progress",
+    "profile": "Profile",
+    "logout": "Logout",
+    "all_categories": "All Categories"
+  },
+
+  "about": {
+    "who_we_are": "Who We Are",
+    "leaders": "Leaders",
+    "certifications": "Certifications"
+  },
+
+  "buttons": {
+    "register_now": "Begin Your Journey",
+    "finish_sign_up": "Complete Registration",
+    "plans_button": "Unlock Premium Access",
+    "continue_with_email": "Continue With Email",
+    "cancel": "Cancel",
+    "buy_now": "Secure Your Spot Now"
+  },
+
+  "for_you": {
+    "title": "Curated For You",
+    "continue_watching": "Continue Watching",
+    "new_to_master_class": "Discover Dee Class Excellence",
+    "picked_for_you": "Handpicked For Your Growth",
+    "my_list": "My Collection",
+    "our_instructors": "Meet Our World-Class Experts",
+    "in_progress": "In Progress",
+    "you_may_like": "You May Also Like",
+    "recommended_courses": "Recommended For You",
+    "new_added": "New to Dee Class"
+  },
+
+  "video": {
+    "resume_watching": "Resume Watching?",
+    "resume_message": "You stopped at {{time}}. Would you like to continue from where you left off?",
+    "start_over": "Start Over",
+    "continue": "Continue",
+    "completed": "Completed",
+    "mark_as_done": "Mark as Done"
+  },
+
+  "labels": {
+    "course_category": "Expertise Category",
+    "switch_language": "Switch Language"
+  },
+
+  "home": {
+    "featured_reels": "Discover Trending Courses and Top Experts",
+    "reels_description": "Immerse yourself in quick visual masterclasses from our world-class experts",
+    "course": "Premium",
+    "watch_course": "Explore Full Course",
+    "reels_cta": "Join the experience",
+    "title": "Learn from the best, become the best!"
+  },
+
+  "courses": {
+    "open_courses": "Ready To Experience",
+    "watch_course": "Watch Course",
+    "watch_trailer": "Preview Excellence",
+    "latest": "Latest Masterclasses",
+    "view_profile": "Explore Expert Profile",
+    "single_course_title": "Intensive Masterclass - Transform Your {{courseName}} Skills In One Session",
+    "series_course_title": "Dee Journey: {{episodeCount}} Episodes of Transformational Learning",
+    "playlist_course_title": "Dee Immersion: Unlock Your Full Potential",
+    "start_watching": "Begin Your Transformation",
+    "lessons": "Session",
+    "lesson": "Session",
+    "chapter": "Chapter",
+    "chapters": "Chapters",
+    "join_to_watch": "Join to Experience",
+    "add_to_playlist": "Save to My Collection",
+    "add_to_list": "Add to My List",
+    "in_my_list": "View in My Collection",
+    "saved": "Saved",
+    "my_list": "My Collection",
+    "access_course": "Unlock This Masterclass",
+    "choose_access_option": "Select your preferred access path:",
+    "single_purchase": "Exclusive Access to This Masterclass",
+    "one_time_payment": "Single investment, lifetime transformation",
+    "currency": "SAR",
+    "buy_now": "Secure Access Now",
+    "subscription": "Premium Membership",
+    "unlimited_access": "Unlimited access to our entire library of excellence",
+    "subscription_plans": "Explore Membership Options",
+    "already_subscribed": "You're already a valued member!",
+    "enjoy_unlimited_access": "Enjoy unlimited access to our complete collection of transformative content.",
+    "check_out": "Discover this transformative masterclass",
+    "link_copied": "Link copied to your clipboard",
+    "link_copy_failed": "Couldn't copy link",
+    "share_not_supported": "Sharing not supported on your browser",
+    "like": "Like",
+    "unlike": "Unlike",
+    "comments": "Comments",
+    "share": "Share",
+    "civic_engagement_title": "Civic Engagement 101",
+    "civic_engagement_description": "Master the art of community involvement and local governance in this premium masterclass",
+    "taught_by": "Taught by",
+    "core_topics": "Core Topics",
+    "single": "Focused Specialized Course",
+    "completed": "Completed",
+    "membership_required": "Membership Required",
+    "membership_required_message": "To like or comment on this masterclass, you need a full membership. Subscribe to our premium plans to unlock all interactive features.",
+    "share_course": "Share Course",
+    "share_with_friends": "Share this content",
+    "share_now": "Share Now",
+    "copy_link": "Copy Link",
+    "copied": "Copied",
+    "copy": "Copy",
+    "share_link": "Share link",
+    "share_via": "Share via",
+    "or": "or",
+    "share_platform_facebook": "Facebook",
+    "share_platform_x": "X",
+    "share_platform_linkedin": "LinkedIn",
+    "share_platform_whatsapp": "WhatsApp",
+    "share_platform_telegram": "Telegram",
+    "share_platform_email": "Email",
+    "load_older_comments": "Load older comments",
+    "no_comments": "No comments yet",
+    "be_first_comment": "Be the first to comment",
+    "write_comment": "Write a comment...",
+    "send_comment": "Send",
+    "you": "You"
+  },
+
+  "news": {
+    "newsMainTitle": "Latest Insights"
+  },
+
+  "footer": {
+    "nav": {
+      "home": "Home",
+      "about": "Our Story",
+      "courses": "Dee Classes",
+      "contact": "Connect With Us",
+      "at_work": "At Work",
+      "quick_links": "Quick Access",
+      "terms": "Terms of Service",
+      "faq": "FAQ",
+      "blog": "Insights",
+      "news": "Latest News",
+      "plans": "Membership Options"
+    },
+    "copyright": "Dee Class All rights reserved",
+    "credit": "By Dow Group",
+    "follow": "Follow us on social media"
+  },
+
+  "forms": {
+    "inputs": {
+      "email_label": "Email",
+      "password_label": "Password",
+      "work_email": "Your professional email",
+      "email": "Your email address",
+      "password": "Your secure password",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "company_name": "Organization",
+      "job_title": "Your Role",
+      "group_size": "Team Size",
+      "learning_needs": "What transformation are you seeking for your organization?"
+    },
+    "errors": {
+      "general": "This field is required",
+      "email": "Please enter a valid email address",
+      "first_name": "Please enter a valid first name",
+      "last_name": "Please enter a valid last name",
+      "company_name": "Please enter a valid company name",
+      "job_title": "Please enter a valid job title",
+      "group_size": "Please enter a valid group size",
+      "learning_needs": "Please enter a valid learning needs"
+    }
+  },
+
+  "general": {
+    "submit": "Submit",
+    "next": "Continue",
+    "previous": "Previous",
+    "continue": "Proceed",
+    "back": "Back",
+    "register_now_message": "Discover transformative learning experiences tailored to your unique journey.",
+    "register_now_text": "Embark on a journey of excellence with premium video masterclasses accessible anytime, anywhere, on any device.",
+    "contact_us": "Connect With Us",
+    "download_the_app": "Experience on Mobile",
+    "categories": "Areas of Excellence",
+    "join_us": "Elevate your influence as an instructor and share your expertise with our global community",
+    "join_us_subtitle": "Transform lives through your knowledge and build your legacy on our premium platform",
+    "join_us_button": "Become an Expert Instructor",
+    "view_all_categories": "Explore All Categories",
+    "plans_title": "Elite Membership Options",
+    "plan_currency": "SAR per month",
+    "plans_description": "Elevate Your Potential with Premium Access to Excellence",
+    "plans_guarantee": "All elite memberships include our 60-day satisfaction commitment and deliver:",
+    "plans_feature_1": "Unlimited access to exclusive, transformative content",
+    "plans_feature_2": "Personalized learning paths crafted for your growth",
+    "plans_feature_3": "Seamless streaming across all your devices",
+    "plans_feature_4": "Priority concierge support experience",
+    "finish_sign_up": "Complete Your Registration",
+    "finish": "Submit",
+    "close": "Close",
+    "agreement_message": "By clicking \"Sign up with Google\", \"Sign up with Facebook\" or by sharing your email, you agree to our <a href='/terms'>Terms of Service</a> and <a href='/privacy'>Privacy Policy</a>.",
+    "agreement_start": "By clicking \"Sign up with Google\", \"Sign up with Facebook\" or by sharing your email, you agree to our",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "and": "and",
+    "auth_title": "Your Transformation Awaits",
+    "auth_subtitle": "One step away from unlocking a world of premium knowledge and growth",
+    "login_title": "Welcome Back to Excellence",
+    "login_subtitle": "Resume your journey toward mastery",
+    "already_have_account": "Already a member?",
+    "login": "Sign In",
+    "new_here": "Ready to begin?",
+    "create_account": "Start Your Journey",
+    "instructor_courses": "Courses by This Expert",
+    "register_title": "Join the Elite Community of Lifelong Learners",
+    "register_now": "Begin Your Transformation Today",
+    "explore": "Discover Excellence",
+    "for_you": "Curated For You",
+    "loading": "Loading...",
+    "error_message": "Oops! Something went wrong.",
+    "retry": " Don't worry, we're on it. Please try again later.",
+    "signed_in_as": "Signed in as",
+    "Leaders": "Leaders",
+    "check_my_courses": "Check My Courses",
+    "logout": "Logout"
+  },
+
+  "profiles": {
+    "add_profile": "Add Profile",
+    "whos_watching": "Who's Experiencing?",
+    "profile_name": "Profile Name",
+    "upload_image": "Upload Profile Image",
+    "max_file_size": "Max file size: 1MB",
+    "image_size_error": "Image must be less than 1MB",
+    "profile_name_required": "Profile name is required",
+    "manage_profile": "Manage Profile",
+    "edit_profile": "Customize Profile",
+    "delete_profile": "Remove Profile",
+    "confirm_delete": "Are you sure you want to delete this profile?",
+    "yes_delete": "Yes, Remove",
+    "no_cancel": "Keep Profile",
+    "update_profile": "Save Changes"
+  },
+
+  "assesment": {
+    "completed": "You've already completed your personalized assessment.",
+    "in_progress": "Your customized assessment is waiting for completion.",
+    "start_new": "Begin a new assessment journey.",
+    "continue": "Continue Your Assessment",
+    "recommended_courses": "Your Personalized Learning Path",
+    "recommended_courses_description": "Expertly curated masterclasses based on your unique assessment profile"
+  },
+
+  "subscribe": {
+    "title": "Join Our Inner Circle",
+    "subtitle": "Be the first to access new masterclasses and exclusive events from world-class experts."
+  },
+
+  "auth": {
+    "login": {
+      "success": "Welcome back to excellence",
+      "error": "Authentication unsuccessful. Please verify your credentials",
+      "required": "Member access required for this premium feature",
+      "session_expired": "Your session has expired. Please login again."
+    },
+    "register": {
+      "success": "Welcome to your journey of transformation",
+      "error": "Registration unsuccessful. Please try again",
+      "emailExists": "This email is already part of our community"
+    },
+    "logout": {
+      "success": "You've successfully signed out",
+      "cancel": "Cancel"
+    },
+    "resetPassword": {
+      "success": "Password reset instructions sent",
+      "error": "Unable to send reset email. Please try again"
+    }
+  },
+
+  "form": {
+    "submit": {
+      "success": "Successfully submitted",
+      "error": "Submission unsuccessful. Please try again"
+    },
+    "validation": {
+      "error": "Please address the highlighted fields"
+    }
+  },
+
+  "course": {
+    "enroll": {
+      "success": "You're now enrolled in this transformative experience",
+      "error": "Enrollment unsuccessful. Please try again"
+    },
+    "complete": {
+      "success": "Congratulations on completing this milestone in your journey!"
+    }
+  },
+
+  "payment": {
+    "success": "Investment successful - your journey begins now",
+    "error": "Transaction unsuccessful. Please try again",
+    "pending": "Your transaction is being processed"
+  },
+
+  "errors": {
+    "general": {
+      "title": "Oops! Something went wrong.",
+      "message": "Don't worry, we're on it. Please try again later."
+    }
+  },
+
+  "get_plan_modal": {
+    "title": "Get Full Access",
+    "description": "Subscribe to a plan to unlock all courses, watch content, like, and comment. Enjoy unlimited access to our entire library of excellence.",
+    "get_plan_button": "Get a Plan",
+    "home_button": "Go to Home"
+  },
+
+  "expert": {
+    "become_expert": "Become an Expert",
+    "form_description": "Fill out the form below to apply as an expert instructor.",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone Number",
+    "location": "Location",
+    "enter_name": "Enter your full name",
+    "enter_email": "Enter your email address",
+    "enter_phone": "Enter your phone number",
+    "enter_location": "Enter your city/country",
+    "resume": "Resume/CV",
+    "upload_resume": "Click to upload PDF",
+    "application_submitted": "Application Submitted!",
+    "application_success_message": "Thank you for your interest. We will review your application and get back to you soon.",
+    "pdf_only": "Please upload a PDF file only",
+    "file_size_error": "File size must be less than 10MB",
+    "fill_required": "Please fill in all required fields",
+    "invalid_email": "Please enter a valid email address",
+    "submit_error": "An error occurred. Please try again."
+  },
+
+  "verify_email": {
+    "title": "Verify Your Email",
+    "description": "Your email address needs to be verified before you can continue. Click the button below to receive a verification code.",
+    "instructions": "Click the button below to receive a verification code via email.",
+    "otp_instructions": "Enter the verification code sent to your email address.",
+    "otp_label": "Verification Code",
+    "otp_placeholder": "Enter code",
+    "otp_required": "Please enter the verification code.",
+    "send_button": "Send Verification Code",
+    "resend_button": "Resend Code",
+    "verify_button": "Verify",
+    "help_text": "Didn't receive the code? Check your spam folder or click resend.",
+    "send_success": "Verification code sent successfully! Please check your inbox.",
+    "send_error": "Failed to send verification code. Please try again.",
+    "verified_success": "Email verified successfully! Redirecting...",
+    "verify_error": "Invalid verification code. Please try again."
+  },
+
+  "plans": {
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "save": "Save",
+    "most_popular": "Most Popular",
+    "year": "year",
+    "month": "month",
+    "yearly_savings": "Save",
+    "compared_monthly": "compared to monthly",
+    "profiles": "Profiles",
+    "download_available": "Download available",
+    "subscribe": "Subscribe Now",
+    "per_month": "per month",
+    "per_year": "per year",
+    "billed_yearly": "Billed yearly",
+    "billed_monthly": "Billed monthly"
+  },
+
+  "my_courses": {
+    "purchased_courses": "My Purchased Courses",
+    "no_courses": "You haven't purchased any courses yet.",
+    "my_collection": "My Collection"
+  },
+
+  "progress": {
+    "my_progress": "My Progress",
+    "no_progress": "You haven't started watching any courses yet. Start exploring and your progress will appear here!",
+    "completed_courses": "Completed Courses",
+    "completed": "Completed",
+    "completed_on": "Completed on"
+  }
+}

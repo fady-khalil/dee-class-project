@@ -1,0 +1,52 @@
+{
+  "name": "d-class-application",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@api.video/player-sdk": "^1.2.33",
+    "@api.video/react-native-player": "^1.1.2",
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-native-community/netinfo": "^11.4.1",
+    "@react-navigation/bottom-tabs": "^7.3.13",
+    "@react-navigation/native": "^7.1.9",
+    "@react-navigation/native-stack": "^7.3.14",
+    "@react-navigation/stack": "^7.3.2",
+    "date-fns": "^4.1.0",
+    "expo": "^54.0.32",
+    "expo-av": "~16.0.8",
+    "expo-crypto": "~15.0.8",
+    "expo-dev-client": "~6.0.20",
+    "expo-file-system": "~19.0.21",
+    "expo-image-picker": "~17.0.10",
+    "expo-linear-gradient": "~15.0.8",
+    "expo-linking": "~8.0.11",
+    "expo-status-bar": "~3.0.9",
+    "expo-updates": "~29.0.16",
+    "i18next": "^25.1.2",
+    "ramda": "^0.27.1",
+    "react": "19.1.0",
+    "react-i18next": "^15.5.1",
+    "react-native": "^0.81.5",
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-reanimated": "~4.1.1",
+    "react-native-render-html": "^6.3.4",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-screens": "~4.16.0",
+    "react-native-vector-icons": "^10.2.0",
+    "react-native-webview": "13.15.0",
+    "react-native-worklets": "0.5.1",
+    "use-latest-callback": "^0.2.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
+    "fs-extra": "^11.1.1"
+  },
+  "private": true
+}

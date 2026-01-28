@@ -1,0 +1,7 @@
+.video-series-scrollbar::-webkit-scrollbar {
+  width: 0.2rem;
+}
+
+.video-series-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
