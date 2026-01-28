@@ -1,0 +1,13 @@
+# Design folder
+Design/
+
+# Node modules
+**/node_modules/
+
+# Environment files
+.env
+**/.env
+
+# OS files
+.DS_Store
+Thumbs.db
