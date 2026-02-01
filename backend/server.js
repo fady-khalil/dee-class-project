@@ -44,7 +44,7 @@ const app = express();
 // Enable CORS for all routes
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? ["https://yalladad.com", "https://dashboard.yalladad.com"]
+    ? ["https://yamminelawfirm.com", "https://dashboard.yamminelawfirm.com"]
     : ["http://localhost:3000", "http://localhost:3001", "http://localhost:5173"];
 
 app.use(
@@ -105,7 +105,7 @@ app.use(responseTranslationMiddleware);
 
 // Home route
 app.get("/", (req, res) => {
-  res.send("Dr Diana Academy API is running");
+  res.send("de class API is running");
 });
 
 // Apply language middleware to all routes under /api
