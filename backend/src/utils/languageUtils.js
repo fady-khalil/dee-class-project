@@ -456,20 +456,6 @@ export const translateApiMessage = (message, language = DEFAULT_LANGUAGE) => {
       ar: "الدورة غير موجودة",
     },
 
-    // Cart messages
-    "Item added to cart successfully": {
-      en: "Item added to cart successfully",
-      ar: "تمت إضافة العنصر إلى السلة بنجاح",
-    },
-    "Item removed from cart successfully": {
-      en: "Item removed from cart successfully",
-      ar: "تمت إزالة العنصر من السلة بنجاح",
-    },
-    "Cart is empty": {
-      en: "Cart is empty",
-      ar: "السلة فارغة",
-    },
-
     // Book messages
     "Book created successfully": {
       en: "Book created successfully",

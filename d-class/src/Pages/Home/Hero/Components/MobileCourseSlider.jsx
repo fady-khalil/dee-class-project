@@ -15,7 +15,7 @@ const MobileCourseSlider = ({ courses }) => {
   const swiperRef = useRef(null);
 
   return (
-    <section className="xl:hidden pt-secondary">
+    <section className="xl:hidden">
       <Container>
         <div className="flex items-center mb-6 justify-between">
           <h1 className="text-white text-3xl uppercase font-bold relative">

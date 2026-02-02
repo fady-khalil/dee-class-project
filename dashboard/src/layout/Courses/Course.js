@@ -42,25 +42,11 @@ const Course = () => {
   const tableColumns = [
     {
       header: 'Title',
-      accessor: (item) => {
-        if (item.translations && item.translations.en) {
-          return item.translations.en.title
-        }
-        return item.title || 'N/A'
-      },
+      accessor: (item) => item.name || 'N/A',
     },
     {
       header: 'Category',
-      accessor: (item) => {
-        const category = item.category
-        if (category) {
-          if (category.translations && category.translations.en) {
-            return category.translations.en.title
-          }
-          return category.title || 'N/A'
-        }
-        return 'N/A'
-      },
+      accessor: (item) => item.category?.title || 'N/A',
     },
     { header: 'Price', accessor: 'price' },
   ]
@@ -204,25 +190,14 @@ const Course = () => {
             <div className="mb-4">
               <h6 className="text-muted mb-2">Title</h6>
               <p className="fs-5">
-                {currentCourse.translations?.en?.title ||
-                  currentCourse.title ||
-                  'N/A'}
-              </p>
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-muted mb-2">Arabic Title</h6>
-              <p className="fs-5" dir="rtl">
-                {currentCourse.translations?.ar?.title || 'N/A'}
+                {currentCourse.name || 'N/A'}
               </p>
             </div>
 
             <div className="mb-4">
               <h6 className="text-muted mb-2">Category</h6>
               <p className="fs-5">
-                {currentCourse.category?.translations?.en?.title ||
-                  currentCourse.category?.title ||
-                  'N/A'}
+                {currentCourse.category?.title || 'N/A'}
               </p>
             </div>
 
@@ -236,9 +211,7 @@ const Course = () => {
                 <h6 className="text-muted mb-2">Image</h6>
                 <img
                   src={`${BACKEND_URL}/${currentCourse.image.data || currentCourse.image}`}
-                  alt={
-                    currentCourse.translations?.en?.title || currentCourse.title
-                  }
+                  alt={currentCourse.name || 'Course'}
                   className="img-fluid rounded"
                   style={{ maxWidth: '100%', maxHeight: '200px' }}
                 />
@@ -269,9 +242,7 @@ const Course = () => {
         visible={deleteModal}
         onClose={() => setDeleteModal(false)}
         onConfirm={handleDelete}
-        itemName={
-          courseToDelete?.translations?.en?.title || courseToDelete?.title
-        }
+        itemName={courseToDelete?.name}
         itemType="course"
       />
     </>

@@ -86,9 +86,14 @@ const Navigation = () => {
               )}
             </button>
           ) : (
-            <Link to={path} key={index}>
-              {name}
-            </Link>
+            <li key={index}>
+              <Link
+                to={path}
+                className="text-white hover:text-primary transition-all duration-300"
+              >
+                {name}
+              </Link>
+            </li>
           )
         )}
       </ul>

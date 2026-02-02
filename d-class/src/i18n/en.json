@@ -23,6 +23,8 @@
 
   "buttons": {
     "register_now": "Begin Your Journey",
+    "begin_journey": "Begin Your Journey",
+    "check_my_courses": "Check My Courses",
     "finish_sign_up": "Complete Registration",
     "plans_button": "Unlock Premium Access",
     "continue_with_email": "Continue With Email",
@@ -149,6 +151,7 @@
       "at_work": "At Work",
       "quick_links": "Quick Access",
       "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
       "faq": "FAQ",
       "blog": "Insights",
       "news": "Latest News",
@@ -271,18 +274,45 @@
 
   "auth": {
     "login": {
-      "success": "Welcome back to excellence",
-      "error": "Authentication unsuccessful. Please verify your credentials",
-      "required": "Member access required for this premium feature",
-      "session_expired": "Your session has expired. Please login again."
+      "title": "Welcome Back",
+      "subtitle": "Sign in to continue your learning journey",
+      "emailPlaceholder": "Email address",
+      "passwordPlaceholder": "Password",
+      "emailError": "Please enter a valid email address",
+      "passwordError": "Password must be at least 8 characters",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In",
+      "or": "or",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create Account",
+      "success": "Welcome back!",
+      "error": "Invalid email or password. Please try again.",
+      "required": "Please sign in to access this feature",
+      "session_expired": "Your session has expired. Please sign in again."
     },
     "register": {
-      "success": "Welcome to your journey of transformation",
-      "error": "Registration unsuccessful. Please try again",
-      "emailExists": "This email is already part of our community"
+      "title": "Create Account",
+      "subtitle": "Join thousands of learners today",
+      "namePlaceholder": "Full name",
+      "emailPlaceholder": "Email address",
+      "passwordPlaceholder": "Password (min. 8 characters)",
+      "nameError": "Please enter your name",
+      "emailError": "Please enter a valid email address",
+      "passwordError": "Password must be at least 8 characters",
+      "agreeText": "By signing up, you agree to our",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "and": "and",
+      "or": "or",
+      "submit": "Create Account",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Sign In",
+      "success": "Account created successfully!",
+      "error": "Registration failed. Please try again.",
+      "emailExists": "This email is already registered"
     },
     "logout": {
-      "success": "You've successfully signed out",
+      "success": "You have been signed out",
       "cancel": "Cancel"
     },
     "resetPassword": {
@@ -371,6 +401,32 @@
     "verify_error": "Invalid verification code. Please try again."
   },
 
+  "forgot_password": {
+    "title": "Reset Password",
+    "step1_desc": "Enter your email to receive a reset code",
+    "step2_desc": "Enter the code sent to your email",
+    "step3_desc": "Create your new password",
+    "email_placeholder": "Enter your email",
+    "email_invalid": "Please enter a valid email address",
+    "otp_placeholder": "Enter code",
+    "otp_invalid": "Please enter the verification code",
+    "new_password_placeholder": "New password",
+    "confirm_password_placeholder": "Confirm password",
+    "password_short": "Password must be at least 8 characters",
+    "password_mismatch": "Passwords do not match",
+    "send_code": "Send Reset Code",
+    "verify_code": "Verify Code",
+    "resend_code": "Resend Code",
+    "reset_password": "Reset Password",
+    "back_to_login": "Back to Login",
+    "otp_sent": "Reset code sent to your email",
+    "otp_verified": "Code verified successfully",
+    "otp_error": "Invalid code. Please try again",
+    "request_error": "Failed to send reset code",
+    "reset_success": "Password reset successfully! Redirecting...",
+    "reset_error": "Failed to reset password. Please try again"
+  },
+
   "plans": {
     "monthly": "Monthly",
     "yearly": "Yearly",
@@ -397,9 +453,39 @@
 
   "progress": {
     "my_progress": "My Progress",
+    "subtitle": "Track your learning journey and pick up where you left off",
     "no_progress": "You haven't started watching any courses yet. Start exploring and your progress will appear here!",
     "completed_courses": "Completed Courses",
     "completed": "Completed",
     "completed_on": "Completed on"
+  },
+
+  "contact": {
+    "title": "Contact Us",
+    "tagline": "We'd love to hear from you",
+    "subtitle": "Have questions or feedback? We're here to help. Send us a message and we'll respond as soon as possible.",
+    "sendMessage": "Send us a Message",
+    "getInTouch": "Get in Touch",
+    "namePlaceholder": "Your Name",
+    "emailPlaceholder": "Your Email",
+    "phonePlaceholder": "Phone Number (Optional)",
+    "subjectPlaceholder": "Subject",
+    "messagePlaceholder": "Write your message here...",
+    "nameError": "Please enter your name",
+    "emailError": "Please enter a valid email",
+    "subjectError": "Please enter a subject",
+    "messageError": "Please enter your message",
+    "submit": "Send Message",
+    "sending": "Sending...",
+    "submitSuccess": "Your message has been sent successfully! We'll get back to you soon.",
+    "submitError": "Failed to send message. Please try again.",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "workingHours": "Working Hours",
+    "followUs": "Follow Us",
+    "noInfo": "Contact information is not available yet.",
+    "quickResponse": "Quick Response",
+    "quickResponseText": "We typically respond within 24 hours during business days."
   }
 }

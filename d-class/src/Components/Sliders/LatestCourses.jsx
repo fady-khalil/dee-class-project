@@ -24,7 +24,7 @@ const LatestCourses = ({ title, data }) => {
   };
 
   return (
-    <div className="flex flex-col items-center my-secondary lg:mt-primary lg:my-0 small_screen_container px-2 md:px-4">
+    <div className="flex flex-col items-center small_screen_container px-2 md:px-4">
       <div className="flex items-center mb-3 md:mb-5 lg:mb-10 gap-x-2 md:gap-x-4 lg:gap-x-6 w-full justify-between md:justify-center">
         <button
           ref={prevRef}

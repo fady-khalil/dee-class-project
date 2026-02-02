@@ -58,16 +58,22 @@ const AutenticatedHeader = () => {
                   <Link
                     state={{ isAuthenticated: true }}
                     to="/categories"
-                    className="text-white font-bold text-lg capitalize flex items-center gap-x-2"
+                    className="text-white font-bold text-lg capitalize flex items-center gap-x-2 hover:text-primary transition-colors"
                   >
                     {t("navigation.browse")}
                   </Link>
                   <Link
                     to="/my-progress"
-                    className="text-white font-bold text-lg capitalize flex items-center gap-x-2"
+                    className="text-white font-bold text-lg capitalize flex items-center gap-x-2 hover:text-primary transition-colors"
                   >
                     <User size={22} />
                     {t("navigation.my_progress")}
+                  </Link>
+                  <Link
+                    to="/contact"
+                    className="text-white font-bold text-lg capitalize flex items-center gap-x-2 hover:text-primary transition-colors"
+                  >
+                    {t("navigation.contact")}
                   </Link>
                 </div>
 
@@ -166,16 +172,22 @@ const AutenticatedHeader = () => {
                   <Link
                     state={{ isAuthenticated: true }}
                     to="/categories"
-                    className="text-white font-bold text-lg flex items-center gap-x-2"
+                    className="text-white font-bold text-lg flex items-center gap-x-2 hover:text-primary transition-colors"
                   >
                     {t("navigation.browse")}
                   </Link>
                   <Link
                     to="/my-progress"
-                    className="text-white font-bold text-lg flex items-center gap-x-2"
+                    className="text-white font-bold text-lg flex items-center gap-x-2 hover:text-primary transition-colors"
                   >
                     <User size={22} />
                     {t("navigation.my_progress")}
+                  </Link>
+                  <Link
+                    to="/contact"
+                    className="text-white font-bold text-lg flex items-center gap-x-2 hover:text-primary transition-colors"
+                  >
+                    {t("navigation.contact")}
                   </Link>
                 </div>
 

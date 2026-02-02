@@ -62,12 +62,14 @@ const MyProgress = () => {
     return (
       <main className="py-primary">
         <Container className="flex flex-col items-center justify-center min-h-[50vh]">
-          <h1 className="text-2xl font-bold text-white mb-4">
-            {t("progress.my_progress") || "My Progress"}
-          </h1>
-          <p className="text-gray-400 text-center">
-            {t("progress.no_progress") || "You haven't started watching any courses yet. Start exploring and your progress will appear here!"}
-          </p>
+          <div className="text-center max-w-md">
+            <h1 className="text-3xl lg:text-4xl font-bold text-white mb-3">
+              {t("progress.my_progress") || "My Progress"}
+            </h1>
+            <p className="text-gray-400 text-lg">
+              {t("progress.no_progress") || "You haven't started watching any courses yet. Start exploring and your progress will appear here!"}
+            </p>
+          </div>
         </Container>
       </main>
     );
@@ -75,10 +77,16 @@ const MyProgress = () => {
 
   return (
     <main className="py-secondary lg:py-primary">
-      <Container className="flex flex-col gap-y-12 lg:gap-y-16">
-        <h1 className="text-2xl lg:text-3xl font-bold text-white">
-          {t("progress.my_progress") || "My Progress"}
-        </h1>
+      <Container className="flex flex-col gap-y-10 lg:gap-y-14">
+        {/* Header Section */}
+        <div className="flex flex-col gap-y-2">
+          <h1 className="text-3xl lg:text-4xl font-bold text-white">
+            {t("progress.my_progress") || "My Progress"}
+          </h1>
+          <p className="text-gray-400 text-base lg:text-lg">
+            {t("progress.subtitle") || "Track your learning journey and pick up where you left off"}
+          </p>
+        </div>
 
         {/* Continue Watching Section */}
         {hasContinueWatching && (

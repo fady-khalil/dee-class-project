@@ -11,7 +11,7 @@ const GetLinks = () => {
     {
       id: 1,
       name: t("navigation.contact"),
-      path: "",
+      path: "/contact",
     },
     {
       id: 3,

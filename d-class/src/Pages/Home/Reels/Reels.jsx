@@ -105,7 +105,7 @@ const Reels = ({ trending }) => {
   return (
     <section
       ref={sectionRef}
-      className="py-primary relative overflow-hidden "
+      className="py-8 sm:py-10 lg:py-14 relative overflow-hidden"
       id="reels-section"
     >
       {/* Simplified background with two colors */}

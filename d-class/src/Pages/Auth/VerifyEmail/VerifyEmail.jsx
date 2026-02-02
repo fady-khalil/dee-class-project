@@ -1,23 +1,24 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
-import Container from "Components/Container/Container";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import usePostData from "Hooks/usePostData";
 import Spinner from "Components/RequestHandler/Spinner";
-import { StatusHandler, useStatusHandler } from "Components/RequestHandler";
 import { LoginAuthContext } from "Context/Authentication/LoginAuth";
-import { EnvelopeSimple } from "@phosphor-icons/react";
+import { EnvelopeSimple, PaperPlaneTilt, ShieldCheck } from "@phosphor-icons/react";
+import logo from "assests/logos/dclass.png";
 
 const VerifyEmail = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const isRTL = i18n.language === "ar";
   const { user, token, isVerified, setIsVerifiedHandler } = useContext(LoginAuthContext);
   const { postData, isLoading } = usePostData();
-  const { isVisible, status, message, showSuccess, showError, hideStatus } =
-    useStatusHandler();
+
   const [emailSent, setEmailSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Get token from context or localStorage
   const getToken = useCallback(() => {
@@ -63,121 +64,126 @@ const VerifyEmail = () => {
 
   const handleSendOtp = async () => {
     const email = getUserEmail();
-
-    // DEBUG
-    console.log("=== SEND VERIFICATION DEBUG ===");
-    console.log("Email:", email);
+    setErrorMessage("");
+    setSuccessMessage("");
 
     if (!email) {
-      console.log("ERROR: No email found");
-      showError(t("verify_email.send_error"));
+      setErrorMessage(t("verify_email.send_error"));
       return;
     }
 
     try {
-      // Backend endpoint: auth/send-verification
-      console.log("Calling auth/send-verification with:", { email });
       const response = await postData("auth/send-verification", { email });
-      console.log("Response:", response);
 
       if (response.success) {
         setEmailSent(true);
-        showSuccess(t("verify_email.send_success"));
+        setSuccessMessage(t("verify_email.send_success"));
       } else {
-        console.log("API Error:", response.message);
-        showError(response.message || t("verify_email.send_error"));
+        setErrorMessage(response.message || t("verify_email.send_error"));
       }
     } catch (error) {
-      console.log("Catch Error:", error);
-      showError(t("verify_email.send_error"));
+      setErrorMessage(t("verify_email.send_error"));
     }
   };
 
   const handleVerifyOtp = async () => {
     if (!otp || otp.length < 4) {
-      showError(t("verify_email.otp_required"));
+      setErrorMessage(t("verify_email.otp_required"));
       return;
     }
 
     const email = getUserEmail();
-
-    // DEBUG
-    console.log("=== VERIFY EMAIL DEBUG ===");
-    console.log("Email:", email);
-    console.log("Code:", otp);
-
+    setErrorMessage("");
+    setSuccessMessage("");
     setIsVerifying(true);
-    try {
-      // Backend expects { email, code } - not { email, otp }
-      const payload = { email, code: otp };
-      console.log("Payload:", payload);
 
-      // Backend endpoint: auth/verify-email
+    try {
+      const payload = { email, code: otp };
       const response = await postData("auth/verify-email", payload);
-      console.log("Response:", response);
 
       if (response.success) {
         setIsVerifiedHandler(true);
-        showSuccess(t("verify_email.verified_success"));
+        setSuccessMessage(t("verify_email.verified_success"));
         setTimeout(() => {
           navigate("/plans");
         }, 1500);
       } else {
-        console.log("API Error:", response.message, response);
-        showError(response.message || t("verify_email.verify_error"));
+        setErrorMessage(response.message || t("verify_email.verify_error"));
       }
     } catch (error) {
-      console.log("Catch Error:", error);
-      showError(t("verify_email.verify_error"));
+      setErrorMessage(t("verify_email.verify_error"));
     } finally {
       setIsVerifying(false);
     }
   };
 
+  const userEmail = getUserEmail();
+
   return (
-    <main className="py-primary min-h-screen md:min-h-0">
-      <Container>
-        <div className="w-full sm:w-4/5 md:w-3/4 lg:w-1/2 mx-auto flex flex-col items-center justify-center bg-white py-8 sm:py-10 px-4 sm:px-6 md:px-8 rounded-xl shadow-sm md:shadow-none">
+    <main className="min-h-screen bg-gradient-to-br from-bg via-grey to-bg flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          <Link to="/">
+            <img src={logo} alt="Dee Class" className="h-12" />
+          </Link>
+        </div>
+
+        {/* Verify Email Card */}
+        <div className="bg-grey/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-gray-700/50">
           {/* Icon */}
-          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-            <EnvelopeSimple size={40} className="text-primary" />
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center">
+              {emailSent ? (
+                <ShieldCheck size={40} className="text-primary" />
+              ) : (
+                <EnvelopeSimple size={40} className="text-primary" />
+              )}
+            </div>
           </div>
 
-          <h1 className="text-xl sm:text-2xl font-bold text-center text-gray-800">
-            {t("verify_email.title")}
-          </h1>
-
-          <p className="text-center text-sm text-gray-600 mt-2 mb-6">
-            {t("verify_email.description")}
-          </p>
+          {/* Header */}
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-white mb-2">
+              {t("verify_email.title")}
+            </h1>
+            <p className="text-gray-400 text-sm">
+              {t("verify_email.description")}
+            </p>
+          </div>
 
           {/* User email display */}
-          {user?.email && (
-            <div className="bg-gray-100 px-4 py-2 rounded-lg mb-6">
-              <p className="text-sm text-gray-700 font-medium">{user.email}</p>
+          {userEmail && (
+            <div className="bg-bg/50 border border-gray-600 px-4 py-3 rounded-xl mb-6 text-center">
+              <p className="text-white font-medium">{userEmail}</p>
             </div>
           )}
 
-          <div className="mt-4 w-full sm:w-auto">
-            <StatusHandler
-              status={status}
-              message={message}
-              isVisible={isVisible}
-              onClose={hideStatus}
-            />
-          </div>
+          {/* Success Message */}
+          {successMessage && (
+            <div className="bg-green-500/10 border border-green-500/50 text-green-400 px-4 py-3 rounded-xl mb-6 text-sm text-center">
+              {successMessage}
+            </div>
+          )}
+
+          {/* Error Message */}
+          {errorMessage && (
+            <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-xl mb-6 text-sm text-center">
+              {errorMessage}
+            </div>
+          )}
 
           {/* Instructions */}
-          <div className="bg-gray-50 rounded-lg p-4 mb-6 w-full">
-            <p className="text-sm text-gray-600 text-center">
+          <div className="bg-bg/30 rounded-xl p-4 mb-6">
+            <p className="text-sm text-gray-400 text-center">
               {emailSent ? t("verify_email.otp_instructions") : t("verify_email.instructions")}
             </p>
           </div>
 
           {/* OTP Input - shown after email is sent */}
           {emailSent && (
-            <div className="w-full sm:w-3/4 mb-4">
-              <label className="text-sm text-gray-600 mb-2 block">
+            <div className="mb-6">
+              <label className="text-sm text-gray-400 mb-2 block text-center">
                 {t("verify_email.otp_label")}
               </label>
               <input
@@ -185,44 +191,53 @@ const VerifyEmail = () => {
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                 placeholder={t("verify_email.otp_placeholder")}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-center text-lg tracking-widest"
+                className="w-full bg-bg/50 border border-gray-600 text-white py-4 px-4
+                  rounded-xl placeholder:text-gray-500
+                  focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50
+                  transition-all duration-300 text-center text-2xl tracking-[0.5em] font-mono"
                 maxLength={6}
               />
             </div>
           )}
 
           {/* Action buttons */}
-          <div className={`flex gap-3 w-full sm:w-auto ${emailSent ? "flex-row" : "flex-col"}`}>
+          <div className="space-y-3">
             {/* Verify OTP button - shown after email is sent */}
             {emailSent && (
               <button
-                className="flex-1 sm:flex-none px-6 py-3 bg-primary hover:bg-darkPrimary text-white font-semibold rounded-lg transition duration-200 flex items-center justify-center"
+                className="w-full bg-primary hover:bg-primary/90 text-white py-3.5 px-6 rounded-xl font-semibold
+                  transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed
+                  flex items-center justify-center gap-2"
                 onClick={handleVerifyOtp}
                 disabled={isVerifying || !otp}
               >
                 {isVerifying ? (
                   <Spinner isSmall={true} isWhite={true} />
                 ) : (
-                  t("verify_email.verify_button")
+                  <>
+                    <ShieldCheck size={20} />
+                    {t("verify_email.verify_button")}
+                  </>
                 )}
               </button>
             )}
 
             {/* Send/Resend OTP button */}
             <button
-              className={`flex-1 sm:flex-none px-6 py-3 font-semibold rounded-lg transition duration-200 flex items-center justify-center ${
-                emailSent
-                  ? "bg-gray-200 hover:bg-gray-300 text-gray-800"
-                  : "bg-primary hover:bg-darkPrimary text-white"
-              }`}
+              className={`w-full py-3.5 px-6 rounded-xl font-semibold transition-all duration-300
+                flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed
+                ${emailSent
+                  ? "bg-gray-700 hover:bg-gray-600 text-white"
+                  : "bg-primary hover:bg-primary/90 text-white"
+                }`}
               onClick={handleSendOtp}
               disabled={isLoading}
             >
               {isLoading ? (
-                <Spinner isSmall={true} isWhite={!emailSent} />
+                <Spinner isSmall={true} isWhite={true} />
               ) : (
                 <>
-                  <EnvelopeSimple size={20} className="mr-2" />
+                  <PaperPlaneTilt size={20} />
                   {emailSent ? t("verify_email.resend_button") : t("verify_email.send_button")}
                 </>
               )}
@@ -234,7 +249,7 @@ const VerifyEmail = () => {
             {t("verify_email.help_text")}
           </p>
         </div>
-      </Container>
+      </div>
     </main>
   );
 };

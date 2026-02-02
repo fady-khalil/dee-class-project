@@ -1,10 +1,26 @@
 import express from "express";
-import { getHomeData } from "../Controllers/HomeController.js";
+import {
+  getHomeData,
+  getContactInfoPublic,
+  getPrivacyPolicyPublic,
+  getTermsOfServicePublic,
+  getFAQPublic,
+  submitContactForm,
+} from "../Controllers/HomeController.js";
 
 const router = express.Router();
 
 // Get home page data
 router.get("/", getHomeData);
+
+// Public content pages
+router.get("/contact-info", getContactInfoPublic);
+router.get("/privacy-policy", getPrivacyPolicyPublic);
+router.get("/terms-of-service", getTermsOfServicePublic);
+router.get("/faq", getFAQPublic);
+
+// Contact form submission
+router.post("/contact", submitContactForm);
 
 // Test route to check if basic routing is working
 router.get("/test", (req, res) => {

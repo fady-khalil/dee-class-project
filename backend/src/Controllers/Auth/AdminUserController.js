@@ -2,10 +2,7 @@ import Admin from "../../Modules/Admin.model.js";
 import { hashPassword } from "../../utils/hashing.js";
 import { getUsers } from "../../Services/crud/UserService.js";
 import User from "../../Modules/User.model.js";
-import Cart from "../../Modules/Cart.model.js";
 import Transaction from "../../Modules/Transaction.model.js";
-import { sendEmail } from "../../utils/emailService.js";
-import transporter from "../../middlewares/SendMail.js";
 
 // Get all admin users
 export const getAdmins = async (req, res) => {
@@ -333,22 +330,11 @@ export const getAllUsers = async (req, res) => {
     // Get users from service
     const { users, pagination } = await getUsers(parsedOptions);
 
-    // Get cart status for each user
-    const usersWithCartStatus = await Promise.all(
-      users.map(async (user) => {
-        const cart = await Cart.findOne({ user: user._id });
-        const userObj = user.toObject();
-        userObj.cartStatus = cart ? cart.status : null;
-        return userObj;
-      })
-    );
-
-    // Return the enhanced user objects
     res.status(200).json({
       status: 200,
       success: true,
       message: "Users retrieved successfully",
-      data: usersWithCartStatus,
+      data: users,
       pagination,
     });
   } catch (error) {
@@ -419,156 +405,7 @@ export const getUserById = async (req, res) => {
   }
 };
 
-// mark cart complete
-export const markCartComplete = async (req, res) => {
-  try {
-    const { userId } = req.params;
-
-    // Verify super admin permission
-    if (req.admin.role !== "super_admin") {
-      return res.status(403).json({
-        status: 403,
-        success: false,
-        message: "Only super admin can complete purchases",
-      });
-    }
-
-    // Find the user
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        status: 404,
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    // Find the user's cart with more detailed course info
-    const cart = await Cart.findOne({ user: userId })
-      .populate({
-        path: "courses.courseId",
-        select: "title price slug description videoTrailer",
-        model: "Course",
-      });
-
-    if (!cart || cart.courses.length === 0) {
-      return res.status(400).json({
-        status: 400,
-        success: false,
-        message: "User has no items in cart",
-      });
-    }
-
-    if (cart.status !== "pending") {
-      return res.status(400).json({
-        status: 400,
-        success: false,
-        message: "Only pending carts can be marked as completed",
-      });
-    }
-
-    // Create a transaction record
-    const transaction = new Transaction({
-      user: userId,
-      courses: cart.courses.map((course) => ({
-        course: course.courseId._id,
-        title: course.title,
-        price: course.price,
-        slug: course.slug,
-      })),
-      total: cart.total,
-      status: "completed",
-      pendingDate: cart.lastStatusUpdate,
-      completedDate: new Date(),
-    });
-
-    await transaction.save();
-
-    // Update user's purchasedItems
-    for (const course of cart.courses) {
-      // Check if this course is already in purchased items
-      const existingCourseIndex = user.purchasedItems.courses.findIndex(
-        (pc) =>
-          pc.courseId &&
-          pc.courseId.toString() === course.courseId._id.toString()
-      );
-
-      if (existingCourseIndex === -1) {
-        // Course is not already purchased, add it with full details
-        user.purchasedItems.courses.push({
-          courseId: course.courseId._id,
-          title: course.courseId.title,
-          price: course.courseId.price,
-          slug: course.courseId.slug,
-          description: course.courseId.description,
-          videoTrailer: course.courseId.videoTrailer, // Store the full videoTrailer object
-          purchasedAt: new Date(),
-        });
-      }
-    }
-
-    await user.save();
-
-    // Update cart status to completed, then clear it
-    cart.status = "completed";
-    cart.lastStatusUpdate = new Date();
-    // Clear the cart items
-    cart.courses = [];
-    cart.total = 0;
-    // Return it to active for future purchases
-    cart.status = "active";
-    await cart.save();
-
-    // Send confirmation email
-    try {
-      await transporter.sendMail({
-        from: process.env.SENDER_EMAIL,
-        to: user.email,
-        subject: "Payment Confirmed - Your Purchase is Complete",
-        html: `
-          <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #4CAF50;">Payment Confirmed!</h1>
-            <p>Dear ${user.fullName},</p>
-            <p>Your payment has been confirmed, and your purchase is now complete.</p>
-            <p>You now have access to all your purchased items.</p>
-            <h2>Purchase Summary:</h2>
-            <p><strong>Total Amount:</strong> $${transaction.total.toFixed(
-              2
-            )}</p>
-            <p>Thank you for your purchase!</p>
-          </div>
-        `,
-      });
-      console.log("Purchase confirmation email sent to:", user.email);
-    } catch (emailError) {
-      console.error("Failed to send confirmation email:", emailError);
-      // Continue with successful response even if email fails
-    }
-
-    res.status(200).json({
-      status: 200,
-      success: true,
-      message: "Purchase completed successfully",
-      data: {
-        transaction,
-        user: {
-          _id: user._id,
-          fullName: user.fullName,
-          email: user.email,
-        },
-      },
-    });
-  } catch (error) {
-    console.error("Error completing purchase:", error);
-    res.status(500).json({
-      status: 500,
-      success: false,
-      message: "An error occurred while completing the purchase",
-    });
-  }
-};
-
-// Add function to get user transactions
+// Get user transactions
 export const getUserTransactions = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -603,44 +440,3 @@ export const getUserTransactions = async (req, res) => {
   }
 };
 
-// Add this function to get a user's cart
-export const getUserCart = async (req, res) => {
-  try {
-    const { userId } = req.params;
-
-    // Verify super admin permission
-    if (req.admin.role !== "super_admin") {
-      return res.status(403).json({
-        status: 403,
-        success: false,
-        message: "Only super admin can view user cart",
-      });
-    }
-
-    // Find the user's cart
-    const cart = await Cart.findOne({ user: userId });
-
-    if (!cart) {
-      return res.status(404).json({
-        status: 404,
-        success: false,
-        message: "Cart not found for this user",
-        data: { books: [], courses: [], total: 0 },
-      });
-    }
-
-    res.status(200).json({
-      status: 200,
-      success: true,
-      message: "User cart retrieved successfully",
-      data: cart,
-    });
-  } catch (error) {
-    console.error("Error getting user cart:", error);
-    res.status(500).json({
-      status: 500,
-      success: false,
-      message: "An error occurred while retrieving user cart",
-    });
-  }
-};

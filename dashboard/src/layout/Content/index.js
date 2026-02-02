@@ -1,3 +1,7 @@
 export { default as HeroSection } from './HeroSection'
 export { default as JoinUs } from './JoinUs'
 export { default as TrendingCourse } from './TrendingCourse'
+export { default as ContactInfo } from './ContactInfo'
+export { default as PrivacyPolicy } from './PrivacyPolicy'
+export { default as TermsOfService } from './TermsOfService'
+export { default as FAQ } from './FAQ'

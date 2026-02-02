@@ -54,20 +54,20 @@ const FooterNavigationItems = [
   {
     name: "footer.nav.contact",
     path: "/contact",
-    isAuthenticated: true,
+    isAuthenticated: false,
     common: true,
   },
   {
-    name: "general.privacy",
+    name: "footer.nav.privacy",
     path: "/privacy",
     isAuthenticated: false,
-    common: false,
+    common: true,
   },
   {
     name: "footer.nav.terms",
     path: "/terms",
     isAuthenticated: false,
-    common: false,
+    common: true,
   },
 ];
 

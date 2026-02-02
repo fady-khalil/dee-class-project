@@ -2,6 +2,10 @@ import HeroSection from "../Modules/HeroSection.model.js";
 import JoinUs from "../Modules/JoinUs.model.js";
 import TrendingCourse from "../Modules/TrendingCourse.model.js";
 import Course from "../Modules/Course.model.js";
+import ContactInfo from "../Modules/ContactInfo.model.js";
+import PrivacyPolicy from "../Modules/PrivacyPolicy.model.js";
+import TermsOfService from "../Modules/TermsOfService.model.js";
+import FAQ from "../Modules/FAQ.model.js";
 
 // API.video API key
 const API_VIDEO_KEY = process.env.API_VIDEO_KEY || "NuUpsgLaoFKP0njYMJ3ekBN78nb0HmgTYdzf6LW0mYw";
@@ -384,6 +388,402 @@ export const removeReel = async (req, res) => {
       status: 500,
       success: false,
       message: "An error occurred while removing reel",
+      data: error.message,
+    });
+  }
+};
+
+// =====================
+// CONTACT INFO
+// =====================
+
+// Get contact info
+export const getContactInfo = async (req, res) => {
+  try {
+    let contactInfo = await ContactInfo.findOne({ singleton: "contact_info" });
+
+    if (!contactInfo) {
+      contactInfo = await ContactInfo.create({ singleton: "contact_info" });
+    }
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Contact info retrieved successfully",
+      data: contactInfo,
+    });
+  } catch (error) {
+    console.error("Error getting contact info:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while retrieving contact info",
+      data: error.message,
+    });
+  }
+};
+
+// Update contact info
+export const updateContactInfo = async (req, res) => {
+  try {
+    const { pageTitle, pageTitle_ar, pageSubtitle, pageSubtitle_ar, email, phone, address, address_ar, workingHours, workingHours_ar, socialMedia } = req.body;
+
+    let contactInfo = await ContactInfo.findOne({ singleton: "contact_info" });
+
+    if (!contactInfo) {
+      contactInfo = new ContactInfo({ singleton: "contact_info" });
+    }
+
+    if (pageTitle !== undefined) contactInfo.pageTitle = pageTitle;
+    if (pageTitle_ar !== undefined) contactInfo.pageTitle_ar = pageTitle_ar;
+    if (pageSubtitle !== undefined) contactInfo.pageSubtitle = pageSubtitle;
+    if (pageSubtitle_ar !== undefined) contactInfo.pageSubtitle_ar = pageSubtitle_ar;
+    if (email !== undefined) contactInfo.email = email;
+    if (phone !== undefined) contactInfo.phone = phone;
+    if (address !== undefined) contactInfo.address = address;
+    if (address_ar !== undefined) contactInfo.address_ar = address_ar;
+    if (workingHours !== undefined) contactInfo.workingHours = workingHours;
+    if (workingHours_ar !== undefined) contactInfo.workingHours_ar = workingHours_ar;
+    if (socialMedia !== undefined) contactInfo.socialMedia = socialMedia;
+
+    await contactInfo.save();
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Contact info updated successfully",
+      data: contactInfo,
+    });
+  } catch (error) {
+    console.error("Error updating contact info:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while updating contact info",
+      data: error.message,
+    });
+  }
+};
+
+// =====================
+// PRIVACY POLICY
+// =====================
+
+// Get privacy policy
+export const getPrivacyPolicy = async (req, res) => {
+  try {
+    let privacyPolicy = await PrivacyPolicy.findOne({ singleton: "privacy_policy" });
+
+    if (!privacyPolicy) {
+      privacyPolicy = await PrivacyPolicy.create({ singleton: "privacy_policy" });
+    }
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Privacy policy retrieved successfully",
+      data: privacyPolicy,
+    });
+  } catch (error) {
+    console.error("Error getting privacy policy:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while retrieving privacy policy",
+      data: error.message,
+    });
+  }
+};
+
+// Update privacy policy
+export const updatePrivacyPolicy = async (req, res) => {
+  try {
+    const { content, content_ar } = req.body;
+
+    let privacyPolicy = await PrivacyPolicy.findOne({ singleton: "privacy_policy" });
+
+    if (!privacyPolicy) {
+      privacyPolicy = new PrivacyPolicy({ singleton: "privacy_policy" });
+    }
+
+    if (content !== undefined) privacyPolicy.content = content;
+    if (content_ar !== undefined) privacyPolicy.content_ar = content_ar;
+
+    await privacyPolicy.save();
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Privacy policy updated successfully",
+      data: privacyPolicy,
+    });
+  } catch (error) {
+    console.error("Error updating privacy policy:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while updating privacy policy",
+      data: error.message,
+    });
+  }
+};
+
+// =====================
+// TERMS OF SERVICE
+// =====================
+
+// Get terms of service
+export const getTermsOfService = async (req, res) => {
+  try {
+    let termsOfService = await TermsOfService.findOne({ singleton: "terms_of_service" });
+
+    if (!termsOfService) {
+      termsOfService = await TermsOfService.create({ singleton: "terms_of_service" });
+    }
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Terms of service retrieved successfully",
+      data: termsOfService,
+    });
+  } catch (error) {
+    console.error("Error getting terms of service:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while retrieving terms of service",
+      data: error.message,
+    });
+  }
+};
+
+// Update terms of service
+export const updateTermsOfService = async (req, res) => {
+  try {
+    const { content, content_ar } = req.body;
+
+    let termsOfService = await TermsOfService.findOne({ singleton: "terms_of_service" });
+
+    if (!termsOfService) {
+      termsOfService = new TermsOfService({ singleton: "terms_of_service" });
+    }
+
+    if (content !== undefined) termsOfService.content = content;
+    if (content_ar !== undefined) termsOfService.content_ar = content_ar;
+
+    await termsOfService.save();
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Terms of service updated successfully",
+      data: termsOfService,
+    });
+  } catch (error) {
+    console.error("Error updating terms of service:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while updating terms of service",
+      data: error.message,
+    });
+  }
+};
+
+// =====================
+// FAQ
+// =====================
+
+// Get FAQ
+export const getFAQ = async (req, res) => {
+  try {
+    let faq = await FAQ.findOne({ singleton: "faq" });
+
+    if (!faq) {
+      faq = await FAQ.create({ singleton: "faq" });
+    }
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "FAQ retrieved successfully",
+      data: faq,
+    });
+  } catch (error) {
+    console.error("Error getting FAQ:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while retrieving FAQ",
+      data: error.message,
+    });
+  }
+};
+
+// Update FAQ (page title only)
+export const updateFAQ = async (req, res) => {
+  try {
+    const { pageTitle, pageTitle_ar } = req.body;
+
+    let faq = await FAQ.findOne({ singleton: "faq" });
+
+    if (!faq) {
+      faq = new FAQ({ singleton: "faq" });
+    }
+
+    if (pageTitle !== undefined) faq.pageTitle = pageTitle;
+    if (pageTitle_ar !== undefined) faq.pageTitle_ar = pageTitle_ar;
+
+    await faq.save();
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "FAQ updated successfully",
+      data: faq,
+    });
+  } catch (error) {
+    console.error("Error updating FAQ:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while updating FAQ",
+      data: error.message,
+    });
+  }
+};
+
+// Add FAQ item
+export const addFAQItem = async (req, res) => {
+  try {
+    const { question, question_ar, answer, answer_ar, order } = req.body;
+
+    if (!question || !answer) {
+      return res.status(400).json({
+        status: 400,
+        success: false,
+        message: "Question and answer are required",
+      });
+    }
+
+    let faq = await FAQ.findOne({ singleton: "faq" });
+
+    if (!faq) {
+      faq = new FAQ({ singleton: "faq" });
+    }
+
+    faq.items.push({
+      question,
+      question_ar: question_ar || "",
+      answer,
+      answer_ar: answer_ar || "",
+      order: order || faq.items.length,
+      isActive: true,
+    });
+
+    await faq.save();
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "FAQ item added successfully",
+      data: faq,
+    });
+  } catch (error) {
+    console.error("Error adding FAQ item:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while adding FAQ item",
+      data: error.message,
+    });
+  }
+};
+
+// Update FAQ item
+export const updateFAQItem = async (req, res) => {
+  try {
+    const { itemId } = req.params;
+    const { question, question_ar, answer, answer_ar, order, isActive } = req.body;
+
+    let faq = await FAQ.findOne({ singleton: "faq" });
+
+    if (!faq) {
+      return res.status(404).json({
+        status: 404,
+        success: false,
+        message: "FAQ not found",
+      });
+    }
+
+    const itemIndex = faq.items.findIndex((item) => item._id.toString() === itemId);
+
+    if (itemIndex === -1) {
+      return res.status(404).json({
+        status: 404,
+        success: false,
+        message: "FAQ item not found",
+      });
+    }
+
+    if (question !== undefined) faq.items[itemIndex].question = question;
+    if (question_ar !== undefined) faq.items[itemIndex].question_ar = question_ar;
+    if (answer !== undefined) faq.items[itemIndex].answer = answer;
+    if (answer_ar !== undefined) faq.items[itemIndex].answer_ar = answer_ar;
+    if (order !== undefined) faq.items[itemIndex].order = order;
+    if (isActive !== undefined) faq.items[itemIndex].isActive = isActive;
+
+    await faq.save();
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "FAQ item updated successfully",
+      data: faq,
+    });
+  } catch (error) {
+    console.error("Error updating FAQ item:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while updating FAQ item",
+      data: error.message,
+    });
+  }
+};
+
+// Delete FAQ item
+export const deleteFAQItem = async (req, res) => {
+  try {
+    const { itemId } = req.params;
+
+    let faq = await FAQ.findOne({ singleton: "faq" });
+
+    if (!faq) {
+      return res.status(404).json({
+        status: 404,
+        success: false,
+        message: "FAQ not found",
+      });
+    }
+
+    faq.items = faq.items.filter((item) => item._id.toString() !== itemId);
+
+    await faq.save();
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "FAQ item deleted successfully",
+      data: faq,
+    });
+  } catch (error) {
+    console.error("Error deleting FAQ item:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while deleting FAQ item",
       data: error.message,
     });
   }

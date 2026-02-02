@@ -82,7 +82,6 @@ const CategorySlider = () => {
     }
   }, [categories]);
 
-  const bug = categories && [...categories, ...categories];
   return (
     <section>
       <div className="flex items-center justify-between lg:justify-center  mb-6">
@@ -135,7 +134,7 @@ const CategorySlider = () => {
             slidesPerView="auto"
             modules={[Navigation]}
           >
-            {bug?.map(({ name, icon, slug }, index) => (
+            {categories?.map(({ name, icon, slug }, index) => (
               <SwiperSlide
                 key={index}
                 className="!w-[180px] px-[2px] py-4 border border-white rounded-md flex-shrink-0 "

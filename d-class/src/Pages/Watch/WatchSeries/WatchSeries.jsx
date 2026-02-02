@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import useFetch from "Hooks/useFetch";
 import IsLoading from "Components/RequestHandler/IsLoading";
@@ -34,6 +34,8 @@ const WatchSeries = () => {
       console.log("Profile ID used:", selectedUser?.id);
       console.log("completed_videos from API:", data?.completed_videos);
       console.log("video_progress from API:", data?.video_progress);
+      console.log("First series item video_progress:", data?.series?.[0]?.video_progress);
+      console.log("Full data object:", data);
 
       setCourseData(data);
 
@@ -85,29 +87,39 @@ const WatchSeries = () => {
     }
   }, [selectedVideo]);
 
-  // Handle video progress updates
-  const handleProgressUpdate = (videoId, percentComplete) => {
-    if (percentComplete >= 75 && !completedVideos[videoId]) {
-      // Mark as loading while API call is in progress
-      setLoadingVideoId(videoId);
+  // Handle video progress updates - wrapped in useCallback to prevent infinite loops
+  const handleProgressUpdate = useCallback((videoId, percentComplete) => {
+    if (percentComplete >= 75) {
+      setLoadingVideoId((current) => {
+        // Only set if not already loading this video
+        if (current !== videoId) return videoId;
+        return current;
+      });
     }
-  };
+  }, []);
 
-  // Handle when a video is marked as complete
-  const handleVideoCompleted = (videoId) => {
-    setCompletedVideos((prev) => ({
-      ...prev,
-      [videoId]: true,
-    }));
+  // Handle when a video is marked as complete - wrapped in useCallback
+  const handleVideoCompleted = useCallback((videoId) => {
+    setCompletedVideos((prev) => {
+      // Only update if not already marked as completed
+      if (prev[videoId]) return prev;
+      return { ...prev, [videoId]: true };
+    });
     setLoadingVideoId(null);
-  };
+  }, []);
 
-  // Get video progress for selected video
-  const getSelectedVideoProgress = () => {
+  // Memoize video progress for selected video to prevent new object references
+  const selectedVideoProgress = useMemo(() => {
+    console.log("=== selectedVideoProgress useMemo ===");
+    console.log("selectedVideo:", selectedVideo);
+    console.log("videoProgress state:", videoProgress);
+    console.log("videoProgress[selectedVideo]:", videoProgress[selectedVideo]);
+
     if (!selectedVideo) return null;
 
     // First check video_progress from API
     if (videoProgress[selectedVideo]) {
+      console.log("Found in videoProgress map:", videoProgress[selectedVideo]);
       return videoProgress[selectedVideo];
     }
 
@@ -115,14 +127,16 @@ const WatchSeries = () => {
     const seriesItem = courseData?.series?.find(
       (item) => item?.series_video_id?.videoId === selectedVideo
     );
+    console.log("seriesItem found:", seriesItem);
+    console.log("seriesItem?.video_progress:", seriesItem?.video_progress);
     return seriesItem?.video_progress || null;
-  };
+  }, [selectedVideo, videoProgress, courseData?.series]);
 
-  // Check if selected video is done
-  const isSelectedVideoDone = () => {
+  // Memoize if selected video is done
+  const isSelectedVideoDone = useMemo(() => {
     if (!selectedVideo) return false;
     return completedVideos[selectedVideo] || false;
-  };
+  }, [selectedVideo, completedVideos]);
 
   if (isLoading) return <IsLoading />;
   if (courseData) {
@@ -135,8 +149,8 @@ const WatchSeries = () => {
               videoId={selectedVideo}
               courseId={courseData?._id}
               courseSlug={slug}
-              videoProgress={getSelectedVideoProgress()}
-              initialIsDone={isSelectedVideoDone()}
+              videoProgress={selectedVideoProgress}
+              initialIsDone={isSelectedVideoDone}
               onProgressUpdate={handleProgressUpdate}
               onVideoCompleted={handleVideoCompleted}
             />

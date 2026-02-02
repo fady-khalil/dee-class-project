@@ -18,9 +18,7 @@ import {
   deleteAdmin,
   getAllUsers,
   getUserById,
-  markCartComplete,
   getUserTransactions,
-  getUserCart,
 } from "../Controllers/Auth/AdminUserController.js";
 
 const router = express.Router();
@@ -47,9 +45,7 @@ router.delete("/users/:id", deleteAdmin);
 // Regular user management routes for super_admin
 router.get("/regular-users", getAllUsers);
 router.get("/regular-users/:id", getUserById);
-router.post("/regular-users/:userId/complete-purchase", markCartComplete);
 router.get("/regular-users/:userId/transactions", getUserTransactions);
-router.get("/regular-users/:userId/cart", getUserCart);
 
 router.get("/verify", verifyAdminToken);
 

@@ -40,6 +40,26 @@ const getNavItems = (role) => {
           name: 'Trending Course',
           to: '/content/trending',
         },
+        {
+          component: CNavItem,
+          name: 'Contact Info',
+          to: '/content/contact-info',
+        },
+        {
+          component: CNavItem,
+          name: 'Privacy Policy',
+          to: '/content/privacy-policy',
+        },
+        {
+          component: CNavItem,
+          name: 'Terms of Service',
+          to: '/content/terms-of-service',
+        },
+        {
+          component: CNavItem,
+          name: 'FAQ',
+          to: '/content/faq',
+        },
       ],
     },
     {

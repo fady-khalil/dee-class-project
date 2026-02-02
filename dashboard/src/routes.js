@@ -8,6 +8,10 @@ const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const HeroSection = React.lazy(() => import('./layout/Content/HeroSection'))
 const JoinUs = React.lazy(() => import('./layout/Content/JoinUs'))
 const TrendingCourse = React.lazy(() => import('./layout/Content/TrendingCourse'))
+const ContactInfo = React.lazy(() => import('./layout/Content/ContactInfo'))
+const PrivacyPolicy = React.lazy(() => import('./layout/Content/PrivacyPolicy'))
+const TermsOfService = React.lazy(() => import('./layout/Content/TermsOfService'))
+const FAQ = React.lazy(() => import('./layout/Content/FAQ'))
 
 // expert applications
 const ExpertApplications = React.lazy(() => import('./layout/ExpertApplications/ExpertApplications'))
@@ -62,6 +66,26 @@ const routes = [
     path: '/content/trending',
     name: 'Trending Course',
     element: TrendingCourse,
+  },
+  {
+    path: '/content/contact-info',
+    name: 'Contact Info',
+    element: ContactInfo,
+  },
+  {
+    path: '/content/privacy-policy',
+    name: 'Privacy Policy',
+    element: PrivacyPolicy,
+  },
+  {
+    path: '/content/terms-of-service',
+    name: 'Terms of Service',
+    element: TermsOfService,
+  },
+  {
+    path: '/content/faq',
+    name: 'FAQ',
+    element: FAQ,
   },
   // expert applications
   {

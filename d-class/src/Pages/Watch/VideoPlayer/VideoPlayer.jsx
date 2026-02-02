@@ -36,7 +36,8 @@ const VideoPlayer = ({
   const durationRef = useRef(0);
   const currentTimeRef = useRef(0);
   const currentVideoIdRef = useRef(videoId);
-  const hasCheckedProgressRef = useRef(false);
+  const lastCheckedVideoRef = useRef(null);
+  const lastCheckedProgressRef = useRef(null);
   const lastVideoIdRef = useRef(null);
 
   // Update the videoId ref whenever the prop changes
@@ -47,12 +48,25 @@ const VideoPlayer = ({
   // Use our progress tracking hook (for marking videos as done at 75%)
   const { updateProgress, isVideoDone } = useVideoProgress(courseId, videoId, initialIsDone);
 
-  // Notify parent when video is marked as done
+  // Store callbacks in refs to avoid dependency issues
+  const onVideoCompletedRef = useRef(onVideoCompleted);
   useEffect(() => {
-    if (isVideoDone && onVideoCompleted) {
-      onVideoCompleted(videoId);
+    onVideoCompletedRef.current = onVideoCompleted;
+  }, [onVideoCompleted]);
+
+  // Notify parent when video is marked as done
+  const notifiedRef = useRef(false);
+  useEffect(() => {
+    // Reset notification flag when video changes
+    notifiedRef.current = false;
+  }, [videoId]);
+
+  useEffect(() => {
+    if (isVideoDone && onVideoCompletedRef.current && !notifiedRef.current) {
+      notifiedRef.current = true;
+      onVideoCompletedRef.current(videoId);
     }
-  }, [isVideoDone, videoId, onVideoCompleted]);
+  }, [isVideoDone, videoId]);
 
   // Use our video history hook (for continue watching)
   // Pass isVideoDone to stop saving progress once video is completed
@@ -71,7 +85,8 @@ const VideoPlayer = ({
       // Only reset these when switching videos
       setShowResumePrompt(false);
       setSavedProgress(null);
-      hasCheckedProgressRef.current = false;
+      lastCheckedVideoRef.current = null;
+      lastCheckedProgressRef.current = null;
       durationRef.current = 0;
       currentTimeRef.current = 0;
     }
@@ -86,25 +101,38 @@ const VideoPlayer = ({
   // Check for saved progress from API when video loads
   useEffect(() => {
     if (!videoId) return;
-    if (hasCheckedProgressRef.current) return;
+
+    // Get the timestamp from videoProgress (0 if no progress)
+    const progressTimestamp = videoProgress?.timestamp || 0;
+
+    // Skip if we already checked this exact video + progress combination
+    if (
+      lastCheckedVideoRef.current === videoId &&
+      lastCheckedProgressRef.current === progressTimestamp
+    ) {
+      return;
+    }
 
     console.log("=== VideoPlayer Resume Check ===");
     console.log("videoId:", videoId);
     console.log("videoProgress from API:", videoProgress);
+    console.log("progressTimestamp:", progressTimestamp);
 
-    // Use video_progress from API (passed as prop)
-    if (videoProgress && videoProgress.timestamp && videoProgress.timestamp > 5) {
-      console.log("Setting resume prompt with timestamp:", videoProgress.timestamp);
+    // Mark as checked with current values
+    lastCheckedVideoRef.current = videoId;
+    lastCheckedProgressRef.current = progressTimestamp;
+
+    // Show resume prompt if timestamp > 5 seconds
+    if (progressTimestamp > 5) {
+      console.log("Setting resume prompt with timestamp:", progressTimestamp);
       setSavedProgress({
-        timestamp: videoProgress.timestamp,
-        timeSlap: videoProgress.timeSlap || formatTime(videoProgress.timestamp),
+        timestamp: progressTimestamp,
+        timeSlap: videoProgress.timeSlap || formatTime(progressTimestamp),
       });
       setShowResumePrompt(true);
     } else {
-      console.log("No progress or timestamp too low:", videoProgress?.timestamp);
+      console.log("No progress or timestamp too low:", progressTimestamp);
     }
-
-    hasCheckedProgressRef.current = true;
   }, [videoId, videoProgress]);
 
   // Store onExitVideo in a ref to avoid dependency issues
@@ -163,16 +191,22 @@ const VideoPlayer = ({
     durationRef.current = newDuration;
   };
 
+  // Store onProgressUpdate in a ref
+  const onProgressUpdateRef = useRef(onProgressUpdate);
+  useEffect(() => {
+    onProgressUpdateRef.current = onProgressUpdate;
+  }, [onProgressUpdate]);
+
   // Custom progress handler
   const handleProgressUpdate = useCallback(
     (percent) => {
       updateProgress(percent);
 
-      if (onProgressUpdate && percent > 0) {
-        onProgressUpdate(currentVideoIdRef.current, percent);
+      if (onProgressUpdateRef.current && percent > 0) {
+        onProgressUpdateRef.current(currentVideoIdRef.current, percent);
       }
     },
-    [updateProgress, onProgressUpdate]
+    [updateProgress]
   );
 
   // Handle time update

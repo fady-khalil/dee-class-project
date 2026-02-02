@@ -14,7 +14,8 @@
       "Bash(npm install:*)",
       "Bash(npx expo install:*)",
       "Bash(npx expo-doctor@latest:*)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }

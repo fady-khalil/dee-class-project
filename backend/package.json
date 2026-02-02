@@ -6,7 +6,8 @@
     "dev": "nodemon server.js",
     "start": "node server.js",
     "build": "node build.js",
-    "create-super-admin": "node src/utils/createInitialSuperAdmin.js"
+    "create-super-admin": "node src/utils/createInitialSuperAdmin.js",
+    "reset-users": "node src/scripts/resetUsers.js"
   },
   "keywords": [],
   "author": "",

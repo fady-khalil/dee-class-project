@@ -3,6 +3,10 @@ import CourseCategory from "../Modules/CourseCategory.model.js";
 import HeroSection from "../Modules/HeroSection.model.js";
 import JoinUs from "../Modules/JoinUs.model.js";
 import TrendingCourse from "../Modules/TrendingCourse.model.js";
+import ContactInfo from "../Modules/ContactInfo.model.js";
+import PrivacyPolicy from "../Modules/PrivacyPolicy.model.js";
+import TermsOfService from "../Modules/TermsOfService.model.js";
+import FAQ from "../Modules/FAQ.model.js";
 
 // Helper function to normalize image path
 const normalizeImagePath = (imagePath) => {
@@ -190,5 +194,265 @@ export const getHomeData = async (req, res, next) => {
   } catch (error) {
     console.error("Error in getHomeData:", error);
     next(error);
+  }
+};
+
+// Get Contact Info (public)
+export const getContactInfoPublic = async (req, res, next) => {
+  try {
+    const lang = req.language || "en";
+
+    let contactInfo = await ContactInfo.findOne({ singleton: "contact_info" }).lean();
+
+    if (!contactInfo) {
+      return res.status(200).json({
+        status: 200,
+        success: true,
+        message: "Contact info retrieved successfully",
+        data: null,
+      });
+    }
+
+    const data = {
+      pageTitle: lang === "ar" ? contactInfo.pageTitle_ar : contactInfo.pageTitle,
+      pageSubtitle: lang === "ar" ? contactInfo.pageSubtitle_ar : contactInfo.pageSubtitle,
+      email: contactInfo.email,
+      phone: contactInfo.phone,
+      address: lang === "ar" ? contactInfo.address_ar : contactInfo.address,
+      workingHours: lang === "ar" ? contactInfo.workingHours_ar : contactInfo.workingHours,
+      socialMedia: contactInfo.socialMedia,
+    };
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Contact info retrieved successfully",
+      data,
+    });
+  } catch (error) {
+    console.error("Error in getContactInfoPublic:", error);
+    next(error);
+  }
+};
+
+// Get Privacy Policy (public)
+export const getPrivacyPolicyPublic = async (req, res, next) => {
+  try {
+    const lang = req.language || "en";
+
+    let privacyPolicy = await PrivacyPolicy.findOne({ singleton: "privacy_policy" }).lean();
+
+    if (!privacyPolicy) {
+      return res.status(200).json({
+        status: 200,
+        success: true,
+        message: "Privacy policy retrieved successfully",
+        data: null,
+      });
+    }
+
+    const data = {
+      content: lang === "ar" ? privacyPolicy.content_ar : privacyPolicy.content,
+    };
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Privacy policy retrieved successfully",
+      data,
+    });
+  } catch (error) {
+    console.error("Error in getPrivacyPolicyPublic:", error);
+    next(error);
+  }
+};
+
+// Get Terms of Service (public)
+export const getTermsOfServicePublic = async (req, res, next) => {
+  try {
+    const lang = req.language || "en";
+
+    let termsOfService = await TermsOfService.findOne({ singleton: "terms_of_service" }).lean();
+
+    if (!termsOfService) {
+      return res.status(200).json({
+        status: 200,
+        success: true,
+        message: "Terms of service retrieved successfully",
+        data: null,
+      });
+    }
+
+    const data = {
+      content: lang === "ar" ? termsOfService.content_ar : termsOfService.content,
+    };
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Terms of service retrieved successfully",
+      data,
+    });
+  } catch (error) {
+    console.error("Error in getTermsOfServicePublic:", error);
+    next(error);
+  }
+};
+
+// Get FAQ (public)
+export const getFAQPublic = async (req, res, next) => {
+  try {
+    const lang = req.language || "en";
+
+    let faq = await FAQ.findOne({ singleton: "faq" }).lean();
+
+    if (!faq) {
+      return res.status(200).json({
+        status: 200,
+        success: true,
+        message: "FAQ retrieved successfully",
+        data: null,
+      });
+    }
+
+    const data = {
+      pageTitle: lang === "ar" ? faq.pageTitle_ar : faq.pageTitle,
+      items: (faq.items || [])
+        .filter((item) => item.isActive)
+        .sort((a, b) => a.order - b.order)
+        .map((item) => ({
+          _id: item._id,
+          question: lang === "ar" ? item.question_ar || item.question : item.question,
+          answer: lang === "ar" ? item.answer_ar || item.answer : item.answer,
+        })),
+    };
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "FAQ retrieved successfully",
+      data,
+    });
+  } catch (error) {
+    console.error("Error in getFAQPublic:", error);
+    next(error);
+  }
+};
+
+// Submit contact form (public)
+export const submitContactForm = async (req, res, next) => {
+  try {
+    const { name, email, phone, subject, message } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({
+        status: 400,
+        success: false,
+        message: "Please fill in all required fields",
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        status: 400,
+        success: false,
+        message: "Please provide a valid email address",
+      });
+    }
+
+    // Import the transporter
+    const transporter = (await import("../middlewares/SendMail.js")).default;
+    const adminEmail = process.env.ADMIN_EMAIL;
+
+    if (!adminEmail) {
+      console.error("ADMIN_EMAIL not configured");
+      return res.status(500).json({
+        status: 500,
+        success: false,
+        message: "Server configuration error",
+      });
+    }
+
+    // Email HTML template
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+          .header h1 { margin: 0; font-size: 24px; }
+          .content { background: #f9f9f9; padding: 30px; border: 1px solid #ddd; border-top: none; border-radius: 0 0 10px 10px; }
+          .field { margin-bottom: 20px; }
+          .label { font-weight: bold; color: #555; margin-bottom: 5px; display: block; }
+          .value { background: white; padding: 12px; border-radius: 5px; border: 1px solid #eee; }
+          .message-box { background: white; padding: 15px; border-radius: 5px; border: 1px solid #eee; white-space: pre-wrap; }
+          .footer { text-align: center; margin-top: 20px; color: #888; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>New Contact Form Submission</h1>
+          </div>
+          <div class="content">
+            <div class="field">
+              <span class="label">Name:</span>
+              <div class="value">${name}</div>
+            </div>
+            <div class="field">
+              <span class="label">Email:</span>
+              <div class="value"><a href="mailto:${email}">${email}</a></div>
+            </div>
+            ${phone ? `
+            <div class="field">
+              <span class="label">Phone:</span>
+              <div class="value">${phone}</div>
+            </div>
+            ` : ''}
+            <div class="field">
+              <span class="label">Subject:</span>
+              <div class="value">${subject}</div>
+            </div>
+            <div class="field">
+              <span class="label">Message:</span>
+              <div class="message-box">${message}</div>
+            </div>
+          </div>
+          <div class="footer">
+            <p>This message was sent from the Dee Class contact form.</p>
+            <p>Submitted at: ${new Date().toLocaleString()}</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    // Send email to admin
+    await transporter.sendMail({
+      from: process.env.SENDER_EMAIL,
+      to: adminEmail,
+      replyTo: email,
+      subject: `[Contact Form] ${subject}`,
+      html: htmlContent,
+    });
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Message sent successfully",
+    });
+  } catch (error) {
+    console.error("Error in submitContactForm:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "Failed to send message. Please try again later.",
+    });
   }
 };

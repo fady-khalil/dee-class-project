@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import Container from "Components/Container/Container";
 import backgroud from "assests/bghomd.png";
 import { useTranslation } from "react-i18next";
@@ -6,14 +7,42 @@ import { Play, Pause } from "@phosphor-icons/react";
 import BASE_URL from "Utilities/BASE_URL";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination, Autoplay } from "swiper/modules";
+import { LoginAuthContext } from "Context/Authentication/LoginAuth";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 
 const Hero = ({ courses, hero }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isPaused, setIsPaused] = useState(false);
   const swiperRef = useRef(null);
+  const { isLoggedIn, allowedCourses } = useContext(LoginAuthContext);
+
+  // Determine button text and action based on user state
+  const getButtonConfig = () => {
+    if (!isLoggedIn) {
+      // Not logged in → Register page
+      return {
+        text: t("buttons.begin_journey") || t("buttons.register_now"),
+        action: () => navigate("/register"),
+      };
+    } else if (allowedCourses?.length > 0) {
+      // Logged in with courses → My Courses page
+      return {
+        text: t("buttons.check_my_courses") || "Check My Courses",
+        action: () => navigate("/my-courses"),
+      };
+    } else {
+      // Logged in, no courses → Plans page
+      return {
+        text: t("buttons.begin_journey") || t("buttons.register_now"),
+        action: () => navigate("/plans"),
+      };
+    }
+  };
+
+  const buttonConfig = getButtonConfig();
 
   // Split courses into 2 columns for desktop
   const column1 = courses?.filter((_, index) => index % 2 === 0) || [];
@@ -62,8 +91,11 @@ const Hero = ({ courses, hero }) => {
               <p className="text-lg text-gray-300 mt-4 max-w-md whitespace-pre-line">
                 {hero?.text}
               </p>
-              <button className="mt-8 px-8 py-3 bg-primary hover:bg-darkPrimary text-white font-semibold rounded-lg transition duration-200">
-                {t("buttons.register_now")}
+              <button
+                onClick={buttonConfig.action}
+                className="mt-8 px-8 py-3 bg-primary hover:bg-darkPrimary text-white font-semibold rounded-lg transition duration-200"
+              >
+                {buttonConfig.text}
               </button>
             </div>
 
@@ -195,8 +227,11 @@ const Hero = ({ courses, hero }) => {
 
           {/* CTA Button */}
           <div className="text-center mt-8 pb-8">
-            <button className="px-8 py-3 bg-primary hover:bg-darkPrimary text-white font-semibold rounded-lg transition duration-200">
-              {t("buttons.register_now")}
+            <button
+              onClick={buttonConfig.action}
+              className="px-8 py-3 bg-primary hover:bg-darkPrimary text-white font-semibold rounded-lg transition duration-200"
+            >
+              {buttonConfig.text}
             </button>
           </div>
         </Container>

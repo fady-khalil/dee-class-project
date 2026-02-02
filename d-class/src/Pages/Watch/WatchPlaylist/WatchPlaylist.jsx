@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import useFetch from "Hooks/useFetch";
 import IsLoading from "Components/RequestHandler/IsLoading";
@@ -91,25 +91,27 @@ const WatchPlaylist = () => {
     }
   }, [selectedVideo]);
 
-  // Handle video progress updates
-  const handleProgressUpdate = (videoId, percentComplete) => {
-    if (percentComplete >= 75 && !completedVideos[videoId]) {
-      // Mark as loading while API call is in progress
-      setLoadingVideoId(videoId);
+  // Handle video progress updates - wrapped in useCallback to prevent infinite loops
+  const handleProgressUpdate = useCallback((videoId, percentComplete) => {
+    if (percentComplete >= 75) {
+      setLoadingVideoId((current) => {
+        if (current !== videoId) return videoId;
+        return current;
+      });
     }
-  };
+  }, []);
 
-  // Handle when a video is marked as complete
-  const handleVideoCompleted = (videoId) => {
-    setCompletedVideos((prev) => ({
-      ...prev,
-      [videoId]: true,
-    }));
+  // Handle when a video is marked as complete - wrapped in useCallback
+  const handleVideoCompleted = useCallback((videoId) => {
+    setCompletedVideos((prev) => {
+      if (prev[videoId]) return prev;
+      return { ...prev, [videoId]: true };
+    });
     setLoadingVideoId(null);
-  };
+  }, []);
 
-  // Get video progress for selected video
-  const getSelectedVideoProgress = () => {
+  // Memoize video progress for selected video to prevent new object references
+  const selectedVideoProgress = useMemo(() => {
     if (!selectedVideo) return null;
 
     // First check video_progress from API
@@ -127,13 +129,13 @@ const WatchPlaylist = () => {
       }
     }
     return null;
-  };
+  }, [selectedVideo, videoProgress, courseData?.chapters]);
 
-  // Check if selected video is done
-  const isSelectedVideoDone = () => {
+  // Memoize if selected video is done
+  const isSelectedVideoDone = useMemo(() => {
     if (!selectedVideo) return false;
     return completedVideos[selectedVideo] || false;
-  };
+  }, [selectedVideo, completedVideos]);
 
   if (isLoading) return <IsLoading />;
   if (courseData) {
@@ -146,8 +148,8 @@ const WatchPlaylist = () => {
               videoId={selectedVideo}
               courseSlug={slug}
               courseId={courseData?._id}
-              videoProgress={getSelectedVideoProgress()}
-              initialIsDone={isSelectedVideoDone()}
+              videoProgress={selectedVideoProgress}
+              initialIsDone={isSelectedVideoDone}
               onProgressUpdate={handleProgressUpdate}
               onVideoCompleted={handleVideoCompleted}
             />

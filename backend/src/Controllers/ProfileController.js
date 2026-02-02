@@ -1041,12 +1041,14 @@ export const saveVideoHistory = async (req, res) => {
 export const markVideoAsDone = async (req, res) => {
   try {
     const userId = req.user._id || req.user.id || req.user.userId;
-    const { profile_id, course_id, video_id } = req.body;
+    const { profile_id, user_id, course_id, video_id } = req.body;
 
-    if (!profile_id || !video_id || !course_id) {
+    const trackingId = profile_id || user_id;
+
+    if (!trackingId || !video_id || !course_id) {
       return res.status(400).json({
         success: false,
-        message: "profile_id, course_id, and video_id are required",
+        message: "profile_id (or user_id), course_id, and video_id are required",
       });
     }
 
@@ -1059,69 +1061,95 @@ export const markVideoAsDone = async (req, res) => {
       });
     }
 
-    // Find the profile
-    const profileIndex = user.profiles.findIndex(
-      (p) => p._id.toString() === profile_id
-    );
+    let profileIndex = -1;
+    let isProfileBased = false;
 
-    if (profileIndex === -1) {
-      return res.status(404).json({
-        success: false,
-        message: "Profile not found",
+    if (profile_id) {
+      profileIndex = user.profiles.findIndex(
+        (p) => p._id.toString() === profile_id
+      );
+      isProfileBased = true;
+
+      if (profileIndex === -1) {
+        return res.status(404).json({
+          success: false,
+          message: "Profile not found",
+        });
+      }
+    }
+
+    if (isProfileBased) {
+      if (!user.profiles[profileIndex].completedVideos) {
+        user.profiles[profileIndex].completedVideos = [];
+      }
+
+      const alreadyDone = user.profiles[profileIndex].completedVideos.some(
+        (v) => v.videoId === video_id && v.courseId?.toString() === course_id
+      );
+
+      if (alreadyDone) {
+        return res.status(200).json({
+          success: true,
+          message: "Video already marked as done",
+          data: { videoId: video_id, courseId: course_id, alreadyDone: true },
+        });
+      }
+
+      user.profiles[profileIndex].completedVideos.push({
+        courseId: course_id,
+        videoId: video_id,
+        completedAt: new Date(),
       });
-    }
 
-    // Initialize completedVideos if it doesn't exist
-    if (!user.profiles[profileIndex].completedVideos) {
-      user.profiles[profileIndex].completedVideos = [];
-    }
+      if (user.profiles[profileIndex].watchingHistory) {
+        user.profiles[profileIndex].watchingHistory =
+          user.profiles[profileIndex].watchingHistory.filter(
+            (h) => h.videoId !== video_id
+          );
+      }
+    } else {
+      if (!user.completedVideos) {
+        user.completedVideos = [];
+      }
 
-    // Check if video is already marked as done
-    const alreadyDone = user.profiles[profileIndex].completedVideos.some(
-      (v) => v.videoId === video_id && v.courseId?.toString() === course_id
-    );
+      const alreadyDone = user.completedVideos.some(
+        (v) => v.videoId === video_id && v.courseId?.toString() === course_id
+      );
 
-    if (alreadyDone) {
-      return res.status(200).json({
-        success: true,
-        message: "Video already marked as done",
-        data: { videoId: video_id, courseId: course_id, alreadyDone: true },
+      if (alreadyDone) {
+        return res.status(200).json({
+          success: true,
+          message: "Video already marked as done",
+          data: { videoId: video_id, courseId: course_id, alreadyDone: true },
+        });
+      }
+
+      user.completedVideos.push({
+        courseId: course_id,
+        videoId: video_id,
+        completedAt: new Date(),
       });
-    }
 
-    // Add video to completed list
-    user.profiles[profileIndex].completedVideos.push({
-      courseId: course_id,
-      videoId: video_id,
-      completedAt: new Date(),
-    });
-
-    // Remove from watching history since it's done
-    if (user.profiles[profileIndex].watchingHistory) {
-      user.profiles[profileIndex].watchingHistory =
-        user.profiles[profileIndex].watchingHistory.filter(
+      if (user.watchingHistory) {
+        user.watchingHistory = user.watchingHistory.filter(
           (h) => h.videoId !== video_id
         );
+      }
     }
 
-    // Check if all videos in the course are done
     const course = await Course.findById(course_id).select("course_type video series chapters").lean();
     let courseCompleted = false;
 
     if (course) {
-      // Get all video IDs based on course type
       let allCourseVideoIds = [];
 
       if (course.course_type === "single" && course.video?.videoId) {
-        // Single course - has one video
         allCourseVideoIds = [course.video.videoId];
       } else if (course.course_type === "series" && course.series) {
-        // Series course - has series array with video in each item
         allCourseVideoIds = course.series
           .map((item) => item.video?.videoId)
           .filter(Boolean);
       } else if (course.course_type === "playlist" && course.chapters) {
-        // Playlist course - has chapters with lessons inside
         allCourseVideoIds = course.chapters
           .flatMap((chapter) => chapter.lessons || [])
           .map((lesson) => lesson.video?.videoId)
@@ -1129,32 +1157,49 @@ export const markVideoAsDone = async (req, res) => {
       }
 
       if (allCourseVideoIds.length > 0) {
-        // Get completed video IDs for this course
-        const completedVideoIds = user.profiles[profileIndex].completedVideos
+        const completedVideosSource = isProfileBased
+          ? user.profiles[profileIndex].completedVideos
+          : user.completedVideos;
+
+        const completedVideoIds = (completedVideosSource || [])
           .filter((v) => v.courseId?.toString() === course_id)
           .map((v) => v.videoId);
 
-        // Check if all course videos are completed
         courseCompleted = allCourseVideoIds.every((vid) =>
           completedVideoIds.includes(vid)
         );
 
         if (courseCompleted) {
-          // Initialize completedCourses if it doesn't exist
-          if (!user.profiles[profileIndex].completedCourses) {
-            user.profiles[profileIndex].completedCourses = [];
-          }
+          if (isProfileBased) {
+            if (!user.profiles[profileIndex].completedCourses) {
+              user.profiles[profileIndex].completedCourses = [];
+            }
 
-          // Check if course is already in completed list
-          const courseAlreadyDone = user.profiles[profileIndex].completedCourses.some(
-            (c) => c.courseId?.toString() === course_id
-          );
+            const courseAlreadyDone = user.profiles[profileIndex].completedCourses.some(
+              (c) => c.courseId?.toString() === course_id
+            );
 
-          if (!courseAlreadyDone) {
-            user.profiles[profileIndex].completedCourses.push({
-              courseId: course_id,
-              completedAt: new Date(),
-            });
+            if (!courseAlreadyDone) {
+              user.profiles[profileIndex].completedCourses.push({
+                courseId: course_id,
+                completedAt: new Date(),
+              });
+            }
+          } else {
+            if (!user.completedCourses) {
+              user.completedCourses = [];
+            }
+
+            const courseAlreadyDone = user.completedCourses.some(
+              (c) => c.courseId?.toString() === course_id
+            );
+
+            if (!courseAlreadyDone) {
+              user.completedCourses.push({
+                courseId: course_id,
+                completedAt: new Date(),
+              });
+            }
           }
         }
       }

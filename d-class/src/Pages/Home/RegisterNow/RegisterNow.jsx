@@ -8,7 +8,7 @@ const RegisterNow = ({ joinUs }) => {
   const { t } = useTranslation();
 
   return (
-    <section className="my-secondary my-primary text-white overflow-hidden">
+    <section className="text-white overflow-hidden">
       <div className="hidden xl:block">
         <div className="relative max-w-5xl mx-auto px-6">
           <div className="absolute -left-10 top-1/2 transform -translate-y-1/2 w-20 h-1 bg-primary rounded-full opacity-70"></div>

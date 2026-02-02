@@ -1,28 +1,25 @@
 import React, { useState, useContext } from "react";
-import Container from "Components/Container/Container";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import Input from "Components/form/Inputs/Input";
 import useInput from "Components/form/Hooks/user-input";
-import PasswordInput from "Components/form/Inputs/PasswordInput";
 import usePostData from "Hooks/usePostData";
 import Spinner from "Components/RequestHandler/Spinner";
-import { StatusHandler, useStatusHandler } from "Components/RequestHandler";
 import { LoginAuthContext } from "Context/Authentication/LoginAuth";
 import GetPlanModal from "Components/Modal/GetPlanModal";
+import { EnvelopeSimple, Lock, Eye, EyeSlash } from "@phosphor-icons/react";
+import logo from "assests/logos/dclass.png";
 
 const Login = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { loginHandler } = useContext(LoginAuthContext);
   const navigate = useNavigate();
+  const isRTL = i18n.language === "ar";
 
-  const [isClicked, setIsClicked] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [validatePassword, setValidatePassword] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [showGetPlanModal, setShowGetPlanModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { postData, isLoading } = usePostData();
-  const { isVisible, status, message, showSuccess, showError, hideStatus } =
-    useStatusHandler();
 
   const {
     value: emailInput,
@@ -30,38 +27,29 @@ const Login = () => {
     hasError: emailHasError,
     inputChangeHandler: emailChangeHandler,
     inputBlurHandler: emailBlurHandler,
-    inputFocusHandler: emailFocusHanlder,
-    isFocus: emailIsFocus,
     reset: emailReset,
   } = useInput((value) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(value);
   });
+
   const {
     value: passwordInput,
     isValid: passwordIsValid,
     hasError: passwordHasError,
     inputChangeHandler: passwordChangeHandler,
     inputBlurHandler: passwordBlurHandler,
-    inputFocusHandler: passwordFocusHandler,
-    isFocus: passwordIsFocus,
     reset: passwordReset,
   } = useInput((value) => value.trim().length >= 8);
 
-  const handleContinueClick = () => {
-    setIsClicked(true);
-    if (emailIsValid) {
-      setShowPassword(true);
-      setIsClicked(false);
-    }
-  };
+  const formIsValid = emailIsValid && passwordIsValid;
 
-  const handleLogin = async () => {
-    setValidatePassword(true);
-    if (!passwordIsValid) {
-      showError("form.validation.error");
-      return;
-    }
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+    setErrorMessage("");
+
+    if (!formIsValid) return;
 
     const userData = {
       email: emailInput,
@@ -72,25 +60,18 @@ const Login = () => {
       const response = await postData("auth/login", userData);
 
       if (response.success) {
-        showSuccess(response.message);
-
-        // Backend returns { token, user }
         const user = response.data?.user;
-
-        // Check if user is verified (backend uses 'verified' field)
         const userIsVerified = user?.verified === true;
-        // Save user data with subscription and profile info
+
         loginHandler(
           response.data?.token,
           user,
           user?.allowedProfiles || null,
-          user?.purchasedItems?.courses?.map(c => c.courseId) || [],
+          user?.purchasedItems?.courses?.map((c) => c.courseId) || [],
           user?.profiles || []
         );
 
         if (!userIsVerified) {
-          // User not verified - redirect to verification page
-          console.log(">>> REDIRECTING TO /verify-email <<<");
           emailReset();
           passwordReset();
           navigate("/verify-email");
@@ -100,112 +81,162 @@ const Login = () => {
         emailReset();
         passwordReset();
 
-        // Check if user has active subscription
         if (user?.hasActiveSubscription && user?.allowedProfiles > 0) {
-          // User has active subscription - navigate to profiles
           navigate("/my-profiles");
         } else if (user?.purchasedItems?.courses?.length > 0) {
-          // User has no subscription but has purchased courses - go to my courses
           navigate("/my-courses");
         } else {
-          // User has no active subscription and no purchased courses - show plan modal
           setShowGetPlanModal(true);
         }
       } else {
-        showError(response.message);
+        setErrorMessage(response.message || t("auth.login.error"));
       }
     } catch (error) {
-      console.log("Login error:", error);
-      showError(error.message);
+      setErrorMessage(t("auth.login.error"));
     }
   };
+
+  const iconPosition = isRTL ? "right-4" : "left-4";
+  const togglePosition = isRTL ? "left-4" : "right-4";
+  const inputPadding = isRTL ? "pr-12 pl-12" : "pl-12 pr-12";
+
   return (
-    <main className="py-primary min-h-screen md:min-h-0">
-      <Container>
-        <div className="w-full sm:w-4/5 md:w-3/4 lg:w-1/2 mx-auto flex flex-col items-center justify-center bg-white py-8 sm:py-10 px-4 sm:px-6 md:px-2 rounded-xl shadow-sm md:shadow-none">
-          <h1 className="text-xl sm:text-2xl font-bold text-center md:text-left">
-            {t("general.login_title")}
-          </h1>
-          <p className="text-center md:text-left text-sm text-gray-600">
-            {t("general.login_subtitle")}
-          </p>
-          <div className="mt-6 w-full sm:w-auto">
-            <StatusHandler
-              status={status}
-              message={message}
-              isVisible={isVisible}
-              onClose={hideStatus}
-            />
-          </div>
-          {/* <div className="mt-6 flex items-center justify-center gap-4">
-            <GoogleAuth onSuccess={handleAuthSuccess} />
-            <AppleAuth onSuccess={handleAuthSuccess} />
-          </div> */}
-          <div className="w-full sm:w-3/4 mt-6 px-1">
-            <label className="text-sm text-gray-600 mb-2 block">
-              {t("forms.inputs.email_label")}
-            </label>
-            <Input
-              isWhite={true}
-              label={t("forms.inputs.email_label")}
-              placeholder={t("forms.inputs.email")}
-              value={emailInput}
-              onChange={(event) => {
-                emailChangeHandler(event);
-              }}
-              onBlur={emailBlurHandler}
-              hasError={(isClicked && !emailIsValid) || emailHasError}
-              errorMessage="Enter a valid email address"
-            />
+    <main className="min-h-screen bg-gradient-to-br from-bg via-grey to-bg flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          <Link to="/">
+            <img src={logo} alt="Dee Class" className="h-12" />
+          </Link>
+        </div>
+
+        {/* Login Card */}
+        <div className="bg-grey/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-gray-700/50">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-white mb-2">
+              {t("auth.login.title")}
+            </h1>
+            <p className="text-gray-400 text-sm">
+              {t("auth.login.subtitle")}
+            </p>
           </div>
 
-          {showPassword && (
-            <div className="w-full sm:w-3/4 my-6 px-1">
-              <label className="text-sm text-gray-600 mb-2 block">
-                {t("forms.inputs.password_label")}
-              </label>
-              <PasswordInput
-                isWhite={true}
-                type="password"
-                label={t("forms.inputs.password_label")}
-                placeholder={t("forms.inputs.password")}
-                value={passwordInput}
-                onChange={(event) => {
-                  passwordChangeHandler(event);
-                }}
-                onBlur={passwordBlurHandler}
-                hasError={
-                  (validatePassword && !passwordIsValid) || passwordHasError
-                }
-                errorMessage="Password must be at least 8 characters"
-              />
+          {/* Error Message */}
+          {errorMessage && (
+            <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-xl mb-6 text-sm text-center">
+              {errorMessage}
             </div>
           )}
 
-          <button
-            className="w-full sm:w-3/4 mt-6 py-3 px-4 bg-primary hover:bg-darkPrimary transition ease-in-out duration-300 text-white font-semibold rounded-lg transition duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
-            onClick={showPassword ? handleLogin : handleContinueClick}
-          >
-            {isLoading ? (
-              <Spinner isSmall={true} isWhite={true} />
-            ) : showPassword ? (
-              t("general.login")
-            ) : (
-              t("buttons.continue_with_email")
-            )}
-          </button>
-          <div className="w-full sm:w-3/4 mx-auto text-center mt-4 px-1">
-            <p className="text-sm text-gray-600">
-              {t("general.new_here")}{" "}
-              <Link to="/register" className="text-primary hover:underline">
-                {t("general.create_account")}
-              </Link>
-            </p>
-          </div>
-        </div>
-      </Container>
+          {/* Form */}
+          <form onSubmit={handleLogin} className="space-y-5">
+            {/* Email */}
+            <div className="relative">
+              <div
+                className={`absolute ${iconPosition} top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none`}
+              >
+                <EnvelopeSimple size={20} />
+              </div>
+              <input
+                type="email"
+                placeholder={t("auth.login.emailPlaceholder")}
+                value={emailInput}
+                onChange={emailChangeHandler}
+                onBlur={emailBlurHandler}
+                className={`w-full bg-bg/50 border text-white py-3.5 ${isRTL ? "pr-12 pl-4" : "pl-12 pr-4"}
+                  rounded-xl placeholder:text-gray-500 placeholder:text-sm
+                  focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50
+                  transition-all duration-300
+                  ${(isSubmitted && !emailIsValid) || emailHasError ? "border-red-500" : "border-gray-600"}`}
+              />
+              {((isSubmitted && !emailIsValid) || emailHasError) && (
+                <p className="text-xs text-red-400 mt-1.5">
+                  {t("auth.login.emailError")}
+                </p>
+              )}
+            </div>
 
-      {/* Get Plan Modal - shown when user has no active plan */}
+            {/* Password */}
+            <div className="relative">
+              <div
+                className={`absolute ${iconPosition} top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none`}
+              >
+                <Lock size={20} />
+              </div>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder={t("auth.login.passwordPlaceholder")}
+                value={passwordInput}
+                onChange={passwordChangeHandler}
+                onBlur={passwordBlurHandler}
+                className={`w-full bg-bg/50 border text-white py-3.5 ${inputPadding}
+                  rounded-xl placeholder:text-gray-500 placeholder:text-sm
+                  focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50
+                  transition-all duration-300
+                  ${(isSubmitted && !passwordIsValid) || passwordHasError ? "border-red-500" : "border-gray-600"}`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className={`absolute ${togglePosition} top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors`}
+              >
+                {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
+              </button>
+              {((isSubmitted && !passwordIsValid) || passwordHasError) && (
+                <p className="text-xs text-red-400 mt-1.5">
+                  {t("auth.login.passwordError")}
+                </p>
+              )}
+            </div>
+
+            {/* Forgot Password */}
+            <div className="text-right">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-primary hover:text-primary/80 transition-colors"
+              >
+                {t("auth.login.forgotPassword")}
+              </Link>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-primary hover:bg-primary/90 text-white py-3.5 px-6 rounded-xl font-semibold
+                transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed
+                flex items-center justify-center gap-2"
+            >
+              {isLoading ? (
+                <Spinner isSmall={true} isWhite={true} />
+              ) : (
+                t("auth.login.submit")
+              )}
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="flex items-center my-6">
+            <div className="flex-1 border-t border-gray-600"></div>
+            <span className="px-4 text-gray-500 text-sm">{t("auth.login.or")}</span>
+            <div className="flex-1 border-t border-gray-600"></div>
+          </div>
+
+          {/* Register Link */}
+          <p className="text-center text-gray-400 text-sm">
+            {t("auth.login.noAccount")}{" "}
+            <Link
+              to="/register"
+              className="text-primary hover:text-primary/80 font-medium transition-colors"
+            >
+              {t("auth.login.createAccount")}
+            </Link>
+          </p>
+        </div>
+      </div>
+
+      {/* Get Plan Modal */}
       <GetPlanModal
         isOpen={showGetPlanModal}
         onClose={() => {

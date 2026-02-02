@@ -44,7 +44,7 @@ const Home = () => {
     fetchData("home");
   }, []);
 
-  console.log(data?.hero)
+  console.log(data?.hero);
 
   if (isLoading) {
     return <IsLoading />;
@@ -52,34 +52,31 @@ const Home = () => {
 
   if (data) {
     return (
-      <main>
-        {/* <button
-          onClick={handleDeeClassRedirect}
-          className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark transition-colors"
-        >
-          Open DeeClass App
-        </button> */}
+      <main className="overflow-x-hidden">
         <Hero courses={data?.data?.featured_courses} hero={data?.data?.hero} />
-        <MobileCourseSlider courses={data?.data?.featured_coursesnow} />
-        <RegisterNow joinUs={data?.data?.join_us} />
-        <Reels trending={data?.data?.trending} />
-        <LatestCourses
-          data={data?.data?.newlyAddedCourses}
-          title={t("for_you.new_to_master_class")}
-        />
 
-        <Container className="lg:py-primary py-secondary">
-          <CategorySlider />
-        </Container>
-        <Container className="lg:py-primary py-secondary">
+        {/* Sections with consistent spacing */}
+        <div className="flex flex-col gap-y-16 sm:gap-y-24 lg:gap-y-36 xl:gap-y-44 pt-16 sm:pt-20 lg:pt-28">
+          {/* <MobileCourseSlider courses={data?.data?.featured_coursesnow} /> */}
+          <RegisterNow joinUs={data?.data?.join_us} />
+          <Reels trending={data?.data?.trending} />
+          <LatestCourses
+            data={data?.data?.newlyAddedCourses}
+            title={t("for_you.new_to_master_class")}
+          />
+          <Container>
+            <CategorySlider />
+          </Container>
           {data?.instructor_profile && data.instructor_profile.length > 0 && (
-            <InstructorProfileSlider
-              data={data.instructor_profile}
-              title={t("for_you.our_instructors")}
-            />
+            <Container>
+              <InstructorProfileSlider
+                data={data.instructor_profile}
+                title={t("for_you.our_instructors")}
+              />
+            </Container>
           )}
-        </Container>
-        <JoinUs />
+          <JoinUs />
+        </div>
       </main>
     );
   }

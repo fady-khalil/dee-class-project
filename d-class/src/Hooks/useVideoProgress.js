@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef } from "react";
+import { useState, useEffect, useContext, useRef, useMemo, useCallback } from "react";
 import usePostData from "./usePostData";
 import { LoginAuthContext } from "Context/Authentication/LoginAuth";
 
@@ -15,33 +15,51 @@ const useVideoProgress = (courseId, videoId, initialIsDone = false) => {
   const { postData, isLoading, isError } = usePostData();
   const { selectedUser, user, isAuthenticated, token } = useContext(LoginAuthContext);
 
-  // Use consistent tracking ID logic (profile for subscribers, user for course purchasers)
-  const trackingId = isAuthenticated ? selectedUser?.id : (user?._id || user?.id);
+  // Memoize trackingId to prevent recalculation on every render
+  const trackingId = useMemo(() => {
+    return isAuthenticated ? (selectedUser?._id || selectedUser?.id) : (user?._id || user?.id);
+  }, [isAuthenticated, selectedUser?._id, selectedUser?.id, user?._id, user?.id]);
 
-  // Store current videoId in a ref to avoid closure issues
+  // Store values in refs to avoid stale closures
+  const trackingIdRef = useRef(trackingId);
+  const tokenRef = useRef(token);
+  const isAuthenticatedRef = useRef(isAuthenticated);
   const currentVideoIdRef = useRef(videoId);
   const currentCourseIdRef = useRef(courseId);
 
-  // Update refs when props change
+  // Update refs when values change
+  useEffect(() => {
+    trackingIdRef.current = trackingId;
+  }, [trackingId]);
+
+  useEffect(() => {
+    tokenRef.current = token;
+  }, [token]);
+
+  useEffect(() => {
+    isAuthenticatedRef.current = isAuthenticated;
+  }, [isAuthenticated]);
+
   useEffect(() => {
     currentVideoIdRef.current = videoId;
     currentCourseIdRef.current = courseId;
   }, [videoId, courseId]);
 
-  // Function to mark video as done
-  const markVideoAsDone = async () => {
-    // Use the current values from refs instead of closure
+  // Function to mark video as done - use useCallback to prevent recreation
+  const markVideoAsDone = useCallback(async () => {
     const currentVideoId = currentVideoIdRef.current;
     const currentCourseId = currentCourseIdRef.current;
+    const currentTrackingId = trackingIdRef.current;
+    const currentToken = tokenRef.current;
+    const currentIsAuthenticated = isAuthenticatedRef.current;
 
-    // Return early if any of these conditions are true
     if (
       apiCallCompleted.current ||
       markingInProgressRef.current ||
       !currentVideoId ||
-      !trackingId ||
+      !currentTrackingId ||
       !currentCourseId ||
-      !token
+      !currentToken
     ) {
       return false;
     }
@@ -50,11 +68,12 @@ const useVideoProgress = (courseId, videoId, initialIsDone = false) => {
 
     try {
       const payload = {
-        ...(isAuthenticated ? { profile_id: trackingId } : { user_id: trackingId }),
+        ...(currentIsAuthenticated ? { profile_id: currentTrackingId } : { user_id: currentTrackingId }),
         course_id: currentCourseId,
         video_id: currentVideoId,
       };
-      const response = await postData("videos-done", payload, token);
+
+      const response = await postData("videos-done", payload, currentToken);
 
       if (response.success) {
         setIsVideoDone(true);
@@ -67,13 +86,12 @@ const useVideoProgress = (courseId, videoId, initialIsDone = false) => {
       markingInProgressRef.current = false;
     }
     return false;
-  };
+  }, [postData]);
 
   // Function to update progress
-  const updateProgress = (percent) => {
+  const updateProgress = useCallback((percent) => {
     setProgressPercentage(percent);
 
-    // If progress reaches 75% and video has not been marked as done
     if (
       percent >= 75 &&
       !apiCallCompleted.current &&
@@ -81,15 +99,13 @@ const useVideoProgress = (courseId, videoId, initialIsDone = false) => {
     ) {
       markVideoAsDone();
     }
-  };
+  }, [markVideoAsDone]);
 
   // Reset state when video changes
   useEffect(() => {
-    // Reset progress state for new video
     setProgressPercentage(0);
     markingInProgressRef.current = false;
 
-    // Set initial done state based on prop
     if (initialIsDone) {
       setIsVideoDone(true);
       apiCallCompleted.current = true;

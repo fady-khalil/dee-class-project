@@ -26,7 +26,7 @@ const GetDrawerLinks = () => {
     },
     {
       name: t("navigation.contact"),
-      path: "",
+      path: "/contact",
     },
   ];
 

@@ -30,12 +30,14 @@ import Register from "Pages/Auth/Register/Register";
 import AuthCallback from "Pages/Auth/Register/AuthCallback";
 import Login from "Pages/Auth/login/Login";
 import VerifyEmail from "Pages/Auth/VerifyEmail/VerifyEmail";
+import ForgotPassword from "Pages/Auth/ForgotPassword/ForgotPassword";
 // general
 import NotFound from "Pages/General/NotFound";
 import Success from "Pages/Success";
 import PaymentCancel from "Pages/PaymentCancel";
 import Privacy from "Pages/General/Privacy";
 import Terms from "Pages/General/Terms";
+import Contact from "Pages/General/Contact";
 // assessment
 import AssessmentComplete from "Pages/Assesments/AssessmentComplete";
 // context
@@ -106,6 +108,7 @@ const App = () => {
         <Route path="*" element={<NotFound />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/contact" element={<Contact />} />
 
         <Route path="/course/watch-series/:slug" element={<WatchSeries />} />
         <Route
@@ -133,6 +136,7 @@ const App = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
           </>
         )}
       </Routes>
