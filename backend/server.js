@@ -25,6 +25,7 @@ import {
 import courseCategoryRoute from "./src/Routes/CoursesCategoryRoute.js";
 import courseRoute from "./src/Routes/CourseRoute.js";
 import courseEngagementRoute from "./src/Routes/CourseEngagementRoute.js";
+import cartRoute from "./src/Routes/CartRoute.js";
 import homeRoute from "./src/Routes/HomeRoute.js";
 import authRouter from "./src/Routes/AuthRouter.js";
 import adminRouter from "./src/Routes/AdminRouter.js";
@@ -33,9 +34,7 @@ import instructorRoute from "./src/Routes/InstructorRoute.js";
 import contentRoute from "./src/Routes/ContentRoute.js";
 import expertApplicationRoute from "./src/Routes/ExpertApplicationRoute.js";
 import planRoute, { adminPlanRouter } from "./src/Routes/PlanRoute.js";
-import stripeRoute, {
-  protectedStripeRouter,
-} from "./src/Routes/StripeRoute.js";
+import stripeRoute, { protectedStripeRouter } from "./src/Routes/StripeRoute.js";
 import profileRoute from "./src/Routes/ProfileRoute.js";
 import { handleWebhook } from "./src/Controllers/StripeController.js";
 
@@ -45,12 +44,8 @@ const app = express();
 // Enable CORS for all routes
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? ["https://yalladad.com", "https://dashboard.yalladad.com"]
-    : [
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://localhost:5173",
-      ];
+    ? ["https://declass.yamminelawfirm.com", "https://dashboarddeclass.yamminelawfirm.com"]
+    : ["http://localhost:3000", "http://localhost:3001", "http://localhost:5173"];
 
 app.use(
   cors({
@@ -68,11 +63,7 @@ app.use(
 );
 
 // Stripe webhook needs raw body - must be before express.json()
-app.post(
-  "/api/stripe/webhook",
-  express.raw({ type: "application/json" }),
-  handleWebhook
-);
+app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), handleWebhook);
 
 app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ extended: true, limit: "100mb" }));
@@ -114,7 +105,7 @@ app.use(responseTranslationMiddleware);
 
 // Home route
 app.get("/", (req, res) => {
-  res.send("Dr Diana Academy API is running");
+  res.send("de class API is running");
 });
 
 // Apply language middleware to all routes under /api
@@ -124,11 +115,7 @@ app.get("/", (req, res) => {
 // Admin routes (no language parameter, returns both languages)
 app.use("/api/admin", adminLanguageMiddleware, adminRouter);
 app.use("/api/admin/content", adminLanguageMiddleware, contentRoute);
-app.use(
-  "/api/admin/expert-applications",
-  adminLanguageMiddleware,
-  expertApplicationRoute
-);
+app.use("/api/admin/expert-applications", adminLanguageMiddleware, expertApplicationRoute);
 app.use("/api/admin/plans", adminLanguageMiddleware, adminPlanRouter);
 app.use("/api/database", adminLanguageMiddleware, databaseRoute);
 
@@ -153,6 +140,7 @@ app.use(
 );
 app.use("/api/:language/courses", languageMiddleware, courseRoute);
 app.use("/api/:language/instructors", languageMiddleware, instructorRoute);
+app.use("/api/:language/cart", languageMiddleware, cartRoute);
 app.use("/api/:language/packages", languageMiddleware, planRoute);
 // Course engagement routes (like, comment)
 app.use("/api/:language", languageMiddleware, courseEngagementRoute);
@@ -166,6 +154,7 @@ app.use("/api/home", languageMiddleware, homeRoute);
 app.use("/api/course-categories", languageMiddleware, courseCategoryRoute);
 app.use("/api/courses", languageMiddleware, courseRoute);
 app.use("/api/instructors", languageMiddleware, instructorRoute);
+app.use("/api/cart", languageMiddleware, cartRoute);
 app.use("/api/packages", languageMiddleware, planRoute);
 // Course engagement routes (like, comment) - fallback
 app.use("/api", languageMiddleware, courseEngagementRoute);
