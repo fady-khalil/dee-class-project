@@ -44,7 +44,7 @@ const app = express();
 // Enable CORS for all routes
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? ["https://yamminelawfirm.com", "https://dashboard.yamminelawfirm.com"]
+    ? ["https://declass.yamminelawfirm.com", "https://dashboarddeclass.yamminelawfirm.com"]
     : ["http://localhost:3000", "http://localhost:3001", "http://localhost:5173"];
 
 app.use(
