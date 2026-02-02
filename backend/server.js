@@ -25,7 +25,6 @@ import {
 import courseCategoryRoute from "./src/Routes/CoursesCategoryRoute.js";
 import courseRoute from "./src/Routes/CourseRoute.js";
 import courseEngagementRoute from "./src/Routes/CourseEngagementRoute.js";
-import cartRoute from "./src/Routes/CartRoute.js";
 import homeRoute from "./src/Routes/HomeRoute.js";
 import authRouter from "./src/Routes/AuthRouter.js";
 import adminRouter from "./src/Routes/AdminRouter.js";
@@ -140,7 +139,6 @@ app.use(
 );
 app.use("/api/:language/courses", languageMiddleware, courseRoute);
 app.use("/api/:language/instructors", languageMiddleware, instructorRoute);
-app.use("/api/:language/cart", languageMiddleware, cartRoute);
 app.use("/api/:language/packages", languageMiddleware, planRoute);
 // Course engagement routes (like, comment)
 app.use("/api/:language", languageMiddleware, courseEngagementRoute);
@@ -154,7 +152,6 @@ app.use("/api/home", languageMiddleware, homeRoute);
 app.use("/api/course-categories", languageMiddleware, courseCategoryRoute);
 app.use("/api/courses", languageMiddleware, courseRoute);
 app.use("/api/instructors", languageMiddleware, instructorRoute);
-app.use("/api/cart", languageMiddleware, cartRoute);
 app.use("/api/packages", languageMiddleware, planRoute);
 // Course engagement routes (like, comment) - fallback
 app.use("/api", languageMiddleware, courseEngagementRoute);
