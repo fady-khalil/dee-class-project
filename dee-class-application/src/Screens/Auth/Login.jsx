@@ -5,89 +5,51 @@ import {
   ScrollView,
   TouchableOpacity,
   Text,
+  TextInput,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import * as Linking from "expo-linking";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Input, PasswordInput, useInput } from "../../components/form";
-import {
-  StatusHandler,
-  useStatusHandler,
-} from "../../components/RequestHandler";
+import { Ionicons } from "@expo/vector-icons";
 import Spinner from "../../components/RequestHandler/Spinner";
 import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import { usePostData } from "../../Hooks/usePostData";
-import COLORS from "../../styles/colors";
-import { GlobalStyle } from "../../styles/GlobalStyle";
-import { HeaderBack } from "../../components/navigation";
 import usePostDataNoLang from "../../Hooks/usePostDataNoLang";
+import COLORS from "../../styles/colors";
+import logo from "../../Assests/logos/dclass.png";
 
 const Login = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
   const { plan_id, is_register } = route.params || {};
-  const { loginHandler, user } = useContext(LoginAuthContext);
-  const [isClicked, setIsClicked] = useState(false);
+  const { loginHandler } = useContext(LoginAuthContext);
+  const isRTL = i18n.language === "ar";
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [validatePassword, setValidatePassword] = useState(false);
   const { postData, isLoading } = usePostData();
-  const { postData: postDataNoLang, isLoading: isPostLoading } =
-    usePostDataNoLang();
+  const { postData: postDataNoLang } = usePostDataNoLang();
 
-  const {
-    isVisible,
-    status,
-    message,
-    showSuccess,
-    showError,
-    hideStatus,
-    messages,
-  } = useStatusHandler();
+  // Form state
+  const [emailInput, setEmailInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
 
-  // Email validation with regex
-  const {
-    value: emailInput,
-    isValid: emailIsValid,
-    hasError: emailHasError,
-    inputChangeHandler: emailChangeHandler,
-    inputBlurHandler: emailBlurHandler,
-    inputFocusHandler: emailFocusHandler,
-    isFocus: emailIsFocus,
-    reset: emailReset,
-  } = useInput((value) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(value);
-  });
+  // Validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailIsValid = emailRegex.test(emailInput);
+  const passwordIsValid = passwordInput.trim().length >= 8;
+  const formIsValid = emailIsValid && passwordIsValid;
 
-  // Password validation (min 8 characters)
-  const {
-    value: passwordInput,
-    isValid: passwordIsValid,
-    hasError: passwordHasError,
-    inputChangeHandler: passwordChangeHandler,
-    inputBlurHandler: passwordBlurHandler,
-    inputFocusHandler: passwordFocusHandler,
-    isFocus: passwordIsFocus,
-    reset: passwordReset,
-  } = useInput((value) => value.trim().length >= 8);
-
-  // Continue button handler for email step
-  const handleContinueClick = () => {
-    setIsClicked(true);
-    if (emailIsValid) {
-      setShowPassword(true);
-      setIsClicked(false);
-    }
-  };
-
-  // Login handler for password step
   const handleLogin = async () => {
-    setValidatePassword(true);
-    if (!passwordIsValid) {
-      showError(t("forms.validation.validation_error"));
-      return;
-    }
+    setIsSubmitted(true);
+    setErrorMessage("");
+
+    if (!formIsValid) return;
 
     const userData = {
       email: emailInput,
@@ -98,50 +60,43 @@ const Login = () => {
       const response = await postData("auth/login", userData);
 
       if (response.success) {
-        const userData = response.data?.user;
+        const user = response.data?.user;
         const token = response.data?.token;
-        const profiles = userData?.profiles || [];
-        const hasActiveSubscription = userData?.hasActiveSubscription || false;
-        const allowedProfiles = userData?.allowedProfiles || 0;
-        const purchasedCourses = userData?.purchasedItems?.courses?.map(c => c.courseId || c._id) || [];
-        const isVerified = userData?.verified;
+        const profiles = user?.profiles || [];
+        const hasActiveSubscription = user?.hasActiveSubscription || false;
+        const allowedProfiles = user?.allowedProfiles || 0;
+        const purchasedCourses = user?.purchasedItems?.courses?.map(c => c.courseId || c._id) || [];
+        const userIsVerified = user?.verified === true;
 
         // Check if user is verified
-        if (!isVerified) {
-          // Store token and user temporarily for verification flow
-          loginHandler(token, userData, false, purchasedCourses, profiles);
+        if (!userIsVerified) {
+          loginHandler(token, user, false, purchasedCourses, profiles);
+          setEmailInput("");
+          setPasswordInput("");
           navigation.navigate("VerifyEmail", { email: emailInput });
           return;
         }
 
-        showSuccess(t("auth.login.success"));
-
-        // Login with full user data
         loginHandler(
           token,
-          userData,
+          user,
           hasActiveSubscription && allowedProfiles > 0,
           purchasedCourses,
           profiles
         );
 
-        // Handle payment if needed (similar logic to web version)
+        // Handle payment if needed
         if (plan_id && is_register) {
-          console.log("Creating payment session for plan:", plan_id);
-          console.log("User ID:", userData?._id);
           try {
-            // Use Expo Linking to create proper deep link URLs
-            // Note: We manually append session_id placeholder to avoid URL encoding
             const baseSuccessUrl = Linking.createURL("payment/success");
             const successUrl = `${baseSuccessUrl}?session_id={CHECKOUT_SESSION_ID}&type=plan`;
             const cancelUrl = Linking.createURL("payment/cancel");
 
             const paymentResponse = await postDataNoLang("create-checkout-session", {
               type: "package",
-              user_id: userData?._id,
+              user_id: user?._id,
               id: plan_id,
               source: "application",
-              // Deep link URLs for mobile app
               success_url: successUrl,
               cancel_url: cancelUrl,
             });
@@ -150,212 +105,314 @@ const Login = () => {
               Linking.openURL(paymentResponse.data.checkout_url);
             }
           } catch (error) {
-            showError("Payment process failed");
+            setErrorMessage(t("auth.login.payment_error"));
           }
         } else {
-          // Normal navigation flow
-          emailReset();
-          passwordReset();
+          setEmailInput("");
+          setPasswordInput("");
 
           if (hasActiveSubscription && profiles.length > 0) {
             navigation.navigate("MyProfiles");
           } else if (purchasedCourses.length > 0) {
             navigation.navigate("MyCourses");
           } else {
-            navigation.navigate("Main");
+            navigation.navigate("Plans");
           }
         }
       } else {
-        showError(response.message || t("auth.login.error"));
+        setErrorMessage(response.message || t("auth.login.error"));
       }
     } catch (error) {
-      console.log(error);
-      showError(error.message || "api.network.error");
+      setErrorMessage(t("auth.login.error"));
     }
   };
 
   return (
-    <View style={styles.rootContainer}>
-      <HeaderBack screenName="login" hideBackButton={!navigation.canGoBack()} />
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <ScrollView
-        style={styles.container}
+        style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="handled"
       >
-        <View style={[GlobalStyle.container, styles.innerContainer]}>
-          <Text style={styles.title}>{t("general.login_title")}</Text>
-          <Text style={styles.subtitle}>{t("general.login_subtitle")}</Text>
+        {/* Logo */}
+        <TouchableOpacity
+          style={styles.logoContainer}
+          onPress={() => navigation.navigate("Main")}
+        >
+          <Image source={logo} style={styles.logo} resizeMode="contain" />
+        </TouchableOpacity>
 
-          <View style={styles.statusContainer}>
-            <StatusHandler
-              isVisible={isVisible}
-              status={status}
-              message={message}
-              hideStatus={hideStatus}
-              messages={messages}
-            />
+        {/* Login Card */}
+        <View style={styles.card}>
+          {/* Header */}
+          <View style={styles.headerContainer}>
+            <Text style={styles.title}>{t("auth.login.title")}</Text>
+            <Text style={styles.subtitle}>{t("auth.login.subtitle")}</Text>
           </View>
 
-          <View style={styles.inputContainer}>
-            <View style={styles.labelContainer}>
-              <Text style={styles.inputLabel}>
-                {t("forms.inputs.email_label")}
-              </Text>
+          {/* Error Message */}
+          {errorMessage ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{errorMessage}</Text>
             </View>
-            <Input
-              isWhite={true}
-              placeholder={t("forms.inputs.email")}
-              value={emailInput}
-              onChange={emailChangeHandler}
-              onBlur={emailBlurHandler}
-              onFocus={emailFocusHandler}
-              hasError={(isClicked && !emailIsValid) || emailHasError}
-              errorMessage={t("forms.errors.email")}
-              keyboardType="email-address"
-            />
-          </View>
+          ) : null}
 
-          {showPassword && (
-            <View style={styles.inputContainer}>
-              <View style={styles.labelContainer}>
-                <Text style={styles.inputLabel}>
-                  {t("forms.inputs.password_label")}
-                </Text>
-              </View>
-              <PasswordInput
-                isWhite={true}
-                placeholder={t("forms.inputs.password")}
-                value={passwordInput}
-                onChange={passwordChangeHandler}
-                onBlur={passwordBlurHandler}
-                onFocus={passwordFocusHandler}
-                hasError={
-                  (validatePassword && !passwordIsValid) || passwordHasError
-                }
-                errorMessage={t("forms.errors.general")}
+          {/* Email Input */}
+          <View style={styles.inputWrapper}>
+            <View style={[styles.inputContainer, (isSubmitted && !emailIsValid) && styles.inputError]}>
+              <Ionicons
+                name="mail-outline"
+                size={20}
+                color={COLORS.darkWhite}
+                style={[styles.inputIcon, isRTL && styles.inputIconRTL]}
+              />
+              <TextInput
+                style={[styles.input, isRTL && styles.inputRTL]}
+                placeholder={t("auth.login.emailPlaceholder")}
+                placeholderTextColor={COLORS.darkWhite}
+                value={emailInput}
+                onChangeText={setEmailInput}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
               />
             </View>
-          )}
+            {isSubmitted && !emailIsValid && (
+              <Text style={styles.fieldError}>{t("auth.login.emailError")}</Text>
+            )}
+          </View>
 
+          {/* Password Input */}
+          <View style={styles.inputWrapper}>
+            <View style={[styles.inputContainer, (isSubmitted && !passwordIsValid) && styles.inputError]}>
+              <Ionicons
+                name="lock-closed-outline"
+                size={20}
+                color={COLORS.darkWhite}
+                style={[styles.inputIcon, isRTL && styles.inputIconRTL]}
+              />
+              <TextInput
+                style={[styles.input, isRTL && styles.inputRTL]}
+                placeholder={t("auth.login.passwordPlaceholder")}
+                placeholderTextColor={COLORS.darkWhite}
+                value={passwordInput}
+                onChangeText={setPasswordInput}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+              />
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={[styles.eyeIcon, isRTL && styles.eyeIconRTL]}
+              >
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color={COLORS.darkWhite}
+                />
+              </TouchableOpacity>
+            </View>
+            {isSubmitted && !passwordIsValid && (
+              <Text style={styles.fieldError}>{t("auth.login.passwordError")}</Text>
+            )}
+          </View>
+
+          {/* Forgot Password */}
           <TouchableOpacity
-            style={styles.button}
-            onPress={showPassword ? handleLogin : handleContinueClick}
+            style={styles.forgotPassword}
+            onPress={() => navigation.navigate("ForgotPassword")}
+          >
+            <Text style={styles.forgotPasswordText}>
+              {t("auth.login.forgotPassword")}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Submit Button */}
+          <TouchableOpacity
+            style={[styles.button, isLoading && styles.buttonDisabled]}
+            onPress={handleLogin}
             disabled={isLoading}
           >
             {isLoading ? (
               <Spinner isSmall={true} isWhite={true} />
             ) : (
-              <Text style={styles.buttonText}>
-                {showPassword
-                  ? t("general.login")
-                  : t("buttons.continue_with_email")}
-              </Text>
+              <Text style={styles.buttonText}>{t("auth.login.submit")}</Text>
             )}
           </TouchableOpacity>
 
+          {/* Divider */}
+          <View style={styles.dividerContainer}>
+            <View style={styles.divider} />
+            <Text style={styles.dividerText}>{t("auth.login.or")}</Text>
+            <View style={styles.divider} />
+          </View>
+
+          {/* Register Link */}
           <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>{t("general.new_here")} </Text>
+            <Text style={styles.registerText}>{t("auth.login.noAccount")} </Text>
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate(
-                  "Register",
-                  plan_id ? { plan_id, is_register } : undefined
-                )
-              }
+              onPress={() => navigation.navigate("Register", plan_id ? { plan_id, is_register } : undefined)}
             >
-              <Text style={styles.registerLink}>
-                {t("general.create_account")}
-              </Text>
+              <Text style={styles.registerLink}>{t("auth.login.createAccount")}</Text>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  rootContainer: {
-    flex: 1,
-    backgroundColor: COLORS.backgroundColor,
-  },
   container: {
     flex: 1,
     backgroundColor: COLORS.backgroundColor,
   },
+  scrollView: {
+    flex: 1,
+  },
   contentContainer: {
     flexGrow: 1,
-    paddingVertical: 20,
+    justifyContent: "center",
+    padding: 16,
   },
-  innerContainer: {
-    paddingHorizontal: 16,
+  logoContainer: {
     alignItems: "center",
+    marginBottom: 32,
+  },
+  logo: {
+    height: 48,
+    width: 150,
+  },
+  card: {
+    backgroundColor: COLORS.grey,
+    borderRadius: 16,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  headerContainer: {
+    alignItems: "center",
+    marginBottom: 24,
   },
   title: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: "bold",
     color: COLORS.white,
-    textAlign: "center",
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: COLORS.darkWhite,
     textAlign: "center",
-    marginBottom: 32,
   },
-  statusContainer: {
-    marginVertical: 16,
-    width: "100%",
+  errorContainer: {
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(239, 68, 68, 0.5)",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+  },
+  errorText: {
+    color: "#f87171",
+    fontSize: 14,
+    textAlign: "center",
+  },
+  inputWrapper: {
+    marginBottom: 16,
   },
   inputContainer: {
-    width: "100%",
-    marginBottom: 24,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  labelContainer: {
-    alignItems: "flex-start",
     flexDirection: "row",
-    justifyContent: "flex-start",
+    alignItems: "center",
+    backgroundColor: COLORS.backgroundColor,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+    paddingHorizontal: 12,
   },
-  inputLabel: {
+  inputError: {
+    borderColor: "#ef4444",
+  },
+  inputIcon: {
+    marginRight: 12,
+  },
+  inputIconRTL: {
+    marginRight: 0,
+    marginLeft: 12,
+  },
+  input: {
+    flex: 1,
+    color: COLORS.white,
     fontSize: 16,
-    color: COLORS.darkWhite,
-    marginBottom: 8,
-    fontWeight: "500",
-    textAlign: "start",
+    paddingVertical: 14,
+  },
+  inputRTL: {
+    textAlign: "right",
+  },
+  eyeIcon: {
+    padding: 4,
+  },
+  eyeIconRTL: {
+    marginLeft: 0,
+    marginRight: 8,
+  },
+  fieldError: {
+    color: "#f87171",
+    fontSize: 12,
+    marginTop: 6,
+  },
+  forgotPassword: {
+    alignSelf: "flex-end",
+    marginBottom: 20,
+  },
+  forgotPasswordText: {
+    color: COLORS.primary,
+    fontSize: 14,
   },
   button: {
     backgroundColor: COLORS.primary,
-    paddingVertical: 16,
-    borderRadius: 8,
+    borderRadius: 12,
+    paddingVertical: 14,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 16,
-    width: "100%",
-    elevation: 2,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
   },
   buttonText: {
     color: COLORS.white,
     fontSize: 16,
     fontWeight: "600",
   },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 24,
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "rgba(255,255,255,0.2)",
+  },
+  dividerText: {
+    color: COLORS.darkWhite,
+    paddingHorizontal: 16,
+    fontSize: 14,
+  },
   registerContainer: {
+    flexDirection: "row",
     justifyContent: "center",
-    marginTop: 24,
     flexWrap: "wrap",
   },
   registerText: {
     color: COLORS.darkWhite,
-    fontSize: 16,
+    fontSize: 14,
   },
   registerLink: {
     color: COLORS.primary,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "500",
   },
 });

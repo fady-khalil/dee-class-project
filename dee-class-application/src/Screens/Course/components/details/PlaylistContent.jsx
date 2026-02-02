@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../../../styles/colors";
@@ -21,6 +22,8 @@ const PlaylistContent = ({
   onVideoSelect,
   completedVideos = {},
   isVideoCompleted,
+  loadingVideoId,
+  isCourseCompleted,
 }) => {
   const { t } = useTranslation();
   const [expandedChapters, setExpandedChapters] = useState({});
@@ -74,6 +77,7 @@ const PlaylistContent = ({
     const thumbnailUrl = lesson.video_id?.assets?.thumbnail || lesson.thumbnail;
     const isCompleted = isVideoCompleted?.(videoId) || completedVideos[videoId] || lesson.is_done;
     const isSelected = selectedVideo?.videoId === videoId;
+    const isLoading = loadingVideoId === videoId;
 
     return (
       <TouchableOpacity
@@ -92,7 +96,9 @@ const PlaylistContent = ({
 
           {/* Status Indicator */}
           <View style={styles.statusOverlay}>
-            {isCompleted ? (
+            {isLoading ? (
+              <ActivityIndicator size="small" color={COLORS.primary} />
+            ) : isCompleted ? (
               <Icon name="check-circle" size={20} color={COLORS.green || "#4CAF50"} />
             ) : isSelected ? (
               <Icon name="play-circle-filled" size={20} color={COLORS.primary} />
@@ -194,7 +200,7 @@ const PlaylistContent = ({
           <Text style={styles.statsText}>
             {completedLessons}/{totalLessons} {t("courses.lessons_completed") || "Lessons Completed"}
           </Text>
-          {isAllCompleted && (
+          {(isAllCompleted || isCourseCompleted) && (
             <LessonCompletedBadge variant="text" size="medium" />
           )}
         </View>

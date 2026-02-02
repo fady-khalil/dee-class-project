@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from "react-native";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../../../styles/colors";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -7,7 +7,7 @@ import LessonCompletedBadge from "../../../../components/common/LessonCompletedB
 
 /**
  * SingleContent - Content view for single video courses
- * Displays the main video with play button overlay
+ * Displays the main video in a row-based card (consistent with SeriesContent)
  */
 const SingleContent = ({
   courseData,
@@ -15,6 +15,8 @@ const SingleContent = ({
   onVideoSelect,
   completedVideos = {},
   isVideoCompleted,
+  loadingVideoId,
+  isCourseCompleted,
 }) => {
   const { t } = useTranslation();
 
@@ -22,8 +24,9 @@ const SingleContent = ({
   const mainVideo = courseData?.api_video_object || courseData?.main_with_api_video_object;
   const videoId = mainVideo?.videoId;
   const thumbnailUrl = mainVideo?.assets?.thumbnail || courseData?.thumbnail;
-  const isCompleted = isVideoCompleted?.(videoId) || completedVideos[videoId] || courseData?.is_done;
+  const isCompleted = isVideoCompleted?.(videoId) || completedVideos[videoId] || courseData?.is_done || isCourseCompleted;
   const isSelected = selectedVideo?.videoId === videoId;
+  const isLoading = loadingVideoId === videoId;
 
   const handleSelect = () => {
     if (mainVideo?.videoId) {
@@ -38,78 +41,83 @@ const SingleContent = ({
 
   return (
     <View style={styles.container}>
-      {/* Course Completed Badge */}
-      {isCompleted && (
-        <View style={styles.completedBadgeContainer}>
-          <LessonCompletedBadge variant="text" size="medium" />
-        </View>
-      )}
-
-      {/* Main Video Card */}
-      <TouchableOpacity
-        style={[styles.videoCard, isSelected && styles.selectedCard]}
-        onPress={handleSelect}
-        activeOpacity={0.8}
-      >
-        {/* Thumbnail */}
-        <View style={styles.thumbnailContainer}>
-          <Image
-            source={{ uri: thumbnailUrl }}
-            style={styles.thumbnail}
-            resizeMode="cover"
-          />
-
-          {/* Play/Check Overlay */}
-          <View style={styles.overlay}>
-            {isCompleted ? (
-              <View style={styles.completedIconContainer}>
-                <Icon name="check-circle" size={48} color={COLORS.green || "#4CAF50"} />
-              </View>
-            ) : (
-              <View style={styles.playIconContainer}>
-                <Icon name="play-circle-filled" size={64} color={COLORS.white} />
-              </View>
-            )}
-          </View>
-
-          {/* Status Badge on Thumbnail */}
-          {isCompleted && (
-            <View style={styles.thumbnailBadge}>
-              <LessonCompletedBadge variant="icon" size="small" />
-            </View>
+      {/* Header with completion status */}
+      <View style={styles.header}>
+        <View style={styles.statsContainer}>
+          <Text style={styles.statsText}>
+            {isCompleted ? "1/1" : "0/1"} {t("courses.lessons_completed")}
+          </Text>
+          {(isCompleted || isCourseCompleted) && (
+            <LessonCompletedBadge variant="text" size="medium" />
           )}
         </View>
 
-        {/* Video Info */}
-        <View style={styles.videoInfo}>
-          <View style={styles.labelRow}>
-            <Text style={styles.label}>{t("courses.mainContent") || "Main Content"}</Text>
-            {isCompleted && (
-              <LessonCompletedBadge variant="text" size="small" />
+        {/* Progress Bar */}
+        <View style={styles.progressBarContainer}>
+          <View style={styles.progressBarBackground}>
+            <View
+              style={[
+                styles.progressBarFill,
+                { width: isCompleted ? "100%" : "0%" },
+              ]}
+            />
+          </View>
+        </View>
+      </View>
+
+      {/* Main Video Card - Row based like SeriesContent */}
+      <View style={styles.contentList}>
+        <TouchableOpacity
+          style={[styles.videoCard, isSelected && styles.selectedCard]}
+          onPress={handleSelect}
+          activeOpacity={0.7}
+        >
+          {/* Thumbnail */}
+          <View style={styles.thumbnailContainer}>
+            <Image
+              source={{ uri: thumbnailUrl }}
+              style={styles.thumbnail}
+              resizeMode="cover"
+            />
+
+            {/* Status Indicator */}
+            <View style={styles.statusOverlay}>
+              {isLoading ? (
+                <ActivityIndicator size="small" color={COLORS.primary} />
+              ) : isCompleted ? (
+                <Icon name="check-circle" size={24} color={COLORS.green || "#4CAF50"} />
+              ) : isSelected ? (
+                <Icon name="play-circle-filled" size={24} color={COLORS.primary} />
+              ) : (
+                <Icon name="play-circle-outline" size={24} color={COLORS.white} />
+              )}
+            </View>
+          </View>
+
+          {/* Video Info */}
+          <View style={styles.videoInfo}>
+            <View style={styles.videoHeader}>
+              <Text style={styles.videoLabel}>
+                {t("courses.mainContent")}
+              </Text>
+              {isCompleted && (
+                <LessonCompletedBadge variant="text" size="small" />
+              )}
+            </View>
+            <Text
+              style={[styles.videoTitle, isSelected && styles.selectedTitle]}
+              numberOfLines={2}
+            >
+              {courseData?.name || courseData?.title}
+            </Text>
+            {courseData?.description && (
+              <Text style={styles.videoDescription} numberOfLines={1}>
+                {courseData.description}
+              </Text>
             )}
           </View>
-          <Text style={[styles.title, isSelected && styles.selectedTitle]} numberOfLines={2}>
-            {courseData?.name || courseData?.title}
-          </Text>
-          <Text style={styles.description} numberOfLines={3}>
-            {courseData?.description}
-          </Text>
-        </View>
-      </TouchableOpacity>
-
-      {/* Instructor Info (if available) */}
-      {courseData?.instructor && (
-        <View style={styles.instructorCard}>
-          <Image
-            source={{ uri: courseData.instructor.profileImage || courseData.instructor.image }}
-            style={styles.instructorImage}
-          />
-          <View style={styles.instructorInfo}>
-            <Text style={styles.instructorLabel}>{t("courses.instructor") || "Instructor"}</Text>
-            <Text style={styles.instructorName}>{courseData.instructor.name}</Text>
-          </View>
-        </View>
-      )}
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -117,106 +125,96 @@ const SingleContent = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255,255,255,0.1)",
+  },
+  statsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  statsText: {
+    color: COLORS.darkWhite,
+    fontSize: 14,
+  },
+  progressBarContainer: {
+    width: "100%",
+  },
+  progressBarBackground: {
+    height: 4,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderRadius: 2,
+    overflow: "hidden",
+  },
+  progressBarFill: {
+    height: "100%",
+    backgroundColor: COLORS.primary,
+    borderRadius: 2,
+  },
+  contentList: {
     padding: 16,
   },
-  completedBadgeContainer: {
-    alignItems: "center",
-    marginBottom: 16,
-  },
   videoCard: {
-    backgroundColor: COLORS.grey,
-    borderRadius: 16,
+    flexDirection: "row",
+    backgroundColor: "rgba(255,255,255,0.05)",
+    borderRadius: 12,
+    marginBottom: 12,
     overflow: "hidden",
   },
   selectedCard: {
-    borderWidth: 2,
-    borderColor: COLORS.primary,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    borderLeftWidth: 3,
+    borderLeftColor: COLORS.primary,
   },
   thumbnailContainer: {
-    width: "100%",
-    aspectRatio: 16 / 9,
+    width: 100,
+    height: 70,
     position: "relative",
   },
   thumbnail: {
     width: "100%",
     height: "100%",
   },
-  overlay: {
+  statusOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",
   },
-  playIconContainer: {
-    opacity: 0.9,
-  },
-  completedIconContainer: {
-    backgroundColor: "rgba(0,0,0,0.5)",
-    borderRadius: 30,
-    padding: 4,
-  },
-  thumbnailBadge: {
-    position: "absolute",
-    bottom: 8,
-    right: 8,
-  },
   videoInfo: {
-    padding: 16,
+    flex: 1,
+    padding: 12,
+    justifyContent: "center",
   },
-  labelRow: {
+  videoHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 8,
+    marginBottom: 4,
   },
-  label: {
+  videoLabel: {
     color: COLORS.primary,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: "600",
     textTransform: "uppercase",
-    letterSpacing: 1,
+    letterSpacing: 0.5,
   },
-  title: {
+  videoTitle: {
     color: COLORS.white,
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 8,
-    lineHeight: 26,
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 4,
   },
   selectedTitle: {
     color: COLORS.primary,
   },
-  description: {
-    color: COLORS.darkWhite,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  instructorCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: COLORS.grey,
-    borderRadius: 12,
-    padding: 12,
-    marginTop: 16,
-  },
-  instructorImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    marginRight: 12,
-  },
-  instructorInfo: {
-    flex: 1,
-  },
-  instructorLabel: {
+  videoDescription: {
     color: COLORS.darkWhite,
     fontSize: 12,
-    marginBottom: 2,
-  },
-  instructorName: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: "600",
   },
 });
 

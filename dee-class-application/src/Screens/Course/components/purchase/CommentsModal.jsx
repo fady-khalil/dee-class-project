@@ -8,10 +8,10 @@ import {
   FlatList,
   TextInput,
   Modal,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import COLORS from "../../../../styles/colors";

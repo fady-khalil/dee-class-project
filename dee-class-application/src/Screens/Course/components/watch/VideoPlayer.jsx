@@ -8,6 +8,7 @@ import {
   Modal,
   TouchableOpacity,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Video } from "expo-av";
@@ -30,6 +31,7 @@ const VideoPlayer = ({
   videoProgress,       // { timestamp, timeSlap } from API - for resume modal
   initialIsDone,       // boolean from API - if video is already done
   onVideoCompleted,    // Callback when video marked as done
+  onProgressUpdate,    // Callback for progress updates (for loading indicator)
   isOfflineMode = false,
   localUri = null,     // Local URI for offline playback
   thumbnail = null,    // Video thumbnail URL
@@ -41,7 +43,12 @@ const VideoPlayer = ({
   const [duration, setDuration] = useState(0);
   const [showResumePrompt, setShowResumePrompt] = useState(false);
   const [savedProgress, setSavedProgress] = useState(null);
-  const [currentVideoId, setCurrentVideoId] = useState(videoId);
+  const [currentVideoId, setCurrentVideoId] = useState(null); // Start as null
+  // Add a delay state to prevent the "viewState" error
+  const [shouldRenderPlayer, setShouldRenderPlayer] = useState(false);
+  const [playerError, setPlayerError] = useState(null);
+  // Add a render key to force complete remount
+  const [playerKey, setPlayerKey] = useState(0);
 
   const playerRef = useRef(null);
   const videoRef = useRef(null);
@@ -50,9 +57,12 @@ const VideoPlayer = ({
   const hasCheckedProgressRef = useRef(false);
   const lastVideoIdRef = useRef(null);
   const isMountedRef = useRef(true);
+  const renderTimeoutRef = useRef(null);
+  const debounceTimeoutRef = useRef(null);
+  const pendingVideoIdRef = useRef(null);
 
   // Use our progress tracking hook (for marking videos as done at 75%)
-  const { updateProgress, isVideoDone } = useVideoProgress(courseId, videoId, initialIsDone);
+  const { updateProgress, isVideoDone, courseCompleted } = useVideoProgress(courseId, videoId, initialIsDone);
 
   // Use our video history hook (for continue watching)
   const { updateCurrentTime, onExitVideo, formatTime } = useVideoHistory(
@@ -67,28 +77,97 @@ const VideoPlayer = ({
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
+      // Clear any pending timeouts
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
     };
   }, []);
 
-  // Update currentVideoId when videoId prop changes
+  // Delay rendering the player to prevent viewState error with debouncing
   useEffect(() => {
-    if (videoId && videoId !== currentVideoId) {
-      setCurrentVideoId(videoId);
+    const targetVideoId = videoId;
+
+    // Clear any existing debounce timeout
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
     }
-  }, [videoId, currentVideoId]);
+
+    // Clear any existing render timeout
+    if (renderTimeoutRef.current) {
+      clearTimeout(renderTimeoutRef.current);
+    }
+
+    if (targetVideoId && !isOfflineMode) {
+      // Store pending video ID for debounce check
+      pendingVideoIdRef.current = targetVideoId;
+
+      // Immediately unmount the current player
+      setShouldRenderPlayer(false);
+      setPlayerError(null);
+      setCurrentVideoId(null);
+      setLoading(true);
+      setIsReady(false);
+
+      console.log(`[VideoPlayer] Debouncing video change to: ${targetVideoId}`);
+
+      // Debounce the video change - wait for rapid changes to settle
+      debounceTimeoutRef.current = setTimeout(() => {
+        // Check if this is still the video we want to render
+        if (!isMountedRef.current || pendingVideoIdRef.current !== targetVideoId) {
+          console.log(`[VideoPlayer] Skipping ${targetVideoId}, pending is ${pendingVideoIdRef.current}`);
+          return;
+        }
+
+        console.log(`[VideoPlayer] Setting up player for video: ${targetVideoId}`);
+
+        // Increment player key to force complete remount
+        setPlayerKey(prev => prev + 1);
+        setCurrentVideoId(targetVideoId);
+
+        // Wait for React to process the state changes before rendering player
+        renderTimeoutRef.current = setTimeout(() => {
+          // Final check before rendering
+          if (isMountedRef.current && pendingVideoIdRef.current === targetVideoId) {
+            console.log(`[VideoPlayer] Rendering player for video: ${targetVideoId}`);
+            setShouldRenderPlayer(true);
+          }
+        }, 400); // Delay to ensure unmount is complete
+      }, 300); // Debounce delay - wait for video selection to settle
+    } else if (isOfflineMode) {
+      setShouldRenderPlayer(true);
+    } else if (!targetVideoId) {
+      setShouldRenderPlayer(false);
+      setCurrentVideoId(null);
+      pendingVideoIdRef.current = null;
+    }
+
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+    };
+  }, [videoId, isOfflineMode]);
 
   // Notify parent when video is marked as done
   useEffect(() => {
     if (isVideoDone && onVideoCompleted && isMountedRef.current) {
-      onVideoCompleted(videoId);
+      onVideoCompleted(videoId, courseCompleted);
     }
-  }, [isVideoDone, videoId, onVideoCompleted]);
+  }, [isVideoDone, videoId, onVideoCompleted, courseCompleted]);
 
-  // Reset state when video changes
+  // Handle video change - save progress and reset state
   useEffect(() => {
     const isVideoChange = lastVideoIdRef.current !== null && lastVideoIdRef.current !== videoId;
 
     if (isVideoChange) {
+      console.log(`[VideoPlayer] Video changed from ${lastVideoIdRef.current} to ${videoId}`);
       // Save progress for previous video (with safety check)
       if (typeof onExitVideo === 'function') {
         try {
@@ -98,7 +177,7 @@ const VideoPlayer = ({
         }
       }
 
-      // Reset state for new video
+      // Reset progress-related state for new video
       if (isMountedRef.current) {
         setShowResumePrompt(false);
         setSavedProgress(null);
@@ -106,11 +185,6 @@ const VideoPlayer = ({
         durationRef.current = 0;
         currentTimeRef.current = 0;
       }
-    }
-
-    if (isMountedRef.current) {
-      setLoading(true);
-      setIsReady(false);
     }
 
     lastVideoIdRef.current = videoId;
@@ -154,23 +228,43 @@ const VideoPlayer = ({
     };
   }, [onExitVideo]);
 
-  // Handle resume - seek to saved position
+  // Handle resume - seek to saved position and auto-play
   const handleResume = useCallback(() => {
     setShowResumePrompt(false);
     if (savedProgress?.timestamp && isMountedRef.current) {
+      // Use longer timeout to ensure player is fully ready
       setTimeout(() => {
         if (!isMountedRef.current) return;
         try {
-          if (playerRef.current && typeof playerRef.current.seek === 'function') {
-            playerRef.current.seek(savedProgress.timestamp);
+          // For ApiVideoPlayer (online) - play first, then seek
+          if (playerRef.current) {
+            console.log("[VideoPlayer] Resuming at:", savedProgress.timestamp);
+            // Start playing first
+            if (typeof playerRef.current.play === 'function') {
+              playerRef.current.play();
+            }
+            // Then seek after video starts playing
+            setTimeout(() => {
+              if (playerRef.current && typeof playerRef.current.seekTo === 'function') {
+                console.log("[VideoPlayer] Seeking to:", savedProgress.timestamp);
+                playerRef.current.seekTo(savedProgress.timestamp);
+              }
+            }, 500);
           }
-          if (videoRef.current && typeof videoRef.current.setPositionAsync === 'function') {
-            videoRef.current.setPositionAsync(savedProgress.timestamp * 1000);
+          // For Expo Video (offline)
+          if (videoRef.current) {
+            if (typeof videoRef.current.playAsync === 'function') {
+              videoRef.current.playAsync().then(() => {
+                if (videoRef.current && typeof videoRef.current.setPositionAsync === 'function') {
+                  videoRef.current.setPositionAsync(savedProgress.timestamp * 1000);
+                }
+              });
+            }
           }
         } catch (e) {
-          console.error("[VideoPlayer] Error seeking:", e);
+          console.error("[VideoPlayer] Error resuming:", e);
         }
-      }, 500);
+      }, 800);
     }
   }, [savedProgress]);
 
@@ -208,9 +302,13 @@ const VideoPlayer = ({
       const percentComplete = Math.floor((currentTime / videoDuration) * 100);
       if (percentComplete > 0) {
         updateProgress(percentComplete);
+        // Notify parent of progress for loading indicator
+        if (onProgressUpdate) {
+          onProgressUpdate(videoId, percentComplete);
+        }
       }
     }
-  }, [updateCurrentTime, updateProgress]);
+  }, [updateCurrentTime, updateProgress, onProgressUpdate, videoId]);
 
   // Handle offline video ready
   const handleOfflineVideoReady = useCallback((status) => {
@@ -353,25 +451,56 @@ const VideoPlayer = ({
         )}
 
         {/* Online Video Player (API Video) */}
-        {hasValidOnlineVideo && currentVideoId && (
+        {hasValidOnlineVideo && currentVideoId && shouldRenderPlayer && !playerError && (
           <View
-            key={`player-container-${currentVideoId}`}
+            key={`player-container-${playerKey}-${currentVideoId}`}
             style={[styles.playerContainer, loading && styles.hidden]}
           >
             <ApiVideoPlayer
-              key={`api-player-${currentVideoId}`}
+              key={`api-player-${playerKey}-${currentVideoId}`}
               videoId={currentVideoId}
               onReady={handleReady}
               onDurationChange={handleDurationChange}
               onTimeUpdate={handleTimeUpdate}
               onEnded={() => isMountedRef.current && updateProgress(100)}
-              onError={(e) => console.error("[VideoPlayer] Online error:", e)}
+              onError={(e) => {
+                console.error("[VideoPlayer] Online error:", e);
+                // Handle the viewState error gracefully
+                const errorMsg = e?.message || e?.toString() || '';
+                if (errorMsg.includes('viewState') || errorMsg.includes('Surface stopped') || errorMsg.includes('tag')) {
+                  console.log("[VideoPlayer] Caught viewState error, attempting recovery...");
+                  if (isMountedRef.current) {
+                    setPlayerError(e);
+                    // Attempt to re-render the player after a delay
+                    setTimeout(() => {
+                      if (isMountedRef.current) {
+                        setPlayerError(null);
+                        setShouldRenderPlayer(false);
+                        setPlayerKey(prev => prev + 1);
+                        setTimeout(() => {
+                          if (isMountedRef.current) {
+                            setShouldRenderPlayer(true);
+                          }
+                        }, 500);
+                      }
+                    }, 500);
+                  }
+                }
+              }}
               ref={playerRef}
               responsive
               resizeMode="cover"
               onFullScreenChange={handleFullScreenChange}
               style={styles.player}
+              autoplay={false}
             />
+          </View>
+        )}
+
+        {/* Show loading indicator while waiting to render player */}
+        {hasValidOnlineVideo && !shouldRenderPlayer && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color={COLORS.primary} />
           </View>
         )}
       </View>

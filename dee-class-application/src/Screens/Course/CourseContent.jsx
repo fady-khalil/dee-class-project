@@ -31,6 +31,8 @@ const CourseContent = ({ route, navigation }) => {
   const [data, setData] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [completedVideos, setCompletedVideos] = useState({});
+  const [loadingVideoId, setLoadingVideoId] = useState(null);
+  const [isCourseCompleted, setIsCourseCompleted] = useState(false);
 
   // Refs
   const isMountedRef = useRef(true);
@@ -80,6 +82,12 @@ const CourseContent = ({ route, navigation }) => {
         });
         setCompletedVideos(completedMap);
         console.log("[CourseContent] Completed videos:", Object.keys(completedMap).length);
+      }
+
+      // Check if course is already completed
+      if (courseData?.is_course_completed || courseData?.is_done) {
+        setIsCourseCompleted(true);
+        console.log("[CourseContent] Course is completed");
       }
 
       // Set initial video based on course type
@@ -162,11 +170,25 @@ const CourseContent = ({ route, navigation }) => {
     setSelectedVideo(videoInfo);
   }, []);
 
-  // Handle video completion
-  const handleVideoCompleted = useCallback((videoId) => {
+  // Handle progress update - show loading when reaching 75%
+  const handleProgressUpdate = useCallback((videoId, percentComplete) => {
     if (!isMountedRef.current) return;
-    console.log("[CourseContent] Video completed:", videoId);
+    if (percentComplete >= 75 && !completedVideos[videoId]) {
+      setLoadingVideoId(videoId);
+    }
+  }, [completedVideos]);
+
+  // Handle video completion
+  const handleVideoCompleted = useCallback((videoId, courseCompleted = false) => {
+    if (!isMountedRef.current) return;
+    console.log("[CourseContent] Video completed:", videoId, "Course completed:", courseCompleted);
     setCompletedVideos((prev) => ({ ...prev, [videoId]: true }));
+    setLoadingVideoId(null);
+
+    // Check if course is now completed (from API response)
+    if (courseCompleted) {
+      setIsCourseCompleted(true);
+    }
   }, []);
 
   // Get video progress from API data
@@ -208,6 +230,8 @@ const CourseContent = ({ route, navigation }) => {
       onVideoSelect: handleVideoSelect,
       completedVideos,
       isVideoCompleted,
+      loadingVideoId,
+      isCourseCompleted,
     };
 
     switch (data.course_type) {
@@ -250,7 +274,7 @@ const CourseContent = ({ route, navigation }) => {
       <StatusBar barStyle="light-content" backgroundColor={COLORS.backgroundColor} />
 
       <HeaderBack
-        screenName={data.name || t("watch_your_course")}
+        pageName={data.name || t("screens.watch_your_course")}
         onBack={() => navigation.goBack()}
         isBack={true}
       />
@@ -265,6 +289,7 @@ const CourseContent = ({ route, navigation }) => {
           videoProgress={getVideoProgress(selectedVideo?.videoId)}
           initialIsDone={isVideoCompleted(selectedVideo?.videoId)}
           onVideoCompleted={handleVideoCompleted}
+          onProgressUpdate={handleProgressUpdate}
           thumbnail={selectedVideo?.thumbnail}
         />
       </View>

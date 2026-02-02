@@ -10,8 +10,8 @@ import {
   Clipboard,
   ScrollView,
   StatusBar,
-  SafeAreaView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { Video } from "expo-av";
 import LessonCompletedBadge from "../../../../components/common/LessonCompletedBadge";
@@ -53,11 +53,46 @@ const TrailerVideo = ({
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [authError, setAuthError] = useState(null);
   const [localVideoUri, setLocalVideoUri] = useState(null);
+  // Add delayed rendering to prevent viewState error
+  const [shouldRenderPlayer, setShouldRenderPlayer] = useState(false);
   const playerRef = useRef(null);
   const videoRef = useRef(null);
+  const isMountedRef = useRef(true);
+  const renderTimeoutRef = useRef(null);
   const insets = useSafeAreaInsets();
   const { isConnected } = useNetwork();
   const { getCourseDownloadInfo } = useDownload();
+
+  // Track mounted state
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Delay rendering the player to prevent viewState error
+  useEffect(() => {
+    if (videoId && !isOfflineMode) {
+      setShouldRenderPlayer(false);
+      renderTimeoutRef.current = setTimeout(() => {
+        if (isMountedRef.current) {
+          setShouldRenderPlayer(true);
+        }
+      }, 300);
+    } else if (isOfflineMode || localVideoUri) {
+      setShouldRenderPlayer(true);
+    }
+
+    return () => {
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+    };
+  }, [videoId, isOfflineMode, localVideoUri]);
 
   // Context and hooks
   const auth = useContext(LoginAuthContext);
@@ -312,8 +347,8 @@ const TrailerVideo = ({
                 isLooping={false}
                 onReadyForDisplay={handleVideoReady}
               />
-            ) : videoId && !isOfflineMode ? (
-              // Use API Video player for online videos
+            ) : videoId && !isOfflineMode && shouldRenderPlayer ? (
+              // Use API Video player for online videos (with delayed rendering)
               <View
                 style={[
                   styles.playerContainer,
@@ -327,6 +362,21 @@ const TrailerVideo = ({
                   responsive
                   resizeMode="cover"
                   onFullScreenChange={handleFullScreenChange}
+                  autoplay={false}
+                  onError={(e) => {
+                    console.error("[TrailerVideo] Player error:", e);
+                    // Handle viewState error gracefully by re-rendering
+                    if (e?.message?.includes('viewState') || e?.message?.includes('Surface stopped')) {
+                      if (isMountedRef.current) {
+                        setShouldRenderPlayer(false);
+                        setTimeout(() => {
+                          if (isMountedRef.current) {
+                            setShouldRenderPlayer(true);
+                          }
+                        }, 500);
+                      }
+                    }
+                  }}
                 />
               </View>
             ) : null}

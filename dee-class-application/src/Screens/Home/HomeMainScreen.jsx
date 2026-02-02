@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import {
   StyleSheet,
-  SafeAreaView,
   StatusBar,
   ActivityIndicator,
   View,
   FlatList,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import useFetch from "../../Hooks/useFetch";
 import { GlobalStyle } from "../../styles/GlobalStyle";
 import COLORS from "../../styles/colors";
@@ -20,19 +20,27 @@ import CourseSlider from "../Librarie/components/CourseSlider";
 import { useAuth } from "../../context/Authentication/LoginAuth";
 
 const HomeMainScreen = ({ navigation }) => {
-  const { data: homeData, isLoading: homeLoading, fetchData: fetchHome } = useFetch();
-  const { data: categoriesData, isLoading: categoriesLoading, fetchData: fetchCategories } = useFetch();
+  const {
+    data: homeData,
+    isLoading: homeLoading,
+    fetchData: fetchHome,
+  } = useFetch();
+  const {
+    data: categoriesData,
+    isLoading: categoriesLoading,
+    fetchData: fetchCategories,
+  } = useFetch();
   const { i18n, t } = useTranslation();
   const { isAuthenticated, allowedProfiles } = useAuth();
 
   useEffect(() => {
     fetchHome("home");
-    fetchCategories("categories");
+    fetchCategories("course-categories");
   }, [i18n.language]);
 
   // Extract data from API response (backend returns { data: { ... } })
   const home = homeData?.data;
-  const categories = categoriesData;
+  const categories = categoriesData?.data;
 
   const isLoading = homeLoading || categoriesLoading;
 
@@ -56,26 +64,34 @@ const HomeMainScreen = ({ navigation }) => {
         renderItem={() => null}
         ListHeaderComponent={
           <>
+            {/* 1. Hero Section */}
             {home?.featured_courses && home.featured_courses.length > 0 && (
               <HomeSlider
-                title="Featured Courses"
                 data={home.featured_courses}
+                hero={home?.hero}
                 navigation={navigation}
                 autoScroll={false}
               />
             )}
-            <View style={{ marginTop: 36 }}>
-              <CategorySlider categories={categories} />
-            </View>
+
+            {/* 2. Register/JoinUs Section */}
             <JoinUs
               isAuthenticated={isAuthenticated}
               allowedProfiles={allowedProfiles}
               joinUs={home?.join_us}
             />
+
+            {/* 3. Reels Section */}
             <Reels
               isAuthenticated={isAuthenticated}
               trending={home?.trending}
             />
+
+            {/* 5. Category Slider Section */}
+            <View style={{ marginTop: 36, marginBottom: 24 }}>
+              <CategorySlider categories={categories} />
+            </View>
+            {/* 4. Latest Courses Section */}
             <CourseSlider
               title={t("for_you.new_to_master_class")}
               data={home?.newlyAddedCourses}

@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, SafeAreaView, View, Text, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  SafeAreaView,
+  View,
+  Text,
+  ActivityIndicator,
+} from "react-native";
 import * as Linking from "expo-linking";
 import { LoginAuthProvider } from "./src/context/Authentication/LoginAuth";
 import AppNavigator from "./src/navigation/AppNavigator";

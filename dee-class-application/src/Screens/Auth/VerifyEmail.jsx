@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -6,118 +6,99 @@ import {
   TouchableOpacity,
   Text,
   TextInput,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import {
-  StatusHandler,
-  useStatusHandler,
-} from "../../components/RequestHandler";
+import { Ionicons } from "@expo/vector-icons";
 import Spinner from "../../components/RequestHandler/Spinner";
 import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import { usePostData } from "../../Hooks/usePostData";
 import COLORS from "../../styles/colors";
-import { GlobalStyle } from "../../styles/GlobalStyle";
-import { HeaderBack } from "../../components/navigation";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { I18nText } from "../../components/common/I18nComponents";
+import logo from "../../Assests/logos/dclass.png";
 
 const VerifyEmail = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
   const { email: routeEmail } = route.params || {};
-  const { user, token, setIsVerifiedHandler } = useContext(LoginAuthContext);
+  const { user, token, isVerified, setIsVerifiedHandler } = useContext(LoginAuthContext);
   const { postData, isLoading } = usePostData();
-  const {
-    isVisible,
-    status,
-    message,
-    showSuccess,
-    showError,
-    hideStatus,
-  } = useStatusHandler();
 
   const [emailSent, setEmailSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Get user email from route params, context, or user object
-  const getUserEmail = () => {
+  const getUserEmail = useCallback(() => {
     return routeEmail || user?.email;
-  };
+  }, [routeEmail, user?.email]);
+
+  // If already verified, redirect to plans
+  useEffect(() => {
+    if (isVerified) {
+      navigation.navigate("Plans");
+    }
+  }, [isVerified, navigation]);
 
   // Handle send verification code
   const handleSendOtp = async () => {
     const email = getUserEmail();
-
-    console.log("=== SEND VERIFICATION DEBUG ===");
-    console.log("Email:", email);
+    setErrorMessage("");
+    setSuccessMessage("");
 
     if (!email) {
-      console.log("ERROR: No email found");
-      showError(t("verify_email.send_error"));
+      setErrorMessage(t("verify_email.send_error"));
       return;
     }
 
     try {
-      const response = await postData("auth/send-verification", { email }, token);
-      console.log("Response:", response);
+      const response = await postData("auth/send-verification", { email });
 
       if (response.success) {
         setEmailSent(true);
-        showSuccess(t("verify_email.send_success"));
+        setSuccessMessage(t("verify_email.send_success"));
       } else {
-        console.log("API Error:", response.message);
-        showError(response.message || t("verify_email.send_error"));
+        setErrorMessage(response.message || t("verify_email.send_error"));
       }
     } catch (error) {
-      console.log("Catch Error:", error);
-      showError(t("verify_email.send_error"));
+      setErrorMessage(t("verify_email.send_error"));
     }
   };
 
   // Handle verify OTP
   const handleVerifyOtp = async () => {
     if (!otp || otp.length < 4) {
-      showError(t("verify_email.otp_required"));
+      setErrorMessage(t("verify_email.otp_required"));
       return;
     }
 
     const email = getUserEmail();
-
-    console.log("=== VERIFY EMAIL DEBUG ===");
-    console.log("Email:", email);
-    console.log("Code:", otp);
-
+    setErrorMessage("");
+    setSuccessMessage("");
     setIsVerifying(true);
-    try {
-      // Backend expects { email, code }
-      const payload = { email, code: otp };
-      console.log("Payload:", payload);
 
-      const response = await postData("auth/verify-email", payload, token);
-      console.log("Response:", response);
+    try {
+      const payload = { email, code: otp };
+      const response = await postData("auth/verify-email", payload);
 
       if (response.success) {
-        // Update verified status
         if (setIsVerifiedHandler) {
           setIsVerifiedHandler(true);
         }
-
-        showSuccess(t("verify_email.verified_success"));
-
-        // Navigate to plans after verification
+        setSuccessMessage(t("verify_email.verified_success"));
         setTimeout(() => {
           navigation.navigate("Plans");
         }, 1500);
       } else {
-        console.log("API Error:", response.message, response);
-        showError(response.message || t("verify_email.verify_error"));
+        setErrorMessage(response.message || t("verify_email.verify_error"));
       }
     } catch (error) {
-      console.log("Catch Error:", error);
-      showError(t("verify_email.verify_error"));
+      setErrorMessage(t("verify_email.verify_error"));
     } finally {
       setIsVerifying(false);
     }
@@ -129,51 +110,77 @@ const VerifyEmail = () => {
     setOtp(numericText);
   };
 
+  const userEmail = getUserEmail();
+
   return (
-    <View style={styles.rootContainer}>
-      <HeaderBack screenName="verify_email" hideBackButton={false} />
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
       <ScrollView
-        style={styles.container}
+        style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="handled"
       >
-        <View style={[GlobalStyle.container, styles.innerContainer]}>
+        {/* Logo */}
+        <TouchableOpacity
+          style={styles.logoContainer}
+          onPress={() => navigation.navigate("Main")}
+        >
+          <Image source={logo} style={styles.logo} resizeMode="contain" />
+        </TouchableOpacity>
+
+        {/* Verify Email Card */}
+        <View style={styles.card}>
           {/* Icon */}
           <View style={styles.iconContainer}>
-            <Icon name="email-outline" size={40} color={COLORS.primary} />
-          </View>
-
-          <I18nText style={styles.title}>{t("verify_email.title")}</I18nText>
-          <I18nText style={styles.subtitle}>{t("verify_email.description")}</I18nText>
-
-          {/* User email display */}
-          {getUserEmail() && (
-            <View style={styles.emailContainer}>
-              <Text style={styles.emailText}>{getUserEmail()}</Text>
-            </View>
-          )}
-
-          <View style={styles.statusContainer}>
-            <StatusHandler
-              isVisible={isVisible}
-              status={status}
-              message={message}
-              hideStatus={hideStatus}
+            <Ionicons
+              name={emailSent ? "shield-checkmark-outline" : "mail-outline"}
+              size={40}
+              color={COLORS.primary}
             />
           </View>
 
+          {/* Header */}
+          <View style={styles.headerContainer}>
+            <Text style={styles.title}>{t("verify_email.title")}</Text>
+            <Text style={styles.subtitle}>{t("verify_email.description")}</Text>
+          </View>
+
+          {/* User email display */}
+          {userEmail && (
+            <View style={styles.emailContainer}>
+              <Text style={styles.emailText}>{userEmail}</Text>
+            </View>
+          )}
+
+          {/* Success Message */}
+          {successMessage ? (
+            <View style={styles.successContainer}>
+              <Text style={styles.successText}>{successMessage}</Text>
+            </View>
+          ) : null}
+
+          {/* Error Message */}
+          {errorMessage ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            </View>
+          ) : null}
+
           {/* Instructions */}
           <View style={styles.instructionsContainer}>
-            <I18nText style={styles.instructionsText}>
+            <Text style={styles.instructionsText}>
               {emailSent
                 ? t("verify_email.otp_instructions")
                 : t("verify_email.instructions")}
-            </I18nText>
+            </Text>
           </View>
 
           {/* OTP Input - shown after email is sent */}
           {emailSent && (
             <View style={styles.otpContainer}>
-              <I18nText style={styles.otpLabel}>{t("verify_email.otp_label")}</I18nText>
+              <Text style={styles.otpLabel}>{t("verify_email.otp_label")}</Text>
               <TextInput
                 style={styles.otpInput}
                 value={otp}
@@ -192,16 +199,17 @@ const VerifyEmail = () => {
             {/* Verify OTP button - shown after email is sent */}
             {emailSent && (
               <TouchableOpacity
-                style={[styles.button, styles.primaryButton, !otp && styles.disabledButton]}
+                style={[styles.button, (!otp || isVerifying) && styles.buttonDisabled]}
                 onPress={handleVerifyOtp}
                 disabled={isVerifying || !otp}
               >
                 {isVerifying ? (
                   <Spinner isSmall={true} isWhite={true} />
                 ) : (
-                  <I18nText style={styles.buttonText}>
-                    {t("verify_email.verify_button")}
-                  </I18nText>
+                  <View style={styles.buttonContent}>
+                    <Ionicons name="shield-checkmark-outline" size={20} color={COLORS.white} />
+                    <Text style={styles.buttonText}>{t("verify_email.verify_button")}</Text>
+                  </View>
                 )}
               </TouchableOpacity>
             )}
@@ -210,7 +218,8 @@ const VerifyEmail = () => {
             <TouchableOpacity
               style={[
                 styles.button,
-                emailSent ? styles.secondaryButton : styles.primaryButton,
+                emailSent && styles.secondaryButton,
+                isLoading && styles.buttonDisabled,
               ]}
               onPress={handleSendOtp}
               disabled={isLoading}
@@ -219,45 +228,56 @@ const VerifyEmail = () => {
                 <Spinner isSmall={true} isWhite={!emailSent} />
               ) : (
                 <View style={styles.buttonContent}>
-                  <I18nText
-                    style={[
-                      styles.buttonText,
-                      emailSent && styles.secondaryButtonText,
-                    ]}
-                  >
+                  <Ionicons
+                    name="paper-plane-outline"
+                    size={20}
+                    color={emailSent ? COLORS.white : COLORS.white}
+                  />
+                  <Text style={[styles.buttonText, emailSent && styles.secondaryButtonText]}>
                     {emailSent
                       ? t("verify_email.resend_button")
                       : t("verify_email.send_button")}
-                  </I18nText>
+                  </Text>
                 </View>
               )}
             </TouchableOpacity>
           </View>
 
           {/* Help text */}
-          <I18nText style={styles.helpText}>{t("verify_email.help_text")}</I18nText>
+          <Text style={styles.helpText}>{t("verify_email.help_text")}</Text>
         </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  rootContainer: {
-    flex: 1,
-    backgroundColor: COLORS.backgroundColor,
-  },
   container: {
     flex: 1,
     backgroundColor: COLORS.backgroundColor,
   },
+  scrollView: {
+    flex: 1,
+  },
   contentContainer: {
     flexGrow: 1,
-    paddingVertical: 20,
+    justifyContent: "center",
+    padding: 16,
   },
-  innerContainer: {
-    paddingHorizontal: 16,
+  logoContainer: {
     alignItems: "center",
+    marginBottom: 32,
+  },
+  logo: {
+    height: 48,
+    width: 150,
+  },
+  card: {
+    backgroundColor: COLORS.grey,
+    borderRadius: 16,
+    padding: 24,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
   },
   iconContainer: {
     width: 80,
@@ -266,44 +286,71 @@ const styles = StyleSheet.create({
     backgroundColor: `${COLORS.primary}20`,
     justifyContent: "center",
     alignItems: "center",
+    alignSelf: "center",
     marginBottom: 24,
+  },
+  headerContainer: {
+    alignItems: "center",
+    marginBottom: 16,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: COLORS.white,
-    textAlign: "center",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
     color: COLORS.darkWhite,
     textAlign: "center",
-    marginBottom: 16,
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
   },
   emailContainer: {
-    backgroundColor: COLORS.grey,
+    backgroundColor: COLORS.backgroundColor,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+    borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 8,
+    paddingVertical: 12,
     marginBottom: 16,
+    alignItems: "center",
   },
   emailText: {
     color: COLORS.white,
     fontSize: 14,
     fontWeight: "500",
   },
-  statusContainer: {
-    marginVertical: 16,
-    width: "100%",
+  successContainer: {
+    backgroundColor: "rgba(34, 197, 94, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(34, 197, 94, 0.5)",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+  },
+  successText: {
+    color: "#4ade80",
+    fontSize: 14,
+    textAlign: "center",
+  },
+  errorContainer: {
+    backgroundColor: "rgba(239, 68, 68, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(239, 68, 68, 0.5)",
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+  },
+  errorText: {
+    color: "#f87171",
+    fontSize: 14,
+    textAlign: "center",
   },
   instructionsContainer: {
-    backgroundColor: COLORS.grey,
-    borderRadius: 8,
+    backgroundColor: COLORS.backgroundColor,
+    borderRadius: 12,
     padding: 16,
-    marginBottom: 24,
-    width: "100%",
+    marginBottom: 20,
   },
   instructionsText: {
     color: COLORS.darkWhite,
@@ -311,49 +358,46 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   otpContainer: {
-    width: "100%",
-    marginBottom: 24,
+    marginBottom: 20,
   },
   otpLabel: {
     color: COLORS.darkWhite,
     fontSize: 14,
     marginBottom: 8,
+    textAlign: "center",
   },
   otpInput: {
-    backgroundColor: COLORS.grey,
-    borderRadius: 8,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+    backgroundColor: COLORS.backgroundColor,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
     color: COLORS.white,
     fontSize: 24,
     letterSpacing: 8,
     fontWeight: "600",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
   },
   buttonsContainer: {
-    width: "100%",
     gap: 12,
   },
   button: {
-    paddingVertical: 16,
-    borderRadius: 8,
+    backgroundColor: COLORS.primary,
+    borderRadius: 12,
+    paddingVertical: 14,
     alignItems: "center",
     justifyContent: "center",
-  },
-  primaryButton: {
-    backgroundColor: COLORS.primary,
   },
   secondaryButton: {
     backgroundColor: COLORS.lightGrey,
   },
-  disabledButton: {
+  buttonDisabled: {
     opacity: 0.5,
   },
   buttonContent: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  buttonIcon: {
-    marginRight: 8,
+    gap: 8,
   },
   buttonText: {
     color: COLORS.white,
@@ -361,14 +405,13 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   secondaryButtonText: {
-    color: COLORS.grey,
+    color: COLORS.white,
   },
   helpText: {
     color: COLORS.darkWhite,
     fontSize: 12,
     textAlign: "center",
-    marginTop: 24,
-    paddingHorizontal: 20,
+    marginTop: 20,
   },
 });
 

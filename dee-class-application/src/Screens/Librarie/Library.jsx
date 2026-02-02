@@ -4,9 +4,9 @@ import {
   StyleSheet,
   ScrollView,
   StatusBar,
-  SafeAreaView,
   Text,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../styles/colors";
 import Spinner from "../../components/RequestHandler/Spinner";

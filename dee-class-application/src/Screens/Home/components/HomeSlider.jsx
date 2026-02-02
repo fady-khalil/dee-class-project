@@ -59,8 +59,12 @@ const SliderCard = memo(({ item, onPress, t }) => {
   );
 });
 
-const HomeSlider = ({ data = [], navigation, autoScroll = false }) => {
+const HomeSlider = ({ data = [], hero, navigation, autoScroll = false }) => {
   const { t } = useTranslation();
+
+  // Use hero data from API or fallback to translations
+  const heroTitle = hero?.title || t("home.slider_subtitle");
+  const heroText = hero?.text || "";
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const autoScrollTimer = useRef(null);
@@ -191,7 +195,10 @@ const HomeSlider = ({ data = [], navigation, autoScroll = false }) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.sectionTitle}>{t("home.slider_subtitle")}</Text>
+        <Text style={styles.sectionTitle}>{heroTitle}</Text>
+        {heroText ? (
+          <Text style={styles.sectionSubtitle}>{heroText}</Text>
+        ) : null}
       </View>
 
       <FlatList
@@ -246,6 +253,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "#FFFFFF",
     fontWeight: "700",
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    color: "rgba(255, 255, 255, 0.7)",
+    marginTop: 8,
+    lineHeight: 20,
   },
   listContent: {
     paddingHorizontal: 6,

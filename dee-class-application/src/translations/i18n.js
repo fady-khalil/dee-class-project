@@ -1,7 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Updates from "expo-updates";
 import en from "./en";
 import ar from "./ar";
 import { I18nManager, Alert, Platform } from "react-native";
@@ -25,31 +24,24 @@ i18n.use(initReactI18next).init({
 // Helper function to restart the app
 const restartApp = async () => {
   try {
-    // Try expo-updates reload first (works in production builds)
-    await Updates.reloadAsync();
-  } catch (error) {
-    console.log("Updates.reloadAsync failed, trying alternative methods:", error);
-
     // For development mode, try DevSettings
     if (__DEV__) {
-      try {
-        const DevSettings = require("react-native").DevSettings;
-        if (DevSettings && DevSettings.reload) {
-          DevSettings.reload();
-          return;
-        }
-      } catch (devError) {
-        console.log("DevSettings.reload failed:", devError);
+      const DevSettings = require("react-native").DevSettings;
+      if (DevSettings && DevSettings.reload) {
+        DevSettings.reload();
+        return;
       }
     }
-
-    // Final fallback - show manual restart message
-    Alert.alert(
-      "Restart Required",
-      "Please close and reopen the app to apply the language change.",
-      [{ text: "OK" }]
-    );
+  } catch (error) {
+    console.log("DevSettings.reload failed:", error);
   }
+
+  // Final fallback - show manual restart message
+  Alert.alert(
+    "Restart Required",
+    "Please close and reopen the app to apply the language change.",
+    [{ text: "OK" }]
+  );
 };
 
 // Function to change the language with full restart

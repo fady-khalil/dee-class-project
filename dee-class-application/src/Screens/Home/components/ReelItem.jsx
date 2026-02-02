@@ -8,8 +8,8 @@ import {
   Dimensions,
   Animated,
   Image,
-  SafeAreaView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -24,16 +24,54 @@ const ReelItem = ({ video, isActive, onVideoEnd, height }) => {
   const [progress, setProgress] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [showAction, setShowAction] = useState(false);
+  // Add delayed rendering to prevent viewState error
+  const [shouldRenderPlayer, setShouldRenderPlayer] = useState(false);
   const playerRef = useRef(null);
   const progressInterval = useRef(null);
   const progressAnimation = useRef(new Animated.Value(0)).current;
   const wasActiveRef = useRef(isActive);
+  const isMountedRef = useRef(true);
+  const renderTimeoutRef = useRef(null);
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
 
   // Extract the thumbnail URL from video assets
   const thumbnailUrl = video.assets?.thumbnail || null;
   const videoIdentifier = video._id || video.videoId;
+
+  // Track mounted state
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Delay rendering the player to prevent viewState error
+  useEffect(() => {
+    if (video.videoId) {
+      // Clear any pending timeout
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+
+      // Delay rendering
+      renderTimeoutRef.current = setTimeout(() => {
+        if (isMountedRef.current) {
+          setShouldRenderPlayer(true);
+        }
+      }, 200);
+    }
+
+    return () => {
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+    };
+  }, [video.videoId]);
 
   // Log active state changes for debugging
   useEffect(() => {
@@ -170,23 +208,39 @@ const ReelItem = ({ video, isActive, onVideoEnd, height }) => {
         </View>
       )}
 
-      <View style={[styles.playerContainer, !isReady && styles.hiddenPlayer]}>
-        <ApiVideoPlayer
-          ref={playerRef}
-          videoId={video.videoId}
-          onReady={handleVideoReady}
-          resizeMode="cover"
-          responsive={true}
-          hideTitle={true}
-          autoplay={isActive}
-          onPlay={() => console.log(`Video ${videoIdentifier} started playing`)}
-          onPause={() => console.log(`Video ${videoIdentifier} paused`)}
-          onEnd={() => {
-            console.log(`Video ${videoIdentifier} ended`);
-            onVideoEnd && onVideoEnd();
-          }}
-        />
-      </View>
+      {shouldRenderPlayer && (
+        <View style={[styles.playerContainer, !isReady && styles.hiddenPlayer]}>
+          <ApiVideoPlayer
+            ref={playerRef}
+            videoId={video.videoId}
+            onReady={handleVideoReady}
+            resizeMode="cover"
+            responsive={true}
+            hideTitle={true}
+            autoplay={isActive}
+            onPlay={() => console.log(`Video ${videoIdentifier} started playing`)}
+            onPause={() => console.log(`Video ${videoIdentifier} paused`)}
+            onEnd={() => {
+              console.log(`Video ${videoIdentifier} ended`);
+              onVideoEnd && onVideoEnd();
+            }}
+            onError={(e) => {
+              console.error(`[ReelItem] Player error for ${videoIdentifier}:`, e);
+              // Handle viewState error gracefully
+              if (e?.message?.includes('viewState') || e?.message?.includes('Surface stopped')) {
+                if (isMountedRef.current) {
+                  setShouldRenderPlayer(false);
+                  setTimeout(() => {
+                    if (isMountedRef.current) {
+                      setShouldRenderPlayer(true);
+                    }
+                  }, 500);
+                }
+              }
+            }}
+          />
+        </View>
+      )}
 
       {/* Progress bar */}
       <View style={styles.progressBarContainer}>

@@ -11,6 +11,7 @@ import MyProfiles from "../Screens/Profile/MyProfiles";
 import Login from "../Screens/Auth/Login";
 import Register from "../Screens/Auth/Register";
 import VerifyEmail from "../Screens/Auth/VerifyEmail";
+import ForgotPassword from "../Screens/Auth/ForgotPassword";
 import Profile from "../Screens/Profile/Profile";
 import SettingsScreen from "../Screens/Settings/SettingsScreen";
 import PlansScreen from "../Screens/Plans/PlansScreen";
@@ -40,6 +41,7 @@ const StackNavigator = () => {
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="VerifyEmail" component={VerifyEmail} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Plans" component={PlansScreen} />

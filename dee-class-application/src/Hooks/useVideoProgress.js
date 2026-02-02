@@ -11,6 +11,7 @@ import { LoginAuthContext } from "../context/Authentication/LoginAuth";
 const useVideoProgress = (courseId, videoId, initialIsDone = false) => {
   const [isVideoDone, setIsVideoDone] = useState(initialIsDone);
   const [progressPercentage, setProgressPercentage] = useState(0);
+  const [courseCompleted, setCourseCompleted] = useState(false);
   const markingInProgressRef = useRef(false);
   const apiCallCompleted = useRef(initialIsDone);
   const isMountedRef = useRef(true);
@@ -80,7 +81,13 @@ const useVideoProgress = (courseId, videoId, initialIsDone = false) => {
         console.log("[useVideoProgress] Video marked as done successfully");
         setIsVideoDone(true);
         apiCallCompleted.current = true;
-        return true;
+
+        // Check if course is now completed
+        if (response?.courseCompleted) {
+          console.log("[useVideoProgress] Course is now completed!");
+          setCourseCompleted(true);
+        }
+        return { success: true, courseCompleted: response?.courseCompleted || false };
       }
     } catch (error) {
       console.error("[useVideoProgress] Error marking video as done:", error);
@@ -133,6 +140,7 @@ const useVideoProgress = (courseId, videoId, initialIsDone = false) => {
     markVideoAsDone,
     isLoading,
     error,
+    courseCompleted,
   };
 };
 

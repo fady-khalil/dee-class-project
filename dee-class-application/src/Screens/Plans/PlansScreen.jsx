@@ -5,10 +5,10 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   StatusBar,
   ActivityIndicator,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import * as Linking from "expo-linking";
 import { useTranslation } from "react-i18next";
 import useFetch from "../../Hooks/useFetch";

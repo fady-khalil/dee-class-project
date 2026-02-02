@@ -10,41 +10,15 @@ import { useEffect } from "react";
 import IsLoading from "Components/RequestHandler/IsLoading";
 import Reels from "./Reels/Reels";
 import CategorySlider from "Components/Sliders/CategorySlider";
-import { useContext } from "react";
-import { LoginAuthContext } from "Context/Authentication/LoginAuth";
 import InstructorProfileSlider from "Components/Sliders/InstructorProfileSlider";
 
 const Home = () => {
   const { t } = useTranslation();
   const { data, isLoading, isError, fetchData } = useFetch("");
-  const { allowedCourses, isAuthenticated } = useContext(LoginAuthContext);
-
-  const handleDeeClassRedirect = () => {
-    // For iOS
-    const iOSDeepLink = "deeclass://";
-    // For Android
-    const androidDeepLink =
-      "intent://#Intent;scheme=deeclass;package=com.deeclass.app;end";
-
-    // Detect platform
-    const isAndroid = /android/i.test(navigator.userAgent);
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-
-    if (isAndroid) {
-      window.location.href = androidDeepLink;
-    } else if (isIOS) {
-      window.location.href = iOSDeepLink;
-    } else {
-      // Fallback for desktop or if app is not installed
-      window.location.href = "https://deeclass.com/download"; // Replace with your app store link
-    }
-  };
 
   useEffect(() => {
     fetchData("home");
   }, []);
-
-  console.log(data?.hero);
 
   if (isLoading) {
     return <IsLoading />;
@@ -57,7 +31,6 @@ const Home = () => {
 
         {/* Sections with consistent spacing */}
         <div className="flex flex-col gap-y-16 sm:gap-y-24 lg:gap-y-36 xl:gap-y-44 pt-16 sm:pt-20 lg:pt-28">
-          {/* <MobileCourseSlider courses={data?.data?.featured_coursesnow} /> */}
           <RegisterNow joinUs={data?.data?.join_us} />
           <Reels trending={data?.data?.trending} />
           <LatestCourses
