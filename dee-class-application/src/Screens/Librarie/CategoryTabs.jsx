@@ -77,7 +77,7 @@ const CategoryTabs = ({
             isForYou && styles.forYouText,
           ]}
         >
-          {item.name}
+          {item.name || item.title}
         </Text>
       </TouchableOpacity>
     );

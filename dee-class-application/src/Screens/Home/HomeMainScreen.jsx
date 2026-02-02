@@ -31,7 +31,7 @@ const HomeMainScreen = ({ navigation }) => {
     fetchData: fetchCategories,
   } = useFetch();
   const { i18n, t } = useTranslation();
-  const { isAuthenticated, allowedProfiles } = useAuth();
+  const { isAuthenticated, allowedProfiles, allowedCourses, isVerified, user } = useAuth();
 
   useEffect(() => {
     fetchHome("home");
@@ -78,6 +78,9 @@ const HomeMainScreen = ({ navigation }) => {
             <JoinUs
               isAuthenticated={isAuthenticated}
               allowedProfiles={allowedProfiles}
+              allowedCourses={allowedCourses}
+              isVerified={isVerified}
+              user={user}
               joinUs={home?.join_us}
             />
 

@@ -60,6 +60,7 @@ const VideoPlayer = ({
   const renderTimeoutRef = useRef(null);
   const debounceTimeoutRef = useRef(null);
   const pendingVideoIdRef = useRef(null);
+  const resumeTimestampRef = useRef(null); // Store resume position
 
   // Use our progress tracking hook (for marking videos as done at 75%)
   const { updateProgress, isVideoDone, courseCompleted } = useVideoProgress(courseId, videoId, initialIsDone);
@@ -228,59 +229,120 @@ const VideoPlayer = ({
     };
   }, [onExitVideo]);
 
-  // Handle resume - seek to saved position and auto-play
+  // Handle resume - seek to saved position and play
   const handleResume = useCallback(() => {
     setShowResumePrompt(false);
-    if (savedProgress?.timestamp && isMountedRef.current) {
-      // Use longer timeout to ensure player is fully ready
+
+    if (!savedProgress?.timestamp) return;
+
+    const resumeTime = savedProgress.timestamp;
+    console.log("[VideoPlayer] Resume requested at:", resumeTime, "isReady:", isReady);
+
+    // If player is already ready, apply resume immediately
+    if (isReady && playerRef.current) {
+      console.log("[VideoPlayer] Player already ready, applying resume now");
+      // Log available methods for debugging
+      const methods = Object.keys(playerRef.current).filter(k => typeof playerRef.current[k] === 'function');
+      console.log("[VideoPlayer] Resume - available methods:", methods);
       setTimeout(() => {
-        if (!isMountedRef.current) return;
-        try {
-          // For ApiVideoPlayer (online) - play first, then seek
-          if (playerRef.current) {
-            console.log("[VideoPlayer] Resuming at:", savedProgress.timestamp);
-            // Start playing first
-            if (typeof playerRef.current.play === 'function') {
-              playerRef.current.play();
-            }
-            // Then seek after video starts playing
-            setTimeout(() => {
-              if (playerRef.current && typeof playerRef.current.seekTo === 'function') {
-                console.log("[VideoPlayer] Seeking to:", savedProgress.timestamp);
-                playerRef.current.seekTo(savedProgress.timestamp);
-              }
-            }, 500);
-          }
-          // For Expo Video (offline)
-          if (videoRef.current) {
-            if (typeof videoRef.current.playAsync === 'function') {
-              videoRef.current.playAsync().then(() => {
-                if (videoRef.current && typeof videoRef.current.setPositionAsync === 'function') {
-                  videoRef.current.setPositionAsync(savedProgress.timestamp * 1000);
-                }
-              });
-            }
-          }
-        } catch (e) {
-          console.error("[VideoPlayer] Error resuming:", e);
+        if (!isMountedRef.current || !playerRef.current) return;
+
+        // Seek first, then play - use seek() not seekTo()
+        if (typeof playerRef.current.seek === 'function') {
+          console.log("[VideoPlayer] Calling seek:", resumeTime);
+          playerRef.current.seek(resumeTime);
+        } else if (typeof playerRef.current.setCurrentTime === 'function') {
+          console.log("[VideoPlayer] Calling setCurrentTime:", resumeTime);
+          playerRef.current.setCurrentTime(resumeTime);
         }
-      }, 800);
+        setTimeout(() => {
+          if (playerRef.current && typeof playerRef.current.play === 'function') {
+            console.log("[VideoPlayer] Calling play");
+            playerRef.current.play();
+          }
+        }, 300);
+      }, 200);
+    } else {
+      // Store for when player becomes ready
+      console.log("[VideoPlayer] Player not ready, storing timestamp for later");
+      resumeTimestampRef.current = resumeTime;
     }
-  }, [savedProgress]);
+
+    // For offline video
+    if (videoRef.current && typeof videoRef.current.setPositionAsync === 'function') {
+      videoRef.current.setPositionAsync(resumeTime * 1000).then(() => {
+        if (videoRef.current && typeof videoRef.current.playAsync === 'function') {
+          videoRef.current.playAsync();
+        }
+      });
+    }
+  }, [savedProgress, isReady]);
 
   // Handle start from beginning
   const handleStartOver = useCallback(() => {
     if (isMountedRef.current) {
+      resumeTimestampRef.current = null; // Clear any resume position
       setShowResumePrompt(false);
       setSavedProgress(null);
     }
   }, []);
 
-  // Handle when player is ready
+  // Handle when player is ready - apply resume if needed
   const handleReady = useCallback(() => {
+    console.log("[VideoPlayer] Player ready, resumeTimestamp:", resumeTimestampRef.current);
+    // Log available methods on player ref for debugging
+    if (playerRef.current) {
+      const methods = Object.keys(playerRef.current).filter(k => typeof playerRef.current[k] === 'function');
+      console.log("[VideoPlayer] Available player methods:", methods);
+    }
     if (isMountedRef.current) {
       setIsReady(true);
       setLoading(false);
+
+      // Apply resume position if set
+      if (resumeTimestampRef.current && resumeTimestampRef.current > 0) {
+        const resumeTime = resumeTimestampRef.current;
+        console.log("[VideoPlayer] Applying resume position:", resumeTime);
+
+        // Wait a bit for player to be fully initialized
+        setTimeout(() => {
+          if (!isMountedRef.current) return;
+
+          // For ApiVideoPlayer - use seek() not seekTo()
+          if (playerRef.current) {
+            console.log("[VideoPlayer] Seeking and playing...");
+            // Seek first
+            if (typeof playerRef.current.seek === 'function') {
+              console.log("[VideoPlayer] Calling seek:", resumeTime);
+              playerRef.current.seek(resumeTime);
+            } else if (typeof playerRef.current.setCurrentTime === 'function') {
+              console.log("[VideoPlayer] Calling setCurrentTime:", resumeTime);
+              playerRef.current.setCurrentTime(resumeTime);
+            }
+            // Then play
+            setTimeout(() => {
+              if (playerRef.current && typeof playerRef.current.play === 'function') {
+                console.log("[VideoPlayer] Calling play");
+                playerRef.current.play();
+              }
+            }, 300);
+          }
+
+          // For Expo Video (offline)
+          if (videoRef.current) {
+            if (typeof videoRef.current.setPositionAsync === 'function') {
+              videoRef.current.setPositionAsync(resumeTime * 1000).then(() => {
+                if (videoRef.current && typeof videoRef.current.playAsync === 'function') {
+                  videoRef.current.playAsync();
+                }
+              });
+            }
+          }
+
+          // Clear the resume timestamp after applying
+          resumeTimestampRef.current = null;
+        }, 500);
+      }
     }
   }, []);
 

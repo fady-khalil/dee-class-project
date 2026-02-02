@@ -23,7 +23,13 @@ import { useNetwork } from "../../context/Network";
  * Matches d-class website implementation
  */
 const CourseContent = ({ route, navigation }) => {
-  const { slug } = route.params;
+  const {
+    slug,
+    fromContinueWatching = false,
+    video_id: resumeVideoId,
+    time: resumeTime,
+    timeSlap: resumeTimeSlap,
+  } = route.params;
   const { t } = useTranslation();
 
   // State
@@ -33,9 +39,11 @@ const CourseContent = ({ route, navigation }) => {
   const [completedVideos, setCompletedVideos] = useState({});
   const [loadingVideoId, setLoadingVideoId] = useState(null);
   const [isCourseCompleted, setIsCourseCompleted] = useState(false);
+  const [resumeProgress, setResumeProgress] = useState(null);
 
   // Refs
   const isMountedRef = useRef(true);
+  const hasProcessedResumeRef = useRef(false);
 
   // Context
   const { fetchData } = useFetch();
@@ -105,7 +113,87 @@ const CourseContent = ({ route, navigation }) => {
   const setInitialVideo = (courseData) => {
     if (!courseData || !isMountedRef.current) return;
 
-    // Try trailer first
+    // If coming from Continue Watching, find and set that video
+    if (fromContinueWatching && resumeVideoId && !hasProcessedResumeRef.current) {
+      console.log("[CourseContent] Resume from Continue Watching, videoId:", resumeVideoId);
+      hasProcessedResumeRef.current = true;
+
+      // Set resume progress for the video player
+      if (resumeTime) {
+        setResumeProgress({
+          timestamp: resumeTime,
+          timeSlap: resumeTimeSlap,
+        });
+      }
+
+      // Find the video in the course data based on course type
+      let foundVideo = null;
+
+      switch (courseData.course_type) {
+        case "single": {
+          const mainVideo = courseData.api_video_object || courseData.main_with_api_video_object;
+          if (mainVideo?.videoId === resumeVideoId) {
+            foundVideo = {
+              type: "main",
+              videoId: mainVideo.videoId,
+              thumbnail: mainVideo.assets?.thumbnail,
+              title: courseData.name,
+            };
+          }
+          break;
+        }
+        case "series": {
+          courseData.series?.forEach((episode, index) => {
+            if (episode?.series_video_id?.videoId === resumeVideoId) {
+              foundVideo = {
+                type: "series",
+                videoId: episode.series_video_id.videoId,
+                thumbnail: episode.series_video_id.assets?.thumbnail,
+                title: episode.title,
+                index,
+              };
+            }
+          });
+          break;
+        }
+        case "playlist": {
+          courseData.chapters?.forEach((chapter, chapterIndex) => {
+            chapter?.lessons?.forEach((lesson, lessonIndex) => {
+              if (lesson?.video_id?.videoId === resumeVideoId) {
+                foundVideo = {
+                  type: "playlist",
+                  videoId: lesson.video_id.videoId,
+                  thumbnail: lesson.video_id.assets?.thumbnail,
+                  title: lesson.title,
+                  chapterIndex,
+                  lessonIndex,
+                };
+              }
+            });
+          });
+          break;
+        }
+      }
+
+      // Also check trailer
+      const trailer = courseData.trailer_with_api_video_object || courseData.trailer;
+      if (trailer?.videoId === resumeVideoId) {
+        foundVideo = {
+          type: "trailer",
+          videoId: trailer.videoId,
+          thumbnail: trailer.assets?.thumbnail,
+          title: courseData.name,
+        };
+      }
+
+      if (foundVideo) {
+        console.log("[CourseContent] Found resume video:", foundVideo);
+        setSelectedVideo(foundVideo);
+        return;
+      }
+    }
+
+    // Try trailer first (default behavior)
     const trailer = courseData.trailer_with_api_video_object || courseData.trailer;
     if (trailer?.videoId) {
       console.log("[CourseContent] Setting trailer as initial video");
@@ -191,8 +279,14 @@ const CourseContent = ({ route, navigation }) => {
     }
   }, []);
 
-  // Get video progress from API data
+  // Get video progress from API data or resume navigation
   const getVideoProgress = (videoId) => {
+    // Check if this is the resume video from continue watching
+    if (resumeProgress && videoId === resumeVideoId) {
+      console.log("[CourseContent] Using resume progress from navigation:", resumeProgress);
+      return resumeProgress;
+    }
+
     if (!videoId || !data?.video_progress) return null;
 
     const progress = data.video_progress[videoId];

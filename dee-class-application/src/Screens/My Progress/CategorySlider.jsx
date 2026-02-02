@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Image,
   Dimensions,
   Text,
   FlatList,
@@ -12,9 +11,33 @@ import { useTranslation } from "react-i18next";
 import { I18nText } from "../../components/common/I18nComponents";
 import COLORS from "../../styles/colors";
 import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Ionicons";
+
 const { width } = Dimensions.get("window");
-const SLIDE_WIDTH = width * 0.3; // 30% of screen width
-const SLIDE_SPACING = 8; // Small spacing between slides
+const SLIDE_WIDTH = width * 0.28; // 28% of screen width
+const SLIDE_SPACING = 10;
+
+// Map category slugs to icons
+const getCategoryIcon = (slug) => {
+  const iconMap = {
+    "business": "briefcase",
+    "technology": "laptop",
+    "design": "color-palette",
+    "marketing": "megaphone",
+    "development": "code-slash",
+    "finance": "cash",
+    "health": "fitness",
+    "music": "musical-notes",
+    "photography": "camera",
+    "lifestyle": "heart",
+    "personal-development": "person",
+    "teaching": "school",
+    "academics": "book",
+    "language": "language",
+    "it-software": "hardware-chip",
+  };
+  return iconMap[slug] || "grid";
+};
 
 const CategoryTabs = ({ categories }) => {
   const { t } = useTranslation();
@@ -22,23 +45,20 @@ const CategoryTabs = ({ categories }) => {
   const navigation = useNavigation();
 
   const renderCategoryItem = ({ item }) => {
+    const iconName = getCategoryIcon(item.slug);
+
     return (
       <TouchableOpacity
-        style={[styles.categorySlide]}
+        style={styles.categorySlide}
         onPress={() =>
           navigation.navigate("Library", { categorySlug: item.slug })
         }
+        activeOpacity={0.7}
       >
         <View style={styles.categoryIconContainer}>
-          {item.icon && (
-            <Image
-              source={{ uri: item.icon }}
-              style={styles.categoryIcon}
-              resizeMode="contain"
-            />
-          )}
+          <Icon name={iconName} size={32} color={COLORS.primary} />
         </View>
-        <I18nText style={styles.categoryText}>
+        <I18nText style={styles.categoryText} numberOfLines={2}>
           {item.title || item.name}
         </I18nText>
       </TouchableOpacity>
@@ -125,16 +145,13 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
   },
   categoryIconContainer: {
-    width: 55,
-    height: 55,
+    width: 50,
+    height: 50,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 8,
-  },
-  categoryIcon: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 8,
+    backgroundColor: "rgba(237, 26, 77, 0.15)",
+    borderRadius: 25,
   },
   categoryText: {
     color: COLORS.white,

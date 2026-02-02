@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import Spinner from "../../components/RequestHandler/Spinner";
 import COLORS from "../../styles/colors";
-const CoursesList = ({ courses, loading, navigation }) => {
+const CoursesList = ({ categoryName, courses = [], loading, navigation }) => {
   const { t } = useTranslation();
 
   if (loading) {
@@ -18,38 +18,44 @@ const CoursesList = ({ courses, loading, navigation }) => {
     navigation.navigate("CourseDetail", { slug });
   };
 
+  // Get thumbnail URL
+  const getThumbnail = (item) => {
+    return (
+      item?.trailer?.assets?.thumbnail ||
+      item?.tralier_with_api_video_object?.assets?.thumbnail ||
+      item?.trailer_with_api_video_object?.assets?.thumbnail ||
+      null
+    );
+  };
+
   return (
     <View style={styles.coursesContainer}>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "flex-start",
-        }}
-      >
-        <Text style={styles.sectionTitle}>{courses?.name}</Text>
-      </View>
+      {categoryName && (
+        <View style={styles.headerContainer}>
+          <Text style={styles.sectionTitle}>{categoryName}</Text>
+        </View>
+      )}
 
-      {courses?.courses?.length === 0 ? (
+      {!courses || courses.length === 0 ? (
         <View style={styles.noCoursesContainer}>
           <Text style={styles.noCoursesText}>{t("general.no_courses")}</Text>
         </View>
       ) : (
         <View style={styles.courseGrid}>
-          {courses?.courses?.map((item, index) => (
+          {courses.map((item, index) => (
             <TouchableOpacity
-              key={index}
+              key={item._id || item.slug || index}
               style={styles.courseCard}
               onPress={() => handleCoursePress(item.slug)}
             >
               <Image
-                source={{
-                  uri: item?.tralier_with_api_video_object?.assets?.thumbnail,
-                }}
+                source={{ uri: getThumbnail(item) }}
                 style={styles.courseImage}
               />
               <View style={styles.courseContent}>
-                <Text style={styles.courseTitle}>{item.name}</Text>
+                <Text style={styles.courseTitle} numberOfLines={2}>
+                  {item.name}
+                </Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -63,11 +69,16 @@ const styles = StyleSheet.create({
   coursesContainer: {
     flex: 1,
   },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    marginBottom: 16,
+  },
   sectionTitle: {
     color: COLORS.white,
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 16,
   },
   coursesLoadingContainer: {
     padding: 24,

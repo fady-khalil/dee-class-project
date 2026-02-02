@@ -1,39 +1,69 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
+import Icon from "react-native-vector-icons/Feather";
 
 import logo from "../../../Assests/logos/small-logo.png";
 import COLORS from "../../../styles/colors";
 import { useNavigation } from "@react-navigation/native";
 
-const JoinUs = ({ isAuthenticated, allowedProfiles, joinUs }) => {
+const JoinUs = ({ isAuthenticated, allowedProfiles, allowedCourses, isVerified, user, joinUs }) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
-  if (isAuthenticated && allowedProfiles) {
+  // Check if email is verified
+  const emailVerified = isVerified || user?.verified || user?.email_verified;
+
+  // Scenario 3: Has active plan (allowedProfiles > 0) → Hide section
+  if (allowedProfiles > 0) {
     return null;
   }
 
-  const handleRedirect = () => {
-    navigation.navigate("Plans");
+  // Scenario 2: Has purchased courses → Hide section (they have access)
+  if (allowedCourses?.length > 0) {
+    return null;
+  }
+
+  // Determine what to show based on scenarios
+  const getContent = () => {
+    // Scenario 1: Not verified → Show verify email prompt
+    if (isAuthenticated && !emailVerified) {
+      return {
+        title: t("verify_email.title"),
+        description: t("verify_email.description"),
+        buttonText: t("verify_email.verify_button"),
+        buttonIcon: "mail",
+        onPress: () => navigation.navigate("VerifyEmail", { email: user?.email }),
+      };
+    }
+
+    // Scenario 4: Verified but no plan/courses → Show sign up / complete registration
+    return {
+      title: joinUs?.title || t("general.join_us"),
+      description: joinUs?.text || t("general.join_us_subtitle"),
+      buttonText: isAuthenticated ? t("general.complete_registration") : t("navigation.sign_up"),
+      buttonIcon: null,
+      onPress: () => navigation.navigate("Plans"),
+    };
   };
 
-  // Use dynamic data from API or fallback to translations
-  const title = joinUs?.title || t("general.join_us");
-  const description = joinUs?.text || t("general.join_us_subtitle");
+  const content = getContent();
 
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <View style={styles.topLine} />
 
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{content.title}</Text>
 
-        <Text style={styles.description}>{description}</Text>
+        <Text style={styles.description}>{content.description}</Text>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleRedirect} style={styles.button}>
-            <Text style={styles.buttonText}>{t("navigation.sign_up")}</Text>
+          <TouchableOpacity onPress={content.onPress} style={styles.button}>
+            {content.buttonIcon && (
+              <Icon name={content.buttonIcon} size={18} color={COLORS.white} style={styles.buttonIcon} />
+            )}
+            <Text style={styles.buttonText}>{content.buttonText}</Text>
           </TouchableOpacity>
           <View style={styles.logoContainer}>
             <Image source={logo} style={styles.logo} resizeMode="contain" />
@@ -104,6 +134,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 2,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  buttonIcon: {
+    marginRight: 8,
   },
   buttonText: {
     color: COLORS.white,

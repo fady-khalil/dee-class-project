@@ -27,39 +27,45 @@ const Library = ({ route }) => {
   const { isAuthenticated } = useAuth();
   const [activeCategorySlug, setActiveCategorySlug] = useState(undefined);
   const {
-    data: categories,
+    data: categoriesResponse,
     isLoading: categoriesLoading,
     isError: categoriesError,
     fetchData: fetchCategories,
   } = useFetch();
   const {
-    data: courses,
+    data: coursesResponse,
     isLoading: coursesLoading,
     isError: coursesError,
     fetchData: fetchCourses,
   } = useFetch();
 
+  // Extract data from API response
+  const categories = categoriesResponse?.data || categoriesResponse || [];
+  const coursesData = coursesResponse?.data || coursesResponse || {};
+
   // Fetch categories on component mount
   useEffect(() => {
-    fetchCategories("categories");
+    fetchCategories("course-categories");
   }, []);
 
   // Set default active category
   useEffect(() => {
-    if (route?.params?.slug) {
-      setActiveCategorySlug(route.params.slug);
+    // Support both slug and categorySlug params
+    const categoryFromParams = route?.params?.categorySlug || route?.params?.slug;
+    if (categoryFromParams) {
+      setActiveCategorySlug(categoryFromParams);
     } else if (isAuthenticated) {
       // If user is authenticated, set "For You" tab as default
       setActiveCategorySlug("for-you");
     } else if (categories?.length > 0) {
       setActiveCategorySlug(categories[0]?.slug);
     }
-  }, [categories, route?.params?.slug, isAuthenticated]);
+  }, [categories, route?.params?.categorySlug, route?.params?.slug, isAuthenticated]);
 
   // Fetch courses when active category changes
   useEffect(() => {
     if (activeCategorySlug && activeCategorySlug !== "for-you") {
-      fetchCourses(`categories/${activeCategorySlug}`);
+      fetchCourses(`courses/category/${activeCategorySlug}`);
     }
   }, [activeCategorySlug]);
 
@@ -112,20 +118,27 @@ const Library = ({ route }) => {
         handleForYouClick={handleForYouClick}
       />
 
-      <ScrollView
-        style={styles.coursesScroll}
-        contentContainerStyle={styles.coursesScrollContent}
-      >
-        {activeCategorySlug === "for-you" ? (
+      {activeCategorySlug === "for-you" ? (
+        <ScrollView
+          style={styles.coursesScroll}
+          contentContainerStyle={styles.coursesScrollContent}
+          nestedScrollEnabled={true}
+        >
           <ForYouSection />
-        ) : (
+        </ScrollView>
+      ) : (
+        <ScrollView
+          style={styles.coursesScroll}
+          contentContainerStyle={styles.coursesScrollContent}
+        >
           <CoursesList
-            courses={courses}
+            categoryName={coursesData?.category?.title}
+            courses={coursesData?.courses || []}
             loading={coursesLoading}
             navigation={navigation}
           />
-        )}
-      </ScrollView>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };

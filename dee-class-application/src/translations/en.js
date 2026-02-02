@@ -49,11 +49,14 @@ export default {
   },
   for_you: {
     title: "Curated For You",
-    continue_watching: "Continue Your Journey",
+    continue_watching: "Continue Watching",
     new_to_master_class: "Discover Dee Class Excellence",
+    new_added: "New to Dee Class",
     picked_for_you: "Handpicked For Your Growth",
+    recommended_courses: "Recommended For You",
     my_list: "My Collection",
     in_progress: "In Progress",
+    no_content: "No personalized content yet. Start exploring courses!",
   },
   home: {
     title: "Welcome to DeeClass",

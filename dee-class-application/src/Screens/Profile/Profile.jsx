@@ -79,92 +79,60 @@ const Profile = () => {
     // First check if email is verified (API returns 'verified' not 'email_verified')
     const emailVerified = isVerified || user?.verified || user?.email_verified;
 
+    // Scenario 1: Email not verified - show verify email button
     if (!emailVerified) {
-      // Email not verified - show verify email button
       return (
-        <View>
-          <TouchableOpacity
-            style={[styles.actionButton, { marginTop: 8 }]}
-            onPress={handleVerifyEmail}
-          >
-            <Icon
-              name="mail"
-              size={22}
-              color={COLORS.primary}
-              style={styles.actionIcon}
-            />
-            <Text style={styles.actionText}>
-              {t("verify_email.title")}
-            </Text>
-            <Icon
-              name="chevron-right"
-              size={20}
-              color={COLORS.darkWhite}
-              style={styles.chevron}
-            />
-          </TouchableOpacity>
-        </View>
-      );
-    }
-
-    // Email verified but no plan or courses
-    if (!user?.allowed_courses?.length && !user?.allowed_profiles) {
-      return (
-        <View>
-          <TouchableOpacity
-            style={[styles.actionButton, { marginTop: 8 }]}
-            onPress={handleCompleteRegistration}
-          >
-            <Icon
-              name="user-plus"
-              size={22}
-              color={COLORS.white}
-              style={styles.actionIcon}
-            />
-            <Text style={styles.actionText}>
-              {t("general.complete_registration")}
-            </Text>
-            <Icon
-              name="chevron-right"
-              size={20}
-              color={COLORS.darkWhite}
-              style={styles.chevron}
-            />
-          </TouchableOpacity>
-        </View>
-      );
-    }
-
-    if (user?.allowed_courses?.length > 0) {
-      return (
-        <View
-          style={{ alignItems: "flex-start", justifyContent: "flex-start" }}
+        <TouchableOpacity
+          style={[styles.actionButton, { marginTop: 8 }]}
+          onPress={handleVerifyEmail}
         >
-          <TouchableOpacity
-            style={[styles.actionButton, { marginTop: 8 }]}
-            onPress={handleCheckCourses}
-          >
-            <Icon
-              name="book"
-              size={22}
-              color={COLORS.white}
-              style={styles.actionIcon}
-            />
-            <Text style={styles.actionText}>
-              {t("general.check_my_courses")}
-            </Text>
-            <Icon
-              name="chevron-right"
-              size={20}
-              color={COLORS.darkWhite}
-              style={styles.chevron}
-            />
-          </TouchableOpacity>
-        </View>
+          <Icon
+            name="mail"
+            size={22}
+            color={COLORS.primary}
+            style={styles.actionIcon}
+          />
+          <Text style={styles.actionText}>
+            {t("verify_email.title")}
+          </Text>
+          <Icon
+            name="chevron-right"
+            size={20}
+            color={COLORS.darkWhite}
+            style={styles.chevron}
+          />
+        </TouchableOpacity>
       );
     }
 
-    if (allowedProfiles) {
+    // Scenario 2: Has specific courses (purchased individually) - show Check My Courses
+    if (allowedCourses?.length > 0) {
+      return (
+        <TouchableOpacity
+          style={[styles.actionButton, { marginTop: 8 }]}
+          onPress={handleCheckCourses}
+        >
+          <Icon
+            name="book"
+            size={22}
+            color={COLORS.white}
+            style={styles.actionIcon}
+          />
+          <Text style={styles.actionText}>
+            {t("general.check_my_courses")}
+          </Text>
+          <Icon
+            name="chevron-right"
+            size={20}
+            color={COLORS.darkWhite}
+            style={styles.chevron}
+          />
+        </TouchableOpacity>
+      );
+    }
+
+    // Scenario 3: Has active plan (allowedProfiles > 0) - show My Profiles
+    if (allowedProfiles > 0) {
       return (
         <TouchableOpacity
           style={[styles.actionButton, { marginTop: 8 }]}
@@ -187,7 +155,29 @@ const Profile = () => {
       );
     }
 
-    return null;
+    // Scenario 4: Verified but no plan and no courses - show Complete Registration (go to Plans)
+    return (
+      <TouchableOpacity
+        style={[styles.actionButton, { marginTop: 8 }]}
+        onPress={handleCompleteRegistration}
+      >
+        <Icon
+          name="user-plus"
+          size={22}
+          color={COLORS.white}
+          style={styles.actionIcon}
+        />
+        <Text style={styles.actionText}>
+          {t("general.complete_registration")}
+        </Text>
+        <Icon
+          name="chevron-right"
+          size={20}
+          color={COLORS.darkWhite}
+          style={styles.chevron}
+        />
+      </TouchableOpacity>
+    );
   };
 
   return (

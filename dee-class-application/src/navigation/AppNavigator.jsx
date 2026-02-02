@@ -2,7 +2,7 @@ import React from "react";
 import StackNavigator from "./StackNavigator";
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "react-native";
-import { linking } from "../../App";
+import { linking } from "./linkingConfig";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const AppNavigator = () => {

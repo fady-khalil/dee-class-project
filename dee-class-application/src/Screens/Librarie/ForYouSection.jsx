@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
@@ -12,9 +11,6 @@ import COLORS from "../../styles/colors";
 import { usePostData } from "../../Hooks/usePostData";
 import { useAuth } from "../../context/Authentication/LoginAuth";
 import { useNavigation } from "@react-navigation/native";
-
-// Components to be created
-import ContinueWatching from "./components/ContinueWatching";
 import CourseSlider from "./components/CourseSlider";
 
 const ForYouSection = () => {
@@ -24,28 +20,34 @@ const ForYouSection = () => {
   const navigation = useNavigation();
   const [forYouCourses, setForYouCourses] = useState({
     continue_watching: [],
-    new_to_master_class: [],
-    picked_for_you: [],
+    recommended_courses: [],
+    new_added: [],
     my_list: [],
   });
   const [errorMessage, setErrorMessage] = useState(null);
   const [expiredToken, setExpiredToken] = useState(false);
 
   const getForYouData = async () => {
-    if (!selectedUser?.id) return;
+    if (!selectedUser?.id) {
+      console.log("[ForYouSection] No selectedUser.id");
+      return;
+    }
 
     const body = {
       profile_id: selectedUser.id,
     };
 
+    console.log("[ForYouSection] Fetching profile-for-you with:", body);
     const response = await postData("profile-for-you", body, token);
+    console.log("[ForYouSection] Response:", response);
+
     if (response.success) {
       setForYouCourses(response.data);
       setErrorMessage(null);
     } else if (response.status === 401) {
       setExpiredToken(true);
     } else {
-      setErrorMessage(response?.message);
+      setErrorMessage(response?.message || "Failed to load content");
     }
   };
 
@@ -110,26 +112,57 @@ const ForYouSection = () => {
     );
   }
 
-  return (
-    <ScrollView style={styles.container}>
-      {/* <ContinueWatching data={forYouCourses?.continue_watching} /> */}
-      <View style={{ marginTop: 20 }}>
-        <CourseSlider
-          title={t("for_you.new_to_master_class")}
-          data={forYouCourses?.new_to_master_class}
-        />
+  // Check if there's any data
+  const hasData =
+    forYouCourses?.continue_watching?.length > 0 ||
+    forYouCourses?.new_added?.length > 0 ||
+    forYouCourses?.recommended_courses?.length > 0 ||
+    forYouCourses?.my_list?.length > 0;
+
+  if (!hasData && !isLoading) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>
+          {t("for_you.no_content") || "No personalized content yet. Start exploring courses!"}
+        </Text>
       </View>
+    );
+  }
 
-      <CourseSlider
-        title={t("for_you.picked_for_you")}
-        data={forYouCourses?.picked_for_you}
-      />
+  return (
+    <View style={styles.container}>
+      {/* Continue Watching */}
+      {forYouCourses?.continue_watching?.length > 0 && (
+        <CourseSlider
+          title={t("for_you.continue_watching")}
+          data={forYouCourses?.continue_watching}
+        />
+      )}
 
-      <CourseSlider
-        title={t("for_you.my_list")}
-        data={forYouCourses?.my_list}
-      />
-    </ScrollView>
+      {/* New Added / New to Dee Class */}
+      {forYouCourses?.new_added?.length > 0 && (
+        <CourseSlider
+          title={t("for_you.new_added") || t("for_you.new_to_master_class")}
+          data={forYouCourses?.new_added}
+        />
+      )}
+
+      {/* Recommended Courses */}
+      {forYouCourses?.recommended_courses?.length > 0 && (
+        <CourseSlider
+          title={t("for_you.recommended_courses") || t("for_you.picked_for_you")}
+          data={forYouCourses?.recommended_courses}
+        />
+      )}
+
+      {/* My List */}
+      {forYouCourses?.my_list?.length > 0 && (
+        <CourseSlider
+          title={t("for_you.my_list")}
+          data={forYouCourses?.my_list}
+        />
+      )}
+    </View>
   );
 };
 
@@ -188,6 +221,17 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     color: COLORS.darkWhite,
     fontWeight: "600",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 32,
+  },
+  emptyText: {
+    color: COLORS.darkWhite,
+    fontSize: 16,
+    textAlign: "center",
   },
 });
 

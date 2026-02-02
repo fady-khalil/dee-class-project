@@ -49,11 +49,14 @@ export default {
   },
   for_you: {
     title: "مختار لك",
-    continue_watching: "واصل رحلتك",
+    continue_watching: "متابعة المشاهدة",
     new_to_master_class: "اكتشف تميز دي كلاس",
+    new_added: "جديد في دي كلاس",
     picked_for_you: "مختار خصيصاً لنموك",
+    recommended_courses: "موصى بها لك",
     my_list: "مجموعتي",
     in_progress: "قيد المشاهدة",
+    no_content: "لا يوجد محتوى مخصص بعد. ابدأ استكشاف الدورات!",
   },
   video: {
     resume_watching: "متابعة المشاهدة؟",

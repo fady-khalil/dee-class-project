@@ -11,20 +11,17 @@ import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import { usePostData } from "../../Hooks/usePostData";
 import CourseSlider from "../Librarie/components/CourseSlider";
 import CompletedCourses from "./CompletedCourses";
+import ContinueWatchingSlider from "./ContinueWatchingSlider";
 import COLORS from "../../styles/colors";
-import CategorySlider from "./CategorySlider";
-import useFetch from "../../Hooks/useFetch";
 import AuthExpiredAlert from "../../components/common/AuthExpiredAlert";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../../components/common/Header";
 const MyProgress = () => {
   const { token, selectedUser, logoutHandler } = useContext(LoginAuthContext);
   const { postData, isLoading } = usePostData();
-  const { fetchData, isLoading: isLoadingFetch } = useFetch();
   const [isError, setIsError] = useState(false);
   const [authError, setAuthError] = useState(false);
   const [data, setData] = useState([]);
-  const [categories, setCategories] = useState([]);
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -67,18 +64,8 @@ const MyProgress = () => {
     }
   };
 
-  const getCategories = async () => {
-    try {
-      const response = await fetchData("categories");
-      setCategories(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     getMyList();
-    getCategories();
   }, []);
 
   const handleLoginRedirect = () => {
@@ -150,19 +137,9 @@ const MyProgress = () => {
           {t("progress.my_progress") || "My Progress"}
         </Text>
 
-        <CategorySlider
-          categories={categories}
-          activeCategorySlug=""
-          handleCategoryClick={() => {}}
-          handleForYouClick={() => {}}
-        />
-
         {/* Continue Watching Section */}
         {hasContinueWatching && (
-          <CourseSlider
-            title={t("for_you.continue_watching")}
-            data={data?.continue_watching}
-          />
+          <ContinueWatchingSlider data={data?.continue_watching} />
         )}
 
         {/* Completed Courses Section */}

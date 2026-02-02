@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -6,11 +6,17 @@ import {
   TouchableOpacity,
   Image,
   Text,
+  Dimensions,
+  Animated,
 } from "react-native";
 import COLORS from "../../../styles/colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import BASE_URL from "../../../config/BASE_URL";
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const CARD_WIDTH = SCREEN_WIDTH * 0.42;
+const CARD_HEIGHT = CARD_WIDTH * 1.5;
 
 // Get server URL without /api for image paths
 const getServerUrl = () => {
@@ -18,69 +24,112 @@ const getServerUrl = () => {
 };
 
 // Get thumbnail URL - prefer trailer thumbnail, fallback to course image
+// Handles both regular courses and continue_watching items (which have nested course object)
 const getThumbnailUrl = (item) => {
+  // For continue_watching items, the course data is nested
+  const course = item?.course || item;
+
   // First try trailer thumbnail (full URL from api.video)
+  if (course?.trailer?.assets?.thumbnail) {
+    return course.trailer.assets.thumbnail;
+  }
+  // Also check item level trailer (for regular courses)
   if (item?.trailer?.assets?.thumbnail) {
     return item.trailer.assets.thumbnail;
   }
   // Fallback to course image (relative path needs server URL)
-  if (item?.image) {
+  const image = course?.image || item?.image;
+  if (image) {
     // If it's already a full URL, return as is
-    if (item.image.startsWith("http")) {
-      return item.image;
+    if (image.startsWith("http")) {
+      return image;
     }
     // Otherwise prepend server URL
-    return `${getServerUrl()}/${item.image}`;
+    return `${getServerUrl()}/${image}`;
   }
   return null;
+};
+
+// Animated Card Component
+const CourseCard = ({ item, navigation }) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const course = item?.course || item;
+  const slug = item?.courseSlug || course?.slug || item?.slug;
+  const name = course?.name || item?.name;
+  const tags = course?.tags || item?.tags;
+  const thumbnailUrl = getThumbnailUrl(item);
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.96,
+      useNativeDriver: true,
+      speed: 50,
+      bounciness: 4,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 50,
+      bounciness: 4,
+    }).start();
+  };
+
+  return (
+    <TouchableOpacity
+      onPress={() => navigation.navigate("CourseDetail", { slug })}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      activeOpacity={1}
+      style={styles.cardWrapper}
+    >
+      <Animated.View style={[styles.courseCard, { transform: [{ scale: scaleAnim }] }]}>
+        {/* Skeleton loader */}
+        {!imageLoaded && <View style={styles.skeleton} />}
+
+        <Image
+          source={{ uri: thumbnailUrl }}
+          style={[styles.thumbnail, !imageLoaded && styles.hiddenImage]}
+          resizeMode="cover"
+          onLoad={() => setImageLoaded(true)}
+        />
+
+        {/* Single tag badge - top left */}
+        {tags && tags.length > 0 && (
+          <View style={styles.tagBadge}>
+            <Text style={styles.tagText}>{tags[0].name}</Text>
+          </View>
+        )}
+
+        {/* Gradient overlay */}
+        <LinearGradient
+          colors={["transparent", "rgba(0,0,0,0.3)", "rgba(0,0,0,0.95)"]}
+          locations={[0.5, 0.7, 1]}
+          style={styles.gradient}
+        />
+
+        {/* Title at bottom */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.courseTitle} numberOfLines={2}>
+            {name}
+          </Text>
+        </View>
+      </Animated.View>
+    </TouchableOpacity>
+  );
 };
 
 const CourseSlider = ({ title, data = [] }) => {
   const navigation = useNavigation();
   if (!data || data.length === 0) return null;
 
-  const renderItem = ({ item }) => {
-    const thumbnailUrl = getThumbnailUrl(item);
-
-    return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate("CourseDetail", { slug: item.slug })}
-        style={styles.courseCard}
-      >
-        <Image
-          source={{ uri: thumbnailUrl }}
-          style={styles.thumbnail}
-          resizeMode="cover"
-        />
-      {item.tags && item.tags.length > 0 && (
-        <View style={styles.tagsContainer}>
-          {item.tags.map((tag, index) => (
-            <View
-              key={
-                tag.id?.toString() ||
-                `${item.id || item.course || ""}-tag-${index}`
-              }
-              style={[styles.tagPill, { backgroundColor: tag.color }]}
-            >
-              <Text style={[styles.tagText, { color: tag.text_color }]}>
-                {tag.name}
-              </Text>
-            </View>
-          ))}
-        </View>
-      )}
-      <LinearGradient
-        colors={["transparent", "rgba(0,0,0,0.7)", "rgba(0,0,0,0.9)"]}
-        locations={[0.5, 0.7, 1]}
-        style={styles.gradient}
-      >
-        <View style={styles.titleContainer}>
-          <Text style={styles.courseTitle}>{item.name}</Text>
-        </View>
-      </LinearGradient>
-    </TouchableOpacity>
-    );
-  };
+  const renderItem = ({ item }) => (
+    <CourseCard item={item} navigation={navigation} />
+  );
 
   return (
     <View style={styles.container}>
@@ -90,24 +139,25 @@ const CourseSlider = ({ title, data = [] }) => {
       <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={(item) =>
-          item._id?.toString() || item.id?.toString() || item.slug || item.name
-        }
+        keyExtractor={(item, index) => {
+          const course = item?.course || item;
+          return (
+            item?.videoId?.toString() ||
+            course?._id?.toString() ||
+            item?._id?.toString() ||
+            item?.courseSlug ||
+            course?.slug ||
+            item?.slug ||
+            `item-${index}`
+          );
+        }}
         horizontal
         showsHorizontalScrollIndicator={false}
         decelerationRate="fast"
-        snapToInterval={320}
-        snapToAlignment="start"
-        disableIntervalMomentum={true}
         contentContainerStyle={styles.listContent}
-        initialNumToRender={3}
-        maxToRenderPerBatch={3}
-        windowSize={5}
-        getItemLayout={(data, index) => ({
-          length: 320,
-          offset: 320 * index,
-          index,
-        })}
+        initialNumToRender={4}
+        maxToRenderPerBatch={4}
+        windowSize={7}
       />
     </View>
   );
@@ -115,90 +165,76 @@ const CourseSlider = ({ title, data = [] }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
-    marginBottom: 48,
+    marginBottom: 24,
   },
   headerContainer: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: 16,
-    paddingHorizontal: 4,
-    marginTop: 10,
+    marginBottom: 12,
   },
   sectionTitle: {
     color: COLORS.white,
-    fontSize: 24,
-    fontWeight: "700",
-    letterSpacing: 0.5,
-    textAlign: "start",
+    fontSize: 18,
+    fontWeight: "600",
+    letterSpacing: 0.2,
   },
   listContent: {
-    paddingHorizontal: 4,
+    paddingRight: 16,
+  },
+  cardWrapper: {
+    marginLeft: 10,
   },
   courseCard: {
-    width: 300,
-    marginRight: 20,
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
     borderRadius: 8,
     overflow: "hidden",
+    backgroundColor: "#1c1c1c",
+  },
+  skeleton: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#2a2a2a",
   },
   thumbnail: {
     width: "100%",
-    height: 350,
-    borderRadius: 8,
+    height: "100%",
   },
-  tagsContainer: {
+  hiddenImage: {
+    opacity: 0,
+  },
+  tagBadge: {
     position: "absolute",
-    top: 12,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-    zIndex: 1,
-  },
-  tagPill: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    backgroundColor: COLORS.white,
+    top: 8,
+    left: 8,
+    backgroundColor: "rgba(0,0,0,0.75)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
   },
   tagText: {
-    fontSize: 12,
+    color: COLORS.white,
+    fontSize: 10,
     fontWeight: "600",
-    letterSpacing: 0.2,
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
   gradient: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    height: "70%",
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    justifyContent: "flex-start",
+    height: "50%",
   },
   titleContainer: {
-    padding: 16,
-    paddingBottom: 12,
-    minHeight: 60,
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    width: "90%",
+    padding: 10,
   },
   courseTitle: {
     color: COLORS.white,
-    fontSize: 20,
-    fontWeight: "600",
-    lineHeight: 24,
-    letterSpacing: 0.2,
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    fontSize: 13,
+    fontWeight: "500",
+    lineHeight: 18,
   },
 });
 
