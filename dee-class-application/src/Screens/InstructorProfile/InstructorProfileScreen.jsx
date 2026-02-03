@@ -22,11 +22,11 @@ const InstructorProfileScreen = ({ route, navigation }) => {
   const { data, isLoading, error, fetchData } = useFetch();
 
   const handleRefresh = () => {
-    fetchData(`instructor-profile/${instructorSlug}`);
+    fetchData(`instructors/${instructorSlug}`);
   };
 
   useEffect(() => {
-    fetchData(`instructor-profile/${instructorSlug}`);
+    fetchData(`instructors/${instructorSlug}`);
   }, [instructorSlug]);
 
   if (isLoading) {
@@ -70,17 +70,17 @@ const InstructorProfileScreen = ({ route, navigation }) => {
       <StatusBar backgroundColor={COLORS.background} barStyle="light-content" />
       <HeaderBack screenName="instructor_profile" />
 
-      {data && (
+      {data?.data && (
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           {/* Hero Section with instructor image and basic info */}
-          <InstructorHero data={data} />
+          <InstructorHero data={data.data} />
 
           {/* About Section with detailed description */}
-          <AboutSection data={data} />
+          <AboutSection data={data.data} />
 
           {/* Courses by this instructor */}
-          {data.courses && data.courses.length > 0 && (
-            <CoursesList courses={data.courses} />
+          {data.data.courses && data.data.courses.length > 0 && (
+            <CoursesList courses={data.data.courses} />
           )}
 
           {/* Bottom spacing */}

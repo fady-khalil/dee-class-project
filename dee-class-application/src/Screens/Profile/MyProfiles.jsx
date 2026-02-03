@@ -78,7 +78,18 @@ const MyProfiles = () => {
   };
 
   // Check if we can add more profiles
-  const canAddProfile = profiles?.length < allowedProfiles;
+  const profilesArray = Array.isArray(profiles) ? profiles : [];
+  const profileCount = profilesArray.length;
+  // Handle allowedProfiles being false, "false", number, or string number
+  const maxProfiles = allowedProfiles && allowedProfiles !== "false" && allowedProfiles !== false
+    ? Number(allowedProfiles)
+    : 0;
+  const canAddProfile = maxProfiles > 0 && profileCount < maxProfiles;
+
+  // Create data array with add button placeholder if allowed
+  const listData = canAddProfile
+    ? [...profilesArray, { _isAddButton: true }]
+    : profilesArray;
 
   // Open edit profile form
   const handleEditProfile = (profile) => {
@@ -103,8 +114,31 @@ const MyProfiles = () => {
     navigation.navigate("Main");
   };
 
-  // Render a profile item
+  // Render a profile item or add button
   const renderProfileItem = ({ item, index }) => {
+    // Render add profile button
+    if (item._isAddButton) {
+      return (
+        <View style={styles.profileItemWrapper}>
+          <TouchableOpacity
+            style={styles.profileItem}
+            onPress={() => {
+              setSelectedProfile(null);
+              setIsAddProfileFormOpen(true);
+            }}
+          >
+            <View style={styles.addProfileCircle}>
+              <Text style={styles.addProfilePlus}>+</Text>
+            </View>
+            <I18nText style={styles.profileName}>
+              {t("profiles.add_profile")}
+            </I18nText>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
+    // Render regular profile
     return (
       <View style={styles.profileItemWrapper}>
         <TouchableOpacity
@@ -176,30 +210,6 @@ const MyProfiles = () => {
     );
   };
 
-  // Render the add profile button
-  const renderAddProfileButton = () => {
-    if (!canAddProfile) return null;
-
-    return (
-      <View style={styles.profileItemWrapper}>
-        <TouchableOpacity
-          style={styles.profileItem}
-          onPress={() => {
-            setSelectedProfile(null);
-            setIsAddProfileFormOpen(true);
-          }}
-        >
-          <View style={styles.addProfileCircle}>
-            <Text style={styles.addProfilePlus}>+</Text>
-          </View>
-          <I18nText style={styles.profileName}>
-            {t("profiles.add_profile")}
-          </I18nText>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={"#000"} barStyle="light-content" />
@@ -212,25 +222,16 @@ const MyProfiles = () => {
         <I18nText style={styles.title}>{t("profiles.whos_watching")}</I18nText>
 
         <FlatList
-          data={profiles}
+          data={listData}
           renderItem={({ item, index }) => renderProfileItem({ item, index })}
-          keyExtractor={(item, index) => item?.id?.toString() || item?._id?.toString() || index.toString()}
+          keyExtractor={(item, index) => item?._isAddButton ? "add-button" : (item?.id?.toString() || item?._id?.toString() || index.toString())}
           numColumns={2}
-          columnWrapperStyle={styles.columnWrapper}
+          columnWrapperStyle={listData.length > 1 ? styles.columnWrapper : undefined}
           contentContainerStyle={styles.profilesListContainer}
           ListEmptyComponent={
-            !canAddProfile ? (
-              <I18nText style={styles.emptyText}>
-                {t("profiles.no_profiles")}
-              </I18nText>
-            ) : null
-          }
-          ListFooterComponent={
-            canAddProfile ? (
-              <View style={styles.addProfileContainer}>
-                {renderAddProfileButton()}
-              </View>
-            ) : null
+            <I18nText style={styles.emptyText}>
+              {t("profiles.no_profiles")}
+            </I18nText>
           }
         />
 
@@ -396,11 +397,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
     marginTop: 40,
-  },
-  addProfileContainer: {
-    width: "100%",
-    alignItems: "center",
-    marginTop: 20,
   },
 });
 

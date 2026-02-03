@@ -8,10 +8,20 @@ import CourseContent from "../Screens/Course/CourseContent";
 import InstructorProfileScreen from "../Screens/InstructorProfile/InstructorProfileScreen";
 import MyCourses from "../Screens/Profile/MyCourses";
 import MyProfiles from "../Screens/Profile/MyProfiles";
+import EditProfile from "../Screens/Profile/EditProfile";
+import ChangePassword from "../Screens/Profile/ChangePassword";
+import SubscriptionDetails from "../Screens/Profile/SubscriptionDetails";
 import Login from "../Screens/Auth/Login";
 import Register from "../Screens/Auth/Register";
 import VerifyEmail from "../Screens/Auth/VerifyEmail";
 import ForgotPassword from "../Screens/Auth/ForgotPassword";
+import GiftCode from "../Screens/Auth/GiftCode";
+import GiftLogin from "../Screens/Auth/GiftLogin";
+import GiftRegister from "../Screens/Auth/GiftRegister";
+import GiftVerifyEmail from "../Screens/Auth/GiftVerifyEmail";
+import GiftSuccess from "../Screens/Auth/GiftSuccess";
+import GiftPlanScreen from "../Screens/Gift/GiftPlanScreen";
+import GiftPurchaseSuccess from "../Screens/Gift/GiftPurchaseSuccess";
 import Profile from "../Screens/Profile/Profile";
 import SettingsScreen from "../Screens/Settings/SettingsScreen";
 import PlansScreen from "../Screens/Plans/PlansScreen";
@@ -38,6 +48,9 @@ const StackNavigator = () => {
       />
       <Stack.Screen name="MyCourses" component={MyCourses} />
       <Stack.Screen name="MyProfiles" component={MyProfiles} />
+      <Stack.Screen name="EditProfile" component={EditProfile} />
+      <Stack.Screen name="ChangePassword" component={ChangePassword} />
+      <Stack.Screen name="SubscriptionDetails" component={SubscriptionDetails} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="VerifyEmail" component={VerifyEmail} />
@@ -47,6 +60,14 @@ const StackNavigator = () => {
       <Stack.Screen name="Plans" component={PlansScreen} />
       <Stack.Screen name="PaymentSuccess" component={PaymentSuccessScreen} />
       <Stack.Screen name="Downloads" component={DownloadCoursesScreen} />
+      {/* Gift Code Screens */}
+      <Stack.Screen name="GiftCode" component={GiftCode} />
+      <Stack.Screen name="GiftLogin" component={GiftLogin} />
+      <Stack.Screen name="GiftRegister" component={GiftRegister} />
+      <Stack.Screen name="GiftVerifyEmail" component={GiftVerifyEmail} />
+      <Stack.Screen name="GiftSuccess" component={GiftSuccess} />
+      <Stack.Screen name="GiftPlan" component={GiftPlanScreen} />
+      <Stack.Screen name="GiftPurchaseSuccess" component={GiftPurchaseSuccess} />
       {/* Add other screens here that need to be accessed outside the tab navigation */}
     </Stack.Navigator>
   );

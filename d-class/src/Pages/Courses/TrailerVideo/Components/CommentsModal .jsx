@@ -7,11 +7,11 @@ import { X, PaperPlaneTilt, ChatCircle } from "@phosphor-icons/react";
 
 const CommentsModal = ({ isOpen, onClose, data, onCommentAdded }) => {
   const { t } = useTranslation();
-  const { user, token } = useContext(LoginAuthContext);
+  const { selectedUser, token } = useContext(LoginAuthContext);
   const { postData: postComment, isLoading: commentLoading } = usePostData();
 
-  // Get the actual user ID
-  const userId = user?._id || user?.id;
+  // Use the selected profile ID (not the user ID)
+  const profileId = selectedUser?.id || selectedUser?._id;
 
   const [newComment, setNewComment] = useState("");
   const [localComments, setLocalComments] = useState([]);
@@ -99,11 +99,11 @@ const CommentsModal = ({ isOpen, onClose, data, onCommentAdded }) => {
   // Handle comment submission
   const handleSubmitComment = async (e) => {
     e.preventDefault();
-    if (!newComment.trim() || !userId || commentLoading) return;
+    if (!newComment.trim() || !profileId || commentLoading) return;
 
     const body = {
-      course_id: data?.id,
-      profile_id: userId,
+      course_id: data?.id || data?._id,
+      profile_id: profileId,
       comment: newComment.trim(),
     };
 

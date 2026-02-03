@@ -64,7 +64,7 @@ const Login = () => {
         const token = response.data?.token;
         const profiles = user?.profiles || [];
         const hasActiveSubscription = user?.hasActiveSubscription || false;
-        const allowedProfiles = user?.allowedProfiles || 0;
+        const allowedProfiles = user?.subscription?.profilesAllowed || 0;
         const purchasedCourses = user?.purchasedItems?.courses?.map(c => c.courseId || c._id) || [];
         const userIsVerified = user?.verified === true;
 
@@ -80,7 +80,7 @@ const Login = () => {
         loginHandler(
           token,
           user,
-          hasActiveSubscription && allowedProfiles > 0,
+          hasActiveSubscription ? allowedProfiles : 0,
           purchasedCourses,
           profiles
         );
@@ -112,11 +112,20 @@ const Login = () => {
           setPasswordInput("");
 
           if (hasActiveSubscription && profiles.length > 0) {
-            navigation.navigate("MyProfiles");
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "MyProfiles" }],
+            });
           } else if (purchasedCourses.length > 0) {
-            navigation.navigate("MyCourses");
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Main" }, { name: "MyCourses" }],
+            });
           } else {
-            navigation.navigate("Plans");
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Main" }, { name: "Plans" }],
+            });
           }
         }
       } else {
@@ -258,6 +267,14 @@ const Login = () => {
               <Text style={styles.registerLink}>{t("auth.login.createAccount")}</Text>
             </TouchableOpacity>
           </View>
+
+          {/* Gift Code Link */}
+          <TouchableOpacity
+            style={styles.giftCodeContainer}
+            onPress={() => navigation.navigate("GiftCode")}
+          >
+            <Text style={styles.giftCodeText}>{t("gift.have_gift_code")}</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -411,6 +428,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   registerLink: {
+    color: COLORS.primary,
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  giftCodeContainer: {
+    alignItems: "center",
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255,255,255,0.1)",
+  },
+  giftCodeText: {
     color: COLORS.primary,
     fontSize: 14,
     fontWeight: "500",

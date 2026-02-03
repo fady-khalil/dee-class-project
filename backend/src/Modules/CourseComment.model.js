@@ -7,10 +7,21 @@ const courseCommentSchema = new mongoose.Schema(
       ref: "Course",
       required: true,
     },
+    // Store the profile ID (subdocument _id from user's profiles array)
+    profile: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: false, // Not required for backward compatibility with old comments
+    },
+    // Also store the user ID for reference
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    // Store the profile name for display (denormalized for performance)
+    profileName: {
+      type: String,
+      required: false, // Not required for backward compatibility with old comments
     },
     comment: {
       type: String,

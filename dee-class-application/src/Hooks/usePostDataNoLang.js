@@ -79,4 +79,5 @@ const usePostDataNoLang = () => {
   return { data, isLoading, isError, validationErrors, responseInfo, postData };
 };
 
+export { usePostDataNoLang };
 export default usePostDataNoLang;

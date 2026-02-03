@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { I18nText, I18nView } from "../../../components/common/I18nComponents";
 import COLORS from "../../../styles/colors";
 import Icon from "react-native-vector-icons/Ionicons";
+import BASE_URL from "../../../config/BASE_URL";
 
 const CoursesList = ({ courses }) => {
   const { t } = useTranslation();
@@ -26,8 +27,24 @@ const CoursesList = ({ courses }) => {
     navigation.navigate("CourseDetail", { slug });
   };
 
+  // Get the best available thumbnail for a course
+  const getCourseImage = (item) => {
+    // First try trailer thumbnail
+    if (item.trailer?.assets?.thumbnail) {
+      return item.trailer.assets.thumbnail;
+    }
+    // Then try course image with BASE_URL
+    if (item.image) {
+      if (item.image.startsWith("http")) {
+        return item.image;
+      }
+      return `${BASE_URL.replace("/api", "")}/${item.image}`;
+    }
+    return null;
+  };
+
   const renderCourseItem = ({ item, index }) => {
-    const hasThumbnail = item.image;
+    const imageUrl = getCourseImage(item);
 
     return (
       <TouchableOpacity
@@ -36,11 +53,9 @@ const CoursesList = ({ courses }) => {
         activeOpacity={0.7}
       >
         <View style={styles.thumbnailContainer}>
-          {hasThumbnail ? (
+          {imageUrl ? (
             <Image
-              source={{
-                uri: item.image,
-              }}
+              source={{ uri: imageUrl }}
               style={styles.thumbnail}
               resizeMode="cover"
             />
@@ -56,9 +71,6 @@ const CoursesList = ({ courses }) => {
               </Text>
             </View>
           )}
-          <View style={styles.badgeContainer}>
-            <Text style={styles.badge}>{index + 1}</Text>
-          </View>
         </View>
         <View style={styles.courseInfo}>
           <Text style={styles.courseName} numberOfLines={2}>
@@ -156,22 +168,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
     marginTop: 8,
-  },
-  badgeContainer: {
-    position: "absolute",
-    top: 12,
-    right: 12,
-    backgroundColor: COLORS.primary,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  badge: {
-    color: COLORS.white,
-    fontSize: 14,
-    fontWeight: "bold",
   },
   courseInfo: {
     padding: 16,

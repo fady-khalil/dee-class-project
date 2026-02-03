@@ -13,6 +13,7 @@ const useFetch = () => {
   const [isError, setIsError] = useState(null);
 
   const fetchData = async (url, token = null) => {
+    console.log(`${BASE_URL}/${i18n.language}/${url}`);
     setIsLoading(true);
     const headers = {
       "Content-Type": "application/json",
@@ -24,18 +25,27 @@ const useFetch = () => {
     }
 
     try {
-      const response = await fetch(`${BASE_URL}/${i18n.language}/${url}`, {
+      const fullUrl = `${BASE_URL}/${i18n.language}/${url}`;
+      console.log("Fetching:", fullUrl);
+
+      const response = await fetch(fullUrl, {
         headers,
       });
 
+      console.log("Response status:", response.status);
+
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorText = await response.text();
+        console.log("Error response:", errorText);
+        throw new Error(`Network response was not ok: ${response.status}`);
       }
 
       const result = await response.json();
+      console.log("Fetch result:", result?.success);
       setData(result);
       return result;
     } catch (error) {
+      console.log("Fetch error:", error.message);
       setIsError(error);
       return null;
     } finally {

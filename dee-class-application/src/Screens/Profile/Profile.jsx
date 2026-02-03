@@ -49,209 +49,176 @@ const Profile = () => {
     setShowLogoutModal(false);
   };
 
-  const handleManageProfiles = () => {
-    navigation.navigate("MyProfiles");
-  };
+  // Check if email is verified
+  const emailVerified = isVerified || user?.verified || user?.email_verified;
 
-  const handleCompleteRegistration = () => {
-    navigation.navigate("Plans");
-  };
-
-  const handleVerifyEmail = () => {
-    navigation.navigate("VerifyEmail", { email: user?.email });
-  };
-
-  const handleCheckCourses = () => {
-    navigation.navigate("MyCourses");
-  };
-
-  const handleDownloadsPress = () => {
-    navigation.navigate("Downloads");
-  };
+  // Check if user has active subscription (handle string/number)
+  const hasActiveSubscription = Number(allowedProfiles) > 0;
 
   // Get first letter of name for avatar
   const getInitial = () => {
-    const name = selectedUserState?.name || user?.email || "User";
+    const name = selectedUserState?.name || user?.fullName || user?.email || "User";
     return name.charAt(0).toUpperCase();
   };
 
-  const renderActionButton = () => {
-    // First check if email is verified (API returns 'verified' not 'email_verified')
-    const emailVerified = isVerified || user?.verified || user?.email_verified;
-
-    // Scenario 1: Email not verified - show verify email button
-    if (!emailVerified) {
-      return (
-        <TouchableOpacity
-          style={[styles.actionButton, { marginTop: 8 }]}
-          onPress={handleVerifyEmail}
-        >
-          <Icon
-            name="mail"
-            size={22}
-            color={COLORS.primary}
-            style={styles.actionIcon}
-          />
-          <Text style={styles.actionText}>
-            {t("verify_email.title")}
-          </Text>
-          <Icon
-            name="chevron-right"
-            size={20}
-            color={COLORS.darkWhite}
-            style={styles.chevron}
-          />
-        </TouchableOpacity>
-      );
-    }
-
-    // Scenario 2: Has specific courses (purchased individually) - show Check My Courses
-    if (allowedCourses?.length > 0) {
-      return (
-        <TouchableOpacity
-          style={[styles.actionButton, { marginTop: 8 }]}
-          onPress={handleCheckCourses}
-        >
-          <Icon
-            name="book"
-            size={22}
-            color={COLORS.white}
-            style={styles.actionIcon}
-          />
-          <Text style={styles.actionText}>
-            {t("general.check_my_courses")}
-          </Text>
-          <Icon
-            name="chevron-right"
-            size={20}
-            color={COLORS.darkWhite}
-            style={styles.chevron}
-          />
-        </TouchableOpacity>
-      );
-    }
-
-    // Scenario 3: Has active plan (allowedProfiles > 0) - show My Profiles
-    if (allowedProfiles > 0) {
-      return (
-        <TouchableOpacity
-          style={[styles.actionButton, { marginTop: 8 }]}
-          onPress={handleManageProfiles}
-        >
-          <Icon
-            name="users"
-            size={22}
-            color={COLORS.white}
-            style={styles.actionIcon}
-          />
-          <Text style={styles.actionText}>{t("general.my_profiles")}</Text>
-          <Icon
-            name="chevron-right"
-            size={20}
-            color={COLORS.darkWhite}
-            style={styles.chevron}
-          />
-        </TouchableOpacity>
-      );
-    }
-
-    // Scenario 4: Verified but no plan and no courses - show Complete Registration (go to Plans)
-    return (
-      <TouchableOpacity
-        style={[styles.actionButton, { marginTop: 8 }]}
-        onPress={handleCompleteRegistration}
-      >
-        <Icon
-          name="user-plus"
-          size={22}
-          color={COLORS.white}
-          style={styles.actionIcon}
-        />
-        <Text style={styles.actionText}>
-          {t("general.complete_registration")}
-        </Text>
-        <Icon
-          name="chevron-right"
-          size={20}
-          color={COLORS.darkWhite}
-          style={styles.chevron}
-        />
-      </TouchableOpacity>
-    );
-  };
+  // Menu item component
+  const MenuItem = ({ icon, iconType = "feather", title, onPress, showBadge, badgeCount, textColor, iconColor }) => (
+    <TouchableOpacity style={styles.menuItem} onPress={onPress}>
+      {iconType === "feather" ? (
+        <Icon name={icon} size={22} color={iconColor || COLORS.white} style={styles.menuIcon} />
+      ) : (
+        <MaterialIcon name={icon} size={22} color={iconColor || COLORS.white} style={styles.menuIcon} />
+      )}
+      <Text style={[styles.menuText, textColor && { color: textColor }]}>{title}</Text>
+      {showBadge && badgeCount > 0 && (
+        <View style={styles.badgeContainer}>
+          <Text style={styles.badgeText}>{badgeCount}</Text>
+        </View>
+      )}
+      <Icon name="chevron-right" size={20} color={textColor || COLORS.darkWhite} style={styles.chevron} />
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
-      <StatusBar
-        backgroundColor={COLORS.backgroundColor}
-        barStyle="light-content"
-      />
+      <StatusBar backgroundColor={COLORS.backgroundColor} barStyle="light-content" />
 
       {/* Header Section */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{t("screens.settings")}</Text>
       </View>
 
-      {/* Profile Info Section */}
-      <View style={styles.profileSection}>
-        <View style={styles.avatarContainer}>
-          <Text style={styles.avatarText}>{getInitial()}</Text>
-        </View>
-        <Text style={styles.userName}>
-          {selectedUserState?.name || user?.email || "User"}
-        </Text>
-        <Text style={styles.userSubtitle}>{t("general.login_subtitle")}</Text>
-      </View>
-
-      {/* Actions Section */}
-      <View style={styles.actionsContainer}>
-        {renderActionButton()}
-
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={handleDownloadsPress}
-        >
-          <MaterialIcon
-            name="download"
-            size={22}
-            color={COLORS.white}
-            style={styles.actionIcon}
-          />
-          <Text style={styles.actionText}>{t("downloads.screen_title")}</Text>
-          {downloadedCourses.length > 0 && (
-            <View style={styles.badgeContainer}>
-              <Text style={styles.badgeText}>{downloadedCourses.length}</Text>
-            </View>
-          )}
-          <Icon
-            name="chevron-right"
-            size={20}
-            color={COLORS.darkWhite}
-            style={styles.chevron}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.actionButton, { marginTop: 8, borderBottomWidth: 0 }]}
-          onPress={handleLogout}
-        >
-          <Icon
-            name="log-out"
-            size={22}
-            color="#FF5A5A"
-            style={styles.actionIcon}
-          />
-          <Text style={[styles.actionText, { color: "#FF5A5A" }]}>
-            {t("screens.logout")}
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        {/* Profile Info Section */}
+        <View style={styles.profileSection}>
+          <View style={styles.avatarContainer}>
+            <Text style={styles.avatarText}>{getInitial()}</Text>
+          </View>
+          <Text style={styles.userName}>
+            {selectedUserState?.name || user?.fullName || user?.email || "User"}
           </Text>
-          <Icon
-            name="chevron-right"
-            size={20}
-            color="#FF5A5A"
-            style={[styles.chevron, { opacity: 0.7 }]}
-          />
-        </TouchableOpacity>
-      </View>
+          <Text style={styles.userEmail}>{user?.email}</Text>
+        </View>
+
+        {/* Not Verified Warning */}
+        {!emailVerified && (
+          <TouchableOpacity
+            style={styles.verifyWarning}
+            onPress={() => navigation.navigate("VerifyEmail", { email: user?.email })}
+          >
+            <Icon name="alert-circle" size={20} color="#F59E0B" />
+            <View style={styles.verifyWarningContent}>
+              <Text style={styles.verifyWarningTitle}>{t("verify_email.title")}</Text>
+              <Text style={styles.verifyWarningText}>{t("account.verify_email_first")}</Text>
+            </View>
+            <Icon name="chevron-right" size={20} color="#F59E0B" />
+          </TouchableOpacity>
+        )}
+
+        {/* Account Section */}
+        {emailVerified && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t("account.profile_section")}</Text>
+            <View style={styles.menuCard}>
+              <MenuItem
+                icon="edit-2"
+                title={t("account.edit_profile")}
+                onPress={() => navigation.navigate("EditProfile")}
+              />
+              <MenuItem
+                icon="lock"
+                title={t("account.change_password")}
+                onPress={() => navigation.navigate("ChangePassword")}
+              />
+            </View>
+          </View>
+        )}
+
+        {/* Subscription Section - only if has plan */}
+        {emailVerified && hasActiveSubscription && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t("account.subscription_section")}</Text>
+            <View style={styles.menuCard}>
+              <MenuItem
+                icon="card-membership"
+                iconType="material"
+                title={t("account.my_subscription")}
+                onPress={() => navigation.navigate("SubscriptionDetails")}
+              />
+              <MenuItem
+                icon="users"
+                title={t("account.manage_profiles")}
+                onPress={() => navigation.navigate("MyProfiles")}
+              />
+              <MenuItem
+                icon="card-giftcard"
+                iconType="material"
+                title={t("gift_plan.title")}
+                onPress={() => navigation.navigate("GiftPlan")}
+              />
+            </View>
+          </View>
+        )}
+
+        {/* Courses Section - only if has purchased courses */}
+        {emailVerified && allowedCourses?.length > 0 && !hasActiveSubscription && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t("account.my_courses")}</Text>
+            <View style={styles.menuCard}>
+              <MenuItem
+                icon="book"
+                title={t("general.check_my_courses")}
+                onPress={() => navigation.navigate("MyCourses")}
+              />
+            </View>
+          </View>
+        )}
+
+        {/* Downloads Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t("downloads.screen_title")}</Text>
+          <View style={styles.menuCard}>
+            <MenuItem
+              icon="download"
+              iconType="material"
+              title={t("downloads.screen_title")}
+              onPress={() => navigation.navigate("Downloads")}
+              showBadge
+              badgeCount={downloadedCourses.length}
+            />
+          </View>
+        </View>
+
+        {/* No Plan Section - prompt to subscribe */}
+        {emailVerified && !hasActiveSubscription && allowedCourses?.length === 0 && (
+          <View style={styles.section}>
+            <View style={styles.subscribeCard}>
+              <MaterialIcon name="card-membership" size={32} color={COLORS.primary} />
+              <Text style={styles.subscribeTitle}>{t("account.no_subscription")}</Text>
+              <Text style={styles.subscribeText}>{t("account.no_subscription_desc")}</Text>
+              <TouchableOpacity
+                style={styles.subscribeButton}
+                onPress={() => navigation.navigate("Plans")}
+              >
+                <Text style={styles.subscribeButtonText}>{t("navigation.plans")}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
+        {/* Logout Section */}
+        <View style={[styles.section, { marginBottom: 40 }]}>
+          <View style={styles.menuCard}>
+            <MenuItem
+              icon="log-out"
+              title={t("account.logout")}
+              onPress={handleLogout}
+              textColor="#EF4444"
+              iconColor="#EF4444"
+            />
+          </View>
+        </View>
+      </ScrollView>
 
       {/* App Version */}
       <View style={styles.versionContainer}>
@@ -268,25 +235,19 @@ const Profile = () => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>{t("general.confirm_logout")}</Text>
-            <Text style={styles.modalMessage}>
-              {t("general.logout_message")}
-            </Text>
+            <Text style={styles.modalMessage}>{t("general.logout_message")}</Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={[styles.modalButton, styles.cancelButton]}
                 onPress={cancelLogout}
               >
-                <Text style={styles.cancelButtonText}>
-                  {t("general.cancel")}
-                </Text>
+                <Text style={styles.cancelButtonText}>{t("general.cancel")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modalButton, styles.confirmButton]}
                 onPress={confirmLogout}
               >
-                <Text style={styles.confirmButtonText}>
-                  {t("general.logout")}
-                </Text>
+                <Text style={styles.confirmButtonText}>{t("general.logout")}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -303,18 +264,22 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingTop: 60,
-    paddingBottom: 20,
+    paddingBottom: 16,
     paddingHorizontal: 20,
     alignItems: "center",
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "700",
     color: COLORS.white,
   },
+  scrollView: {
+    flex: 1,
+  },
   profileSection: {
     alignItems: "center",
-    paddingVertical: 30,
+    paddingVertical: 24,
+    paddingHorizontal: 20,
   },
   avatarContainer: {
     width: 80,
@@ -331,49 +296,127 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   userName: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "600",
     color: COLORS.white,
     marginBottom: 4,
   },
-  userSubtitle: {
+  userEmail: {
     fontSize: 14,
     color: COLORS.darkWhite,
-    opacity: 0.8,
-    textAlign: "center",
-    paddingHorizontal: 40,
   },
-  actionsContainer: {
-    marginTop: 20,
-    paddingHorizontal: 20,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-  },
-  actionButton: {
+  verifyWarning: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    backgroundColor: "rgba(245, 158, 11, 0.15)",
+    marginHorizontal: 16,
+    marginBottom: 16,
     padding: 16,
     borderRadius: 12,
-    marginVertical: 4,
-    width: "100%",
+    borderWidth: 1,
+    borderColor: "rgba(245, 158, 11, 0.3)",
   },
-  actionIcon: {
-    marginRight: 16,
-  },
-  actionText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: "500",
+  verifyWarningContent: {
     flex: 1,
+    marginHorizontal: 12,
+  },
+  verifyWarningTitle: {
+    color: "#F59E0B",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  verifyWarningText: {
+    color: "#F59E0B",
+    fontSize: 12,
+    opacity: 0.8,
+    marginTop: 2,
+  },
+  section: {
+    marginHorizontal: 16,
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    color: COLORS.darkWhite,
+    fontSize: 13,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: 10,
+    marginLeft: 4,
+  },
+  menuCard: {
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255, 255, 255, 0.05)",
+  },
+  menuIcon: {
+    marginRight: 14,
+  },
+  menuText: {
+    flex: 1,
+    color: COLORS.white,
+    fontSize: 15,
+    fontWeight: "500",
   },
   chevron: {
     opacity: 0.5,
   },
+  badgeContainer: {
+    backgroundColor: COLORS.primary,
+    minWidth: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+    paddingHorizontal: 6,
+  },
+  badgeText: {
+    color: COLORS.white,
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  subscribeCard: {
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 12,
+    padding: 24,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: COLORS.primary + "30",
+  },
+  subscribeTitle: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: "600",
+    marginTop: 12,
+    marginBottom: 6,
+  },
+  subscribeText: {
+    color: COLORS.darkWhite,
+    fontSize: 13,
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  subscribeButton: {
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 10,
+  },
+  subscribeButtonText: {
+    color: COLORS.white,
+    fontSize: 14,
+    fontWeight: "600",
+  },
   versionContainer: {
-    position: "absolute",
-    bottom: 20,
-    width: "100%",
+    paddingVertical: 16,
     alignItems: "center",
   },
   versionText: {
@@ -395,14 +438,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.2)",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 10,
   },
   modalTitle: {
     fontSize: 20,
@@ -431,7 +466,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.15)",
   },
   confirmButton: {
-    backgroundColor: "#FF5A5A",
+    backgroundColor: "#EF4444",
   },
   cancelButtonText: {
     color: "#FFFFFF",
@@ -444,21 +479,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     fontWeight: "500",
-  },
-  badgeContainer: {
-    backgroundColor: COLORS.primary,
-    minWidth: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 10,
-    paddingHorizontal: 6,
-  },
-  badgeText: {
-    color: COLORS.white,
-    fontSize: 12,
-    fontWeight: "bold",
   },
 });
 

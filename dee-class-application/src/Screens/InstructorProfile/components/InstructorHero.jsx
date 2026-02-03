@@ -13,6 +13,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { I18nText, I18nView } from "../../../components/common/I18nComponents";
 import COLORS from "../../../styles/colors";
 import { GlobalStyle } from "../../../styles/GlobalStyle";
+import BASE_URL from "../../../config/BASE_URL";
 
 const { width } = Dimensions.get("window");
 
@@ -31,6 +32,16 @@ const InstructorHero = ({ data }) => {
     }
   };
 
+  // Build full image URL - remove /api from BASE_URL for static files
+  const getImageUrl = () => {
+    const imagePath = data?.profileImage || data?.image;
+    if (!imagePath) return null;
+    if (imagePath.startsWith("http")) return imagePath;
+    return `${BASE_URL.replace("/api", "")}/${imagePath}`;
+  };
+
+  const imageUrl = getImageUrl();
+
   if (!data) {
     return (
       <I18nView style={[styles.container, styles.loadingContainer]}>
@@ -45,7 +56,7 @@ const InstructorHero = ({ data }) => {
         {/* Instructor Image */}
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: data?.image || "https://via.placeholder.com/130" }}
+            source={{ uri: imageUrl || "https://via.placeholder.com/130" }}
             style={styles.image}
             resizeMode="cover"
           />
@@ -64,65 +75,35 @@ const InstructorHero = ({ data }) => {
           </Text>
 
           {/* Social Media Icons */}
-          {data?.social_media_links && (
+          {(data?.facebook || data?.instagram || data?.linkedin) && (
             <View style={styles.socialContainer}>
-              {data.social_media_links.facebook && (
+              {data?.facebook && (
                 <TouchableOpacity
                   style={styles.socialButton}
-                  onPress={() =>
-                    handleOpenLink(data.social_media_links.facebook)
-                  }
+                  onPress={() => handleOpenLink(data.facebook)}
                   activeOpacity={0.7}
                 >
                   <Icon name="logo-facebook" size={22} color={COLORS.white} />
                 </TouchableOpacity>
               )}
 
-              {data.social_media_links.instagram && (
+              {data?.instagram && (
                 <TouchableOpacity
                   style={styles.socialButton}
-                  onPress={() =>
-                    handleOpenLink(data.social_media_links.instagram)
-                  }
+                  onPress={() => handleOpenLink(data.instagram)}
                   activeOpacity={0.7}
                 >
                   <Icon name="logo-instagram" size={22} color={COLORS.white} />
                 </TouchableOpacity>
               )}
 
-              {data.social_media_links.linkedin && (
+              {data?.linkedin && (
                 <TouchableOpacity
                   style={styles.socialButton}
-                  onPress={() =>
-                    handleOpenLink(data.social_media_links.linkedin)
-                  }
+                  onPress={() => handleOpenLink(data.linkedin)}
                   activeOpacity={0.7}
                 >
                   <Icon name="logo-linkedin" size={22} color={COLORS.white} />
-                </TouchableOpacity>
-              )}
-
-              {data.social_media_links.twitter && (
-                <TouchableOpacity
-                  style={styles.socialButton}
-                  onPress={() =>
-                    handleOpenLink(data.social_media_links.twitter)
-                  }
-                  activeOpacity={0.7}
-                >
-                  <Icon name="logo-twitter" size={22} color={COLORS.white} />
-                </TouchableOpacity>
-              )}
-
-              {data.social_media_links.youtube && (
-                <TouchableOpacity
-                  style={styles.socialButton}
-                  onPress={() =>
-                    handleOpenLink(data.social_media_links.youtube)
-                  }
-                  activeOpacity={0.7}
-                >
-                  <Icon name="logo-youtube" size={22} color={COLORS.white} />
                 </TouchableOpacity>
               )}
             </View>

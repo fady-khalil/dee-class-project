@@ -263,12 +263,14 @@ export const LoginAuthProvider = ({ children }) => {
           const storedAllowedProfiles = await AsyncStorage.getItem(
             "allowedProfiles"
           );
-          if (storedAllowedProfiles && storedAllowedProfiles !== "undefined") {
-            setAllowedProfiles(storedAllowedProfiles);
-
-            // Set authenticated if profiles are allowed
-            if (storedAllowedProfiles !== "false") {
+          if (storedAllowedProfiles && storedAllowedProfiles !== "undefined" && storedAllowedProfiles !== "false") {
+            // Parse as number to ensure proper comparison
+            const parsedProfiles = parseInt(storedAllowedProfiles, 10);
+            if (!isNaN(parsedProfiles) && parsedProfiles > 0) {
+              setAllowedProfiles(parsedProfiles);
               setIsAuthenticated(true);
+            } else {
+              setAllowedProfiles(0);
             }
           }
 
@@ -337,6 +339,12 @@ export const LoginAuthProvider = ({ children }) => {
     }
   };
 
+  // Check if user can download based on subscription
+  const canDownload = user?.subscription?.canDownload === true &&
+    user?.subscription?.status === "active" &&
+    user?.subscription?.currentPeriodEnd &&
+    new Date(user.subscription.currentPeriodEnd) > new Date();
+
   const contextValue = {
     isLoggedIn,
     user,
@@ -347,6 +355,7 @@ export const LoginAuthProvider = ({ children }) => {
     selectedUser,
     isAuthenticated,
     isVerified,
+    canDownload,
     setToken,
     setProfiles,
     setSelectedUserState,

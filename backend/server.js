@@ -35,7 +35,10 @@ import expertApplicationRoute from "./src/Routes/ExpertApplicationRoute.js";
 import planRoute, { adminPlanRouter } from "./src/Routes/PlanRoute.js";
 import stripeRoute, { protectedStripeRouter } from "./src/Routes/StripeRoute.js";
 import profileRoute from "./src/Routes/ProfileRoute.js";
+import accountRoute from "./src/Routes/AccountRoute.js";
+import giftRoute, { protectedGiftRouter } from "./src/Routes/GiftRoute.js";
 import { handleWebhook } from "./src/Controllers/StripeController.js";
+import { Identifier } from "./src/middlewares/Identifications.js";
 
 const port = process.env.PORT || 5001;
 const app = express();
@@ -125,6 +128,10 @@ app.use("/api/expert-application", expertApplicationRoute);
 app.use("/api", stripeRoute); // create-checkout-session, webhook/refresh-data
 app.use("/api/subscription", protectedStripeRouter); // subscription-status, cancel-subscription, portal-session
 
+// Gift routes (no language parameter)
+app.use("/api/gift", giftRoute); // validate, redeem, purchase, verify-purchase
+app.use("/api/gift", Identifier, protectedGiftRouter); // my-gifts (requires auth)
+
 // Profile routes (no language parameter)
 app.use("/api", profileRoute); // create-profile, edit-profile, delete-profile, profiles
 
@@ -144,6 +151,8 @@ app.use("/api/:language/packages", languageMiddleware, planRoute);
 app.use("/api/:language", languageMiddleware, courseEngagementRoute);
 // Profile routes with language (for profile-for-you endpoint)
 app.use("/api/:language", languageMiddleware, profileRoute);
+// Account routes (edit profile, subscription details)
+app.use("/api/:language/account", languageMiddleware, accountRoute);
 
 // Regular API routes (without language in URL)
 // Fallback routes for backward compatibility - these should use language middleware too

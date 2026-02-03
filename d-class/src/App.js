@@ -31,6 +31,14 @@ import AuthCallback from "Pages/Auth/Register/AuthCallback";
 import Login from "Pages/Auth/login/Login";
 import VerifyEmail from "Pages/Auth/VerifyEmail/VerifyEmail";
 import ForgotPassword from "Pages/Auth/ForgotPassword/ForgotPassword";
+// gift
+import GiftCode from "Pages/Gift/GiftCode";
+import GiftLogin from "Pages/Gift/GiftLogin";
+import GiftRegister from "Pages/Gift/GiftRegister";
+import GiftVerifyEmail from "Pages/Gift/GiftVerifyEmail";
+import GiftSuccess from "Pages/Gift/GiftSuccess";
+import GiftPlan from "Pages/Gift/GiftPlan";
+import GiftPurchaseSuccess from "Pages/Gift/GiftPurchaseSuccess";
 // general
 import NotFound from "Pages/General/NotFound";
 import Success from "Pages/Success";
@@ -116,6 +124,13 @@ const App = () => {
           element={<WatchPlaylist />}
         />
         <Route path="/course/watch-single/:slug" element={<WatchSingle />} />
+        {/* Gift routes - available for both authenticated and unauthenticated users */}
+        <Route path="/gift" element={<GiftCode />} />
+        <Route path="/gift/login" element={<GiftLogin />} />
+        <Route path="/gift/register" element={<GiftRegister />} />
+        <Route path="/gift/verify-email" element={<GiftVerifyEmail />} />
+        <Route path="/gift/success" element={<GiftSuccess />} />
+
         {/* Conditional routes based on authentication status */}
         {isAuthenticated ? (
           <>
@@ -124,6 +139,9 @@ const App = () => {
             <Route path="/my-profiles" element={<ManageProfiles />} />
             <Route path="/my-account" element={<MyAccount />} />
             <Route path="/my-progress" element={<MyProgress />} />
+            {/* Gift plan purchase - only for authenticated users */}
+            <Route path="/gift/plan" element={<GiftPlan />} />
+            <Route path="/gift/purchase-success" element={<GiftPurchaseSuccess />} />
           </>
         ) : (
           <>

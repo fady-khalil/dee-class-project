@@ -16,6 +16,12 @@ export const linking = {
           type: (type) => type,
         },
       },
+      GiftPurchaseSuccess: {
+        path: "gift/success",
+        parse: {
+          session_id: (session_id) => session_id,
+        },
+      },
       Main: {
         screens: {
           Home: "home",

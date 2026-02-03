@@ -1,10 +1,21 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
-import { AntDesign } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { useDownload } from "../../context/Download/DownloadContext";
+import COLORS from "../../styles/colors";
 
 const OfflineScreen = () => {
   const { t } = useTranslation();
+  const navigation = useNavigation();
+  const { downloadedCourses } = useDownload();
+
+  const hasDownloads = downloadedCourses && downloadedCourses.length > 0;
+
+  const handleViewDownloads = () => {
+    navigation.navigate("Downloads");
+  };
 
   return (
     <View style={styles.container}>
@@ -15,8 +26,25 @@ const OfflineScreen = () => {
             <View style={styles.iconSlash} />
           </View>
         </View>
-        <Text style={styles.title}>{t("navigation.offline_status")}</Text>
-        <Text style={styles.message}>{t("navigation.offline_message")}</Text>
+        <Text style={styles.title}>{t("downloads.offline_banner_title")}</Text>
+        <Text style={styles.message}>
+          {hasDownloads
+            ? t("downloads.offline_banner_message")
+            : t("downloads.offline_banner_empty")}
+        </Text>
+
+        {hasDownloads && (
+          <TouchableOpacity
+            style={styles.downloadButton}
+            onPress={handleViewDownloads}
+            activeOpacity={0.7}
+          >
+            <MaterialIcons name="download" size={20} color={COLORS.white} />
+            <Text style={styles.downloadButtonText}>
+              {t("downloads.view_downloads")}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -70,6 +98,22 @@ const styles = StyleSheet.create({
     color: "#aaa",
     textAlign: "center",
     lineHeight: 22,
+  },
+  downloadButton: {
+    backgroundColor: COLORS.primary,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 10,
+    marginTop: 24,
+  },
+  downloadButtonText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
   },
 });
 

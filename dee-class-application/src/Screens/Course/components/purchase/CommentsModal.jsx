@@ -25,6 +25,9 @@ const CommentsModal = ({ isOpen, onClose, data, onCommentAdded }) => {
   const token = auth ? auth.token : null;
   const { postData: postComment, isLoading: commentLoading } = usePostData();
 
+  // Use the selected profile ID
+  const profileId = selectedUser?.id || selectedUser?._id;
+
   const [newComment, setNewComment] = useState("");
   const [localComments, setLocalComments] = useState([]);
   const [totalComments, setTotalComments] = useState(0);
@@ -70,7 +73,7 @@ const CommentsModal = ({ isOpen, onClose, data, onCommentAdded }) => {
       comment: comment.comment,
       profile_id: comment.profile_id,
       comment_by: comment.comment_by,
-      my_comment: comment.profile_id === selectedUser?.id,
+      my_comment: comment.profile_id === profileId || comment.my_comment,
       created_at: comment.created_at,
       updated_at: comment.updated_at,
     }));
@@ -96,11 +99,11 @@ const CommentsModal = ({ isOpen, onClose, data, onCommentAdded }) => {
 
   // Handle comment submission
   const handleSubmitComment = async () => {
-    if (!newComment.trim() || !selectedUser?.id || commentLoading) return;
+    if (!newComment.trim() || !profileId || commentLoading) return;
 
     const body = {
-      course_id: data?.id,
-      profile_id: selectedUser.id,
+      course_id: data?.id || data?._id,
+      profile_id: profileId,
       comment: newComment.trim(),
     };
 
@@ -109,13 +112,13 @@ const CommentsModal = ({ isOpen, onClose, data, onCommentAdded }) => {
 
     try {
       const response = await postComment("comment-course", body, token);
-      //   console.log(response, "response from handleSubmitComment");
-      console.log(token, "   from handleSubmitComment");
-      console.log(body, "response from handleSubmitComment");
+      console.log(response, "response from handleSubmitComment");
 
-      if (response?.success && response?.comments) {
+      // Backend returns { success: true, data: { comments: [...] } }
+      const comments = response?.data?.comments || response?.comments;
+      if (response?.success && comments) {
         // Transform comments from API to match our format
-        let apiComments = transformComments(response.comments);
+        let apiComments = transformComments(comments);
 
         // Determine if the API is returning oldest-first or newest-first
         const isNewestFirst =
@@ -131,7 +134,7 @@ const CommentsModal = ({ isOpen, onClose, data, onCommentAdded }) => {
 
         // Update local state
         setLocalComments(apiComments);
-        setTotalComments(apiComments.length);
+        setTotalComments(comments.length);
 
         // Reset to show first 10 comments (which includes the new one at top)
         setDisplayedComments(Math.min(10, apiComments.length));

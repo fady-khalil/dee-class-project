@@ -349,17 +349,24 @@ async function handleCheckoutComplete(session) {
   }
 
   // Update user subscription
+  const periodStart = subscription.current_period_start
+    ? new Date(subscription.current_period_start * 1000)
+    : new Date();
+  const periodEnd = subscription.current_period_end
+    ? new Date(subscription.current_period_end * 1000)
+    : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
   await User.findByIdAndUpdate(userId, {
     subscription: {
       planId: plan._id,
       status: "active",
       stripeCustomerId: session.customer,
       stripeSubscriptionId: subscription.id,
-      currentPeriodStart: new Date(subscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+      currentPeriodStart: periodStart,
+      currentPeriodEnd: periodEnd,
       profilesAllowed: plan.profilesAllowed,
       canDownload: plan.canDownload,
-      cancelAtPeriodEnd: subscription.cancel_at_period_end,
+      cancelAtPeriodEnd: subscription.cancel_at_period_end || false,
     },
   });
 
@@ -393,12 +400,20 @@ async function handleSubscriptionUpdated(subscription) {
   }
 
   // Update subscription details
-  await User.findByIdAndUpdate(user._id, {
+  const updateData = {
     "subscription.status": status,
-    "subscription.currentPeriodStart": new Date(subscription.current_period_start * 1000),
-    "subscription.currentPeriodEnd": new Date(subscription.current_period_end * 1000),
     "subscription.cancelAtPeriodEnd": subscription.cancel_at_period_end,
-  });
+  };
+
+  // Only update dates if they exist
+  if (subscription.current_period_start) {
+    updateData["subscription.currentPeriodStart"] = new Date(subscription.current_period_start * 1000);
+  }
+  if (subscription.current_period_end) {
+    updateData["subscription.currentPeriodEnd"] = new Date(subscription.current_period_end * 1000);
+  }
+
+  await User.findByIdAndUpdate(user._id, updateData);
 
   console.log(`Updated subscription for user ${user._id}`);
 }
@@ -451,11 +466,18 @@ async function handleInvoicePaid(invoice) {
   }
 
   // Update subscription period
-  await User.findByIdAndUpdate(user._id, {
+  const updateData = {
     "subscription.status": "active",
-    "subscription.currentPeriodStart": new Date(subscription.current_period_start * 1000),
-    "subscription.currentPeriodEnd": new Date(subscription.current_period_end * 1000),
-  });
+  };
+
+  if (subscription.current_period_start) {
+    updateData["subscription.currentPeriodStart"] = new Date(subscription.current_period_start * 1000);
+  }
+  if (subscription.current_period_end) {
+    updateData["subscription.currentPeriodEnd"] = new Date(subscription.current_period_end * 1000);
+  }
+
+  await User.findByIdAndUpdate(user._id, updateData);
 
   console.log(`Subscription renewed for user ${user._id}`);
 }

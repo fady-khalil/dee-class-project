@@ -17,6 +17,7 @@ import SeriesContent from "./components/details/SeriesContent";
 import SingleContent from "./components/details/SingleContent";
 import HeaderBack from "../../components/navigation/HeaderBack";
 import { useNetwork } from "../../context/Network";
+import { useDownload } from "../../context/Download/DownloadContext";
 
 /**
  * CourseContent - Watch screen for all course types
@@ -29,6 +30,7 @@ const CourseContent = ({ route, navigation }) => {
     video_id: resumeVideoId,
     time: resumeTime,
     timeSlap: resumeTimeSlap,
+    isOfflineMode = false,
   } = route.params;
   const { t } = useTranslation();
 
@@ -49,6 +51,10 @@ const CourseContent = ({ route, navigation }) => {
   const { fetchData } = useFetch();
   const { isAuthenticated, token, selectedUser, user } = useContext(LoginAuthContext);
   const { isConnected } = useNetwork();
+  const { getCourseDownloadInfo, getCourseBySlug } = useDownload();
+
+  // Offline playback state
+  const [offlineVideoUri, setOfflineVideoUri] = useState(null);
 
   // Track mounted state
   useEffect(() => {
@@ -58,26 +64,81 @@ const CourseContent = ({ route, navigation }) => {
     };
   }, []);
 
-  // Fetch course data
+  // Handle offline video loading when selectedVideo changes
+  useEffect(() => {
+    if (!isOfflineMode || !selectedVideo || !data) {
+      setOfflineVideoUri(null);
+      return;
+    }
+
+    const downloadInfo = getCourseDownloadInfo(data._id || data.id);
+    if (!downloadInfo || !downloadInfo.downloadedFiles) {
+      console.log("[CourseContent] No download info found for offline playback");
+      return;
+    }
+
+    // Find the matching video file based on type and index
+    let videoFile = null;
+
+    if (selectedVideo.type === "trailer") {
+      videoFile = downloadInfo.downloadedFiles.find(f => f.type === "trailer");
+    } else if (selectedVideo.type === "main") {
+      videoFile = downloadInfo.downloadedFiles.find(f => f.type === "main");
+    } else if (selectedVideo.type === "series") {
+      videoFile = downloadInfo.downloadedFiles.find(
+        f => f.type === "series" && f.index === selectedVideo.index
+      );
+    } else if (selectedVideo.type === "playlist") {
+      videoFile = downloadInfo.downloadedFiles.find(
+        f => f.type === "playlist" &&
+             f.chapterIndex === selectedVideo.chapterIndex &&
+             f.lessonIndex === selectedVideo.lessonIndex
+      );
+    }
+
+    if (videoFile && videoFile.localPath) {
+      console.log("[CourseContent] Using local video:", videoFile.localPath);
+      setOfflineVideoUri(videoFile.localPath);
+    } else {
+      console.log("[CourseContent] Video file not found in downloads");
+    }
+  }, [isOfflineMode, selectedVideo, data]);
+
+  // Fetch course data (or load from downloaded metadata in offline mode)
   const getCourse = async () => {
     try {
       if (!isMountedRef.current) return;
       setIsLoading(true);
 
-      // Build URL with profile_id for progress tracking
-      const profileId = selectedUser?.id || user?._id || user?.id;
-      const url = profileId
-        ? `courses/${slug}?profile_id=${profileId}`
-        : `courses/${slug}`;
+      let courseData = null;
 
-      console.log("[CourseContent] Fetching:", url);
-      const response = await fetchData(url, token);
+      // In offline mode, load from downloaded course data (stored when downloaded)
+      if (isOfflineMode) {
+        console.log("[CourseContent] Loading offline course data for slug:", slug);
+        courseData = getCourseBySlug(slug);
+        if (courseData) {
+          console.log("[CourseContent] Found offline course:", courseData.name);
+        } else {
+          console.log("[CourseContent] Offline course not found, will try online fetch");
+        }
+      }
+
+      // If not offline or course not found in downloads, fetch from API
+      if (!courseData) {
+        // Build URL with profile_id for progress tracking
+        const profileId = selectedUser?.id || user?._id || user?.id;
+        const url = profileId
+          ? `courses/${slug}?profile_id=${profileId}`
+          : `courses/${slug}`;
+
+        console.log("[CourseContent] Fetching:", url);
+        const response = await fetchData(url, token);
+        courseData = response?.data || response;
+      }
 
       // Check if still mounted after async operation
       if (!isMountedRef.current) return;
 
-      // Extract course data (API returns { data: courseData })
-      const courseData = response?.data || response;
       console.log("[CourseContent] Course type:", courseData?.course_type);
 
       setData(courseData);
@@ -377,7 +438,7 @@ const CourseContent = ({ route, navigation }) => {
       <View style={styles.playerContainer}>
         <VideoPlayer
           videoData={data}
-          videoId={selectedVideo?.videoId}
+          videoId={isOfflineMode ? null : selectedVideo?.videoId}
           courseId={data._id || data.id}
           courseSlug={slug}
           videoProgress={getVideoProgress(selectedVideo?.videoId)}
@@ -385,6 +446,8 @@ const CourseContent = ({ route, navigation }) => {
           onVideoCompleted={handleVideoCompleted}
           onProgressUpdate={handleProgressUpdate}
           thumbnail={selectedVideo?.thumbnail}
+          isOfflineMode={isOfflineMode}
+          localUri={offlineVideoUri}
         />
       </View>
 

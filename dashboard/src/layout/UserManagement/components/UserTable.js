@@ -12,7 +12,7 @@ import {
 } from '@coreui/react'
 import { Link } from 'react-router-dom'
 
-const UserTable = ({ users, loading, searchTerm, filters, handleViewCart }) => {
+const UserTable = ({ users, loading, searchTerm, filters }) => {
   const { verificationFilter, paymentFilter, itemsFilter } = filters
 
   if (loading) {
@@ -20,6 +20,25 @@ const UserTable = ({ users, loading, searchTerm, filters, handleViewCart }) => {
       <div className="text-center py-5">
         <CSpinner color="primary" />
       </div>
+    )
+  }
+
+  // Get subscription status badge
+  const getSubscriptionBadge = (user) => {
+    const status = user.subscription?.status
+    if (!status) {
+      return <CBadge color="secondary">No Plan</CBadge>
+    }
+    const colors = {
+      active: 'success',
+      cancelled: 'warning',
+      expired: 'danger',
+      past_due: 'danger',
+    }
+    return (
+      <CBadge color={colors[status] || 'secondary'}>
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </CBadge>
     )
   }
 
@@ -31,14 +50,14 @@ const UserTable = ({ users, loading, searchTerm, filters, handleViewCart }) => {
           <CTableHeaderCell>Email</CTableHeaderCell>
           <CTableHeaderCell>Phone</CTableHeaderCell>
           <CTableHeaderCell>Verification</CTableHeaderCell>
-          <CTableHeaderCell>Cart Status</CTableHeaderCell>
-          <CTableHeaderCell>Items</CTableHeaderCell>
+          <CTableHeaderCell>Subscription</CTableHeaderCell>
+          <CTableHeaderCell>Actions</CTableHeaderCell>
         </CTableRow>
       </CTableHead>
       <CTableBody>
         {users.length === 0 ? (
           <CTableRow>
-            <CTableDataCell colSpan="7" className="text-center">
+            <CTableDataCell colSpan="6" className="text-center">
               {searchTerm || verificationFilter || paymentFilter || itemsFilter
                 ? 'No users found matching your filters'
                 : 'No users found'}
@@ -47,49 +66,23 @@ const UserTable = ({ users, loading, searchTerm, filters, handleViewCart }) => {
         ) : (
           users.map((user) => (
             <CTableRow key={user._id}>
-              <CTableDataCell>{user.fullName}</CTableDataCell>
+              <CTableDataCell>{user.fullName || 'N/A'}</CTableDataCell>
               <CTableDataCell>{user.email}</CTableDataCell>
-              <CTableDataCell>{user.phoneNumber}</CTableDataCell>
+              <CTableDataCell>{user.phoneNumber || 'N/A'}</CTableDataCell>
               <CTableDataCell>
                 <CBadge color={user.verified ? 'success' : 'warning'}>
                   {user.verified ? 'Verified' : 'Not Verified'}
                 </CBadge>
               </CTableDataCell>
               <CTableDataCell>
-                {user.cartStatus ? (
-                  <CBadge
-                    color={
-                      user.cartStatus === 'pending'
-                        ? 'warning'
-                        : user.cartStatus === 'completed'
-                          ? 'success'
-                          : 'info'
-                    }
-                  >
-                    {user.cartStatus.charAt(0).toUpperCase() +
-                      user.cartStatus.slice(1)}
-                  </CBadge>
-                ) : (
-                  <CBadge color="light" textColor="dark">
-                    No Cart
-                  </CBadge>
-                )}
+                {getSubscriptionBadge(user)}
               </CTableDataCell>
               <CTableDataCell>
-                <div className="d-flex gap-1">
-                  <Link to={`/users/${user._id}/view`}>
-                    <CButton color="info" size="sm" className="text-white">
-                      View Details
-                    </CButton>
-                  </Link>
-                  <CButton
-                    color="secondary"
-                    size="sm"
-                    onClick={() => handleViewCart(user)}
-                  >
-                    View Cart
+                <Link to={`/users/${user._id}/view`}>
+                  <CButton color="info" size="sm" className="text-white">
+                    View Details
                   </CButton>
-                </div>
+                </Link>
               </CTableDataCell>
             </CTableRow>
           ))

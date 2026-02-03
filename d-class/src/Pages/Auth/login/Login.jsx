@@ -233,6 +233,16 @@ const Login = () => {
               {t("auth.login.createAccount")}
             </Link>
           </p>
+
+          {/* Gift Code Link */}
+          <div className="mt-6 pt-6 border-t border-gray-600">
+            <Link
+              to="/gift"
+              className="block text-center text-primary hover:text-primary/80 font-medium transition-colors text-sm"
+            >
+              {t("gift.have_gift_code")}
+            </Link>
+          </div>
         </div>
       </div>
 

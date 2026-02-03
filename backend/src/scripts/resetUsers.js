@@ -9,9 +9,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, "../../.env") });
 
-// Import User model
+// Import models
 import User from "../Modules/User.model.js";
 import Transaction from "../Modules/Transaction.model.js";
+import CourseLike from "../Modules/CourseLike.model.js";
+import CourseComment from "../Modules/CourseComment.model.js";
 
 // Create readline interface for input
 const rl = readline.createInterface({
@@ -31,17 +33,19 @@ const prompt = (question) => {
 const RESET_OPTIONS = {
   1: {
     name: "Delete ALL users",
-    description: "Completely removes all user accounts from the database",
+    description: "Completely removes all user accounts, transactions, likes, and comments",
     action: async () => {
       const result = await User.deleteMany({});
-      await Transaction.deleteMany({});
-      return `Deleted ${result.deletedCount} users and all transactions`;
+      const transResult = await Transaction.deleteMany({});
+      const likesResult = await CourseLike.deleteMany({});
+      const commentsResult = await CourseComment.deleteMany({});
+      return `Deleted ${result.deletedCount} users, ${transResult.deletedCount} transactions, ${likesResult.deletedCount} likes, ${commentsResult.deletedCount} comments`;
     },
   },
   2: {
     name: "Reset user data (keep accounts)",
     description:
-      "Keeps user accounts but clears purchases, subscriptions, profiles, and watch history",
+      "Keeps user accounts but clears purchases, subscriptions, profiles, likes, comments, and watch history",
     action: async () => {
       const result = await User.updateMany(
         {},
@@ -75,7 +79,9 @@ const RESET_OPTIONS = {
         }
       );
       await Transaction.deleteMany({});
-      return `Reset data for ${result.modifiedCount} users`;
+      const likesResult = await CourseLike.deleteMany({});
+      const commentsResult = await CourseComment.deleteMany({});
+      return `Reset data for ${result.modifiedCount} users, deleted ${likesResult.deletedCount} likes, ${commentsResult.deletedCount} comments`;
     },
   },
   3: {
@@ -105,7 +111,7 @@ const RESET_OPTIONS = {
   },
   4: {
     name: "Reset profiles only",
-    description: "Clears all user profiles and profile-related data",
+    description: "Clears all user profiles, likes, and comments (profile-related data)",
     action: async () => {
       const result = await User.updateMany(
         {},
@@ -115,7 +121,9 @@ const RESET_OPTIONS = {
           },
         }
       );
-      return `Reset profiles for ${result.modifiedCount} users`;
+      const likesResult = await CourseLike.deleteMany({});
+      const commentsResult = await CourseComment.deleteMany({});
+      return `Reset profiles for ${result.modifiedCount} users, deleted ${likesResult.deletedCount} likes, ${commentsResult.deletedCount} comments`;
     },
   },
   5: {

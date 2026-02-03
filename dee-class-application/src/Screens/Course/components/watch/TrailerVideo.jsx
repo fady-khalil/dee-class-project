@@ -18,6 +18,8 @@ import LessonCompletedBadge from "../../../../components/common/LessonCompletedB
 import COLORS from "../../../../styles/colors";
 import { LoginAuthContext } from "../../../../context/Authentication/LoginAuth";
 import { usePostData } from "../../../../Hooks/usePostData";
+import { usePostDataNoLang } from "../../../../Hooks/usePostDataNoLang";
+import useAuthFetchNoLang from "../../../../Hooks/useAuthFetchNoLang";
 import ActionButtons from "../purchase/ActionButtons";
 import PurchaseModal from "../purchase/PurchaseModal";
 import ApiVideoPlayer from "@api.video/react-native-player";
@@ -97,11 +99,14 @@ const TrailerVideo = ({
   // Context and hooks
   const auth = useContext(LoginAuthContext);
   const token = auth ? auth.token : null;
-  const selectedUser = auth ? auth.user : null;
+  const selectedUser = auth ? auth.selectedUser : null;
   const isAuthenticated = auth ? auth.isAuthenticated : false;
 
-  const { postData: addToPlaylist, isLoading: isAddLoading } = usePostData();
-  const { postData: fetchMyList, isLoading: myListLoading } = usePostData();
+  // My List hooks (use NoLang since profile routes don't have language prefix)
+  const { fetchData: fetchMyListCheck, isLoading: myListCheckLoading } = useAuthFetchNoLang();
+  const { postData: postMyListAdd, isLoading: myListAddLoading } = usePostDataNoLang();
+  const { postData: postMyListRemove, isLoading: myListRemoveLoading } = usePostDataNoLang();
+  const myListLoading = myListCheckLoading || myListAddLoading || myListRemoveLoading;
 
   // Check for offline video file
   useEffect(() => {
@@ -206,26 +211,23 @@ const TrailerVideo = ({
     }
   };
 
-  // Get user's course list
-  const getMyList = async () => {
-    if (!selectedUser?.id || !token || !isConnected) return;
+  // Check if course is in user's list
+  const checkMyList = async () => {
+    if (!selectedUser?.id || !token || !isConnected || !data?._id) return;
 
     try {
-      const body = {
-        profile_id: selectedUser.id,
-      };
-      const response = await fetchMyList("profile-list", body, token);
+      const response = await fetchMyListCheck(
+        `my-list/check?profile_id=${selectedUser.id}&course_id=${data._id}`,
+        token
+      );
 
-      if (response?.data?.length > 0) {
-        const found = response.data.some((item) => item?.slug === data?.slug);
-        setIsCourseInMyList(found);
+      if (response?.success) {
+        setIsCourseInMyList(response.data?.isInList || false);
       } else if (response?.message === "Unauthenticated.") {
-        // Handle unauthenticated error
         setAuthError("Unauthenticated.");
       }
     } catch (error) {
-      console.log("Error fetching my list:", error);
-      // Check for auth error but don't interrupt the UI flow
+      console.log("Error checking my list:", error);
       if (
         error?.message === "Unauthenticated." ||
         error?.response?.data?.message === "Unauthenticated."
@@ -257,19 +259,18 @@ const TrailerVideo = ({
       return;
     }
 
-    if (!selectedUser?.id || !token) return;
+    if (!selectedUser?.id || !token || !data?._id) return;
 
     try {
       const body = {
         profile_id: selectedUser.id,
-        course_slug: data?.slug,
+        course_id: data._id,
       };
-      const response = await addToPlaylist("add-profile-list", body, token);
+      const response = await postMyListAdd("my-list/add", body, token);
 
       if (response?.success) {
         setIsCourseInMyList(true);
       } else if (response?.message === "Unauthenticated.") {
-        // Handle unauthenticated error
         setAuthError("Unauthenticated.");
       }
     } catch (error) {
@@ -304,10 +305,10 @@ const TrailerVideo = ({
   };
 
   useEffect(() => {
-    if (isAuthenticated && selectedUser?.id && isConnected) {
-      getMyList();
+    if (isAuthenticated && selectedUser?.id && isConnected && data?._id) {
+      checkMyList();
     }
-  }, [isAuthenticated, selectedUser, isConnected]);
+  }, [isAuthenticated, selectedUser?.id, isConnected, data?._id]);
 
   const descriptionText = data?.description
     ? stripHtml(data.description)
@@ -427,7 +428,7 @@ const TrailerVideo = ({
           handleOpenCourseClick={handleOpenCourseClick}
           handleAddToPlaylist={handleAddToPlaylist}
           handleShare={handleShare}
-          isLoading={isAddLoading}
+          isLoading={myListAddLoading}
           myListLoading={myListLoading}
           isCourseInMyList={isCourseInMyList}
           navigation={navigation}
@@ -444,7 +445,7 @@ const TrailerVideo = ({
           isOpen={showPurchaseModal}
           onClose={() => setShowPurchaseModal(false)}
           data={data}
-          isLoading={isAddLoading}
+          isLoading={myListAddLoading}
           navigation={navigation}
         />
       )}

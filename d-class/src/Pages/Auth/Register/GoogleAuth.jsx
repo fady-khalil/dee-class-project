@@ -1,5 +1,6 @@
 import React from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import BASE_URL from "Utilities/BASE_URL";
 
 const GoogleAuth = ({ onSuccess }) => {
   const handleSuccess = async (response) => {
@@ -7,7 +8,7 @@ const GoogleAuth = ({ onSuccess }) => {
     console.log("Google OAuth Token:", googleToken);
 
     try {
-      const res = await fetch("http://localhost:8000/api/auth/google", {
+      const res = await fetch(`${BASE_URL}/auth/google`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

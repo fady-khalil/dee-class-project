@@ -177,24 +177,26 @@ const TrailerVideo = ({ videoId, data, isAuthenticated, isPurchased }) => {
       return;
     }
 
-    // Get the actual user ID (not profile ID)
-    const userId = user?._id || user?.id;
-    if (!userId || isLiked) return;
+    // Use the selected profile ID (not the user ID)
+    const profileId = selectedUser?.id || selectedUser?._id;
+    if (!profileId || likeLoading) return;
 
     const newLikedState = !isLiked;
     setIsLiked(newLikedState);
-    setLikesCount((prev) => (newLikedState ? prev + 1 : prev - 1));
+    setLikesCount((prev) => (newLikedState ? prev + 1 : Math.max(0, prev - 1)));
 
     const body = {
       course_id: data?._id,
-      profile_id: userId,
+      profile_id: profileId,
     };
 
-    const response = await postLikeData("like-course", body, token);
+    // Use like or unlike endpoint based on current state
+    const endpoint = isLiked ? "unlike-course" : "like-course";
+    const response = await postLikeData(endpoint, body, token);
     if (!response?.success) {
       // Revert the state if API call failed
       setIsLiked(!newLikedState);
-      setLikesCount((prev) => (newLikedState ? prev - 1 : prev + 1));
+      setLikesCount((prev) => (!newLikedState ? prev + 1 : Math.max(0, prev - 1)));
     }
   };
 

@@ -35,7 +35,7 @@ const UserDropDown = ({ selectedUser, isDropdownOpen, onHandleDropDown }) => {
       </div>
 
       <Link
-        to="/my-profiles"
+        to="/my-account"
         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-200"
         onClick={() => onHandleDropDown(false)}
       >

@@ -7,8 +7,7 @@ import "swiper/css/navigation";
 import { useTranslation } from "react-i18next";
 import { CaretLeft, CaretRight, CheckCircle } from "@phosphor-icons/react";
 import placeholder from "assests/courses/1.jpg";
-
-const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:5001";
+import BASE_URL from "Utilities/BASE_URL";
 
 const CompletedCourses = ({ data }) => {
   const { t, i18n } = useTranslation();

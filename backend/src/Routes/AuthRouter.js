@@ -48,6 +48,11 @@ router.post(
   sendVerificationEmail
 );
 router.post(
+  "/resend-verification",
+  //  verificationLimiter,
+  sendVerificationEmail
+);
+router.post(
   "/verify-email",
   // verificationLimiter,
   validateVerificationCode,

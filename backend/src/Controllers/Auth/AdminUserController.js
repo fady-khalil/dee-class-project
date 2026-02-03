@@ -3,6 +3,7 @@ import { hashPassword } from "../../utils/hashing.js";
 import { getUsers } from "../../Services/crud/UserService.js";
 import User from "../../Modules/User.model.js";
 import Transaction from "../../Modules/Transaction.model.js";
+import GiftCode from "../../Modules/GiftCode.model.js";
 
 // Get all admin users
 export const getAdmins = async (req, res) => {
@@ -365,7 +366,7 @@ export const getUserById = async (req, res) => {
       });
     }
 
-    // Fetch user with populated purchasedItems
+    // Fetch user with populated purchasedItems and subscription plan
     const user = await User.findById(id)
       .select(
         "-password -failedLoginAttempts -accountLocked -accountLockedUntil -verificationCode -verificationCodeValidation -forgotPasswordCode -forgotPasswordCodeValidation"
@@ -373,6 +374,10 @@ export const getUserById = async (req, res) => {
       .populate({
         path: "purchasedItems.courses",
         select: "title thumbnail price",
+      })
+      .populate({
+        path: "subscription.planId",
+        select: "title title_ar monthlyPrice yearlyPrice currency profilesAllowed canDownload",
       });
 
     if (!user) {
@@ -386,14 +391,40 @@ export const getUserById = async (req, res) => {
 
     console.log(`User found: ${user.email}`);
 
-    // Log the purchasedItems to see what's being returned
-    console.log("User purchasedItems:", user.purchasedItems);
+    // Fetch gifts purchased by this user (gifts they paid for)
+    const giftsPurchased = await GiftCode.find({ purchasedBy: id })
+      .populate({
+        path: "planId",
+        select: "title title_ar monthlyPrice yearlyPrice currency",
+      })
+      .populate({
+        path: "redeemedBy",
+        select: "fullName email",
+      })
+      .sort("-createdAt");
+
+    // Fetch gifts received by this user (gifts they redeemed)
+    const giftsReceived = await GiftCode.find({ redeemedBy: id })
+      .populate({
+        path: "planId",
+        select: "title title_ar monthlyPrice yearlyPrice currency",
+      })
+      .populate({
+        path: "purchasedBy",
+        select: "fullName email",
+      })
+      .sort("-redeemedAt");
+
+    // Convert user to object and add gift data
+    const userData = user.toObject();
+    userData.giftsPurchased = giftsPurchased;
+    userData.giftsReceived = giftsReceived;
 
     res.status(200).json({
       status: 200,
       success: true,
       message: "User retrieved successfully",
-      data: user,
+      data: userData,
     });
   } catch (error) {
     console.error("Error getting user:", error);

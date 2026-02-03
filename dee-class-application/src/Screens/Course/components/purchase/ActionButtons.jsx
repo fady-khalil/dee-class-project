@@ -38,6 +38,7 @@ const ActionButtons = ({
   const isAuthenticated = auth ? auth.isAuthenticated : false;
   const token = auth ? auth.token : null;
   const selectedUser = auth ? auth.selectedUser : null;
+  const canDownload = auth ? auth.canDownload : false;
 
   // Combined access check - user can watch if authenticated OR purchased
   const hasAccess = isAuthenticated || isPurchased || isOfflineMode;
@@ -107,9 +108,8 @@ const ActionButtons = ({
 
   // Handle download button press
   const handleDownloadPress = async () => {
-    if (!hasAccess) {
-      // Show purchase modal if no access
-      handleOpenCourseClick();
+    // canDownload check is already done via button visibility, but double-check
+    if (!canDownload) {
       return;
     }
 
@@ -138,7 +138,9 @@ const ActionButtons = ({
       return;
     }
 
-    if (!selectedUser?.id || likeLoading) return;
+    // Use the selected profile ID
+    const profileId = selectedUser?.id || selectedUser?._id;
+    if (!profileId || likeLoading) return;
 
     // Optimistic update
     const newLikedState = !isLiked;
@@ -148,11 +150,13 @@ const ActionButtons = ({
 
     try {
       const body = {
-        course_id: data?.id,
-        profile_id: selectedUser.id,
+        course_id: data?.id || data?._id,
+        profile_id: profileId,
       };
 
-      const response = await postLikeData("like-course", body, token);
+      // Use like or unlike endpoint based on current state
+      const endpoint = isLiked ? "unlike-course" : "like-course";
+      const response = await postLikeData(endpoint, body, token);
 
       if (!response?.success) {
         // Revert the state if API call failed
@@ -282,10 +286,10 @@ const ActionButtons = ({
         </View>
       )}
 
-      {/* Icon buttons row (Download, Like, Comments, Share, My List) */}
+      {/* Icon buttons row (Like, Comments, Share, My List) */}
       <View style={styles.iconButtonsRow}>
-        {/* Download button - only for users with access */}
-        {hasAccess && (
+        {/* Download button - HIDDEN FOR NOW - TODO: implement native encryption for security */}
+        {/* {canDownload && (
           <TouchableOpacity
             style={[styles.iconButton, isDownloaded && styles.downloadedButton]}
             onPress={handleDownloadPress}
@@ -314,7 +318,7 @@ const ActionButtons = ({
               />
             )}
           </TouchableOpacity>
-        )}
+        )} */}
 
         {/* Like Button */}
         <TouchableOpacity

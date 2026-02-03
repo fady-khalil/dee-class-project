@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef, useCallback } from "react";
 import usePostDataNoLang from "./usePostDataNoLang";
 import { LoginAuthContext } from "Context/Authentication/LoginAuth";
 import formatTime from "Utilities/formatTime";
+import BASE_URL from "Utilities/BASE_URL";
 
 /**
  * Hook to handle video history tracking (continue watching)
@@ -161,7 +162,7 @@ const useVideoHistory = (courseSlug, videoId, totalDuration, isVideoDone = false
 
           // Try sendBeacon first (more reliable on page close)
           const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
-          navigator.sendBeacon?.(`${process.env.REACT_APP_BASE_URL || ''}/api/profile-video-history`, blob);
+          navigator.sendBeacon?.(`${BASE_URL}/profile-video-history`, blob);
         }
       }
     };

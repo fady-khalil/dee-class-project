@@ -6,6 +6,12 @@ import { Alert } from "react-native";
 import { useTranslation } from "react-i18next";
 import * as Crypto from "expo-crypto";
 import { LoginAuthContext } from "../Authentication/LoginAuth";
+import {
+  encryptFile,
+  decryptFileForPlayback,
+  cleanupTempFile,
+  cleanupAllTempFiles,
+} from "../../utils/encryption";
 
 const DownloadContext = createContext();
 
@@ -21,7 +27,13 @@ export const DownloadProvider = ({ children }) => {
   const [downloadQueue, setDownloadQueue] = useState([]);
   const [currentDownload, setCurrentDownload] = useState(null);
   const [downloadProgress, setDownloadProgress] = useState({});
-  const { selectedUser } = useContext(LoginAuthContext);
+  const { selectedUser, user } = useContext(LoginAuthContext);
+
+  // Check if user can download based on subscription
+  const canDownload = user?.subscription?.canDownload === true &&
+    user?.subscription?.status === "active" &&
+    user?.subscription?.currentPeriodEnd &&
+    new Date(user.subscription.currentPeriodEnd) > new Date();
 
   // Load saved downloads on app start
   useEffect(() => {
@@ -117,6 +129,16 @@ export const DownloadProvider = ({ children }) => {
 
   // Start downloading a course
   const downloadCourse = async (course) => {
+    // Check if user has download permission from subscription
+    if (!canDownload) {
+      Alert.alert(
+        t("downloads.no_permission_title"),
+        t("downloads.no_permission_message"),
+        [{ text: t("general.ok") }]
+      );
+      return false;
+    }
+
     // Check if course is already downloaded
     if (downloadedCourses.some((c) => c.id === course.id)) {
       Alert.alert(
@@ -127,16 +149,12 @@ export const DownloadProvider = ({ children }) => {
       return false;
     }
 
-    // Check if course is already in queue
+    // Check if course is already in queue - silently return (no alert needed)
     if (
       downloadQueue.some((c) => c.id === course.id) ||
       (currentDownload && currentDownload.id === course.id)
     ) {
-      Alert.alert(
-        t("downloads.already_in_queue_title"),
-        t("downloads.already_in_queue_message"),
-        [{ text: t("general.ok") }]
-      );
+      console.log("[Download] Course already in queue:", course.id);
       return false;
     }
 
@@ -346,6 +364,18 @@ export const DownloadProvider = ({ children }) => {
 
     try {
       const result = await downloadResumable.downloadAsync();
+
+      // NOTE: Encryption disabled for performance - JavaScript-based encryption
+      // is too slow for large video files and blocks the UI.
+      // TODO: Implement native encryption module for better performance
+      // if (result && result.uri) {
+      //   console.log(`Encrypting downloaded file: ${filePath}`);
+      //   const encrypted = await encryptFile(filePath);
+      //   if (!encrypted) {
+      //     console.warn(`Failed to encrypt file: ${filePath}`);
+      //   }
+      // }
+
       return result;
     } catch (error) {
       console.error(`Error downloading ${url}:`, error);
@@ -399,6 +429,11 @@ export const DownloadProvider = ({ children }) => {
     return getUserDownloads().find((c) => c.id === courseId);
   };
 
+  // Get downloaded course by slug (for offline mode navigation)
+  const getCourseBySlug = (slug) => {
+    return getUserDownloads().find((c) => c.slug === slug);
+  };
+
   // Filter downloads by current user
   const getUserDownloads = () => {
     if (!selectedUser) return [];
@@ -430,7 +465,12 @@ export const DownloadProvider = ({ children }) => {
         deleteCourse,
         isCourseDownloaded,
         getCourseDownloadInfo,
+        getCourseBySlug,
         getDaysRemaining,
+        // Encryption utilities for secure playback
+        decryptFileForPlayback,
+        cleanupTempFile,
+        cleanupAllTempFiles,
       }}
     >
       {children}

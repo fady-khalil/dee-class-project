@@ -31,7 +31,8 @@ const HomeMainScreen = ({ navigation }) => {
     fetchData: fetchCategories,
   } = useFetch();
   const { i18n, t } = useTranslation();
-  const { isAuthenticated, allowedProfiles, allowedCourses, isVerified, user } = useAuth();
+  const { isAuthenticated, allowedProfiles, allowedCourses, isVerified, user } =
+    useAuth();
 
   useEffect(() => {
     fetchHome("home");
