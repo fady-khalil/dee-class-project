@@ -9,6 +9,14 @@ import { CaretLeft, CaretRight, CheckCircle } from "@phosphor-icons/react";
 import placeholder from "assests/courses/1.jpg";
 import BASE_URL from "Utilities/BASE_URL";
 
+// Get thumbnail URL
+const getCourseThumbnail = (course) => {
+  if (course?.trailer?.assets?.thumbnail) return course.trailer.assets.thumbnail;
+  if (course?.thumbnail) return course.thumbnail;
+  if (course?.image) return `${BASE_URL.replace("/api", "")}/${course.image}`;
+  return placeholder;
+};
+
 const CompletedCourses = ({ data }) => {
   const { t, i18n } = useTranslation();
 
@@ -85,10 +93,7 @@ const CompletedCourses = ({ data }) => {
               >
                 <div className="relative">
                   <img
-                    src={
-                      trailer?.assets?.thumbnail ||
-                      (image ? `${BASE_URL}/${image}` : placeholder)
-                    }
+                    src={getCourseThumbnail(course)}
                     alt={name}
                     className="w-full h-[200px] object-cover rounded-xl shadow-md shadow-white/10 group-hover:shadow-primary/20 transition-shadow"
                     onError={(e) => { e.target.src = placeholder; }}

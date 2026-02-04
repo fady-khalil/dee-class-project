@@ -11,6 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { LinearGradient } from "expo-linear-gradient";
 import COLORS from "../../../styles/colors";
+import BASE_URL from "../../../config/BASE_URL";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.75;
@@ -22,9 +23,29 @@ const AUTO_SCROLL_INTERVAL = 4000;
 // Number of times to repeat data for "infinite" feel
 const REPEAT_COUNT = 100;
 
+// Get server URL without /api for image paths
+const getServerUrl = () => {
+  return BASE_URL.replace("/api", "");
+};
+
+// Get full image URL (handles both full URLs and relative paths)
+const getImageUrl = (imagePath) => {
+  if (!imagePath || typeof imagePath !== 'string') return null;
+  if (imagePath.startsWith("http")) return imagePath;
+  return `${getServerUrl()}/${imagePath}`;
+};
+
+// Get thumbnail URL
+const getThumbnailUrl = (item) => {
+  console.log("HomeSlider course:", item?.name, "type:", item?.course_type, "thumbnail:", item?.thumbnail, "trailer:", item?.trailer?.assets?.thumbnail);
+  if (item?.trailer?.assets?.thumbnail) return item.trailer.assets.thumbnail;
+  if (item?.thumbnail) return item.thumbnail;
+  return getImageUrl(item?.image || item?.mobileImage);
+};
+
 // Memoized card component for better performance
 const SliderCard = memo(({ item, onPress, t }) => {
-  const thumbnailUrl = item?.trailer?.assets?.thumbnail || item?.image;
+  const thumbnailUrl = getThumbnailUrl(item);
 
   return (
     <TouchableOpacity

@@ -242,13 +242,48 @@ const TrailerVideo = ({ videoId, data, isAuthenticated, isPurchased }) => {
     }
   }, [data?.course_engagement]);
 
+  // Get thumbnail URL with fallbacks for different course types
+  const getThumbnailUrl = () => {
+    // 1. Try trailer thumbnail
+    if (data?.trailer?.assets?.thumbnail) return data.trailer.assets.thumbnail;
+
+    // 2. Try course direct thumbnail
+    if (data?.thumbnail) return data.thumbnail;
+
+    // 3. For playlist courses, use first lesson's video thumbnail
+    if (data?.course_type === 'playlist' && data?.chapters?.length > 0) {
+      const firstLesson = data.chapters[0]?.lessons?.[0];
+      if (firstLesson?.video_id?.assets?.thumbnail) {
+        return firstLesson.video_id.assets.thumbnail;
+      }
+    }
+
+    // 4. For series courses, use first episode's video thumbnail
+    if (data?.course_type === 'series' && data?.series?.length > 0) {
+      const firstEpisode = data.series[0];
+      if (firstEpisode?.series_video_id?.assets?.thumbnail) {
+        return firstEpisode.series_video_id.assets.thumbnail;
+      }
+    }
+
+    // 5. For single courses, use main video thumbnail
+    if (data?.course_type === 'single' && data?.api_video_object?.assets?.thumbnail) {
+      return data.api_video_object.assets.thumbnail;
+    }
+
+    // 6. Fall back to course image
+    return data?.image || data?.mobileImage || null;
+  };
+
+  const thumbnailUrl = getThumbnailUrl();
+
   return (
     <div className="w-full relative">
       {/* Video thumbnail fallback */}
-      {!isReady && (
+      {!isReady && thumbnailUrl && (
         <div className="lg:min-h-[80vh]">
           <img
-            src={data?.trailer?.assets?.thumbnail}
+            src={thumbnailUrl}
             alt="Course Thumbnail"
             className="w-full h-full object-cover"
           />

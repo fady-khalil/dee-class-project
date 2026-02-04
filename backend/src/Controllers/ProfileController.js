@@ -657,6 +657,26 @@ export const getProfileForYou = async (req, res) => {
     }
 
     const isArabic = lang === "ar";
+
+    // Helper to get thumbnail from course based on type
+    const getCourseThumbnail = (course) => {
+      // 1. Trailer thumbnail
+      if (course.trailer?.assets?.thumbnail) return course.trailer.assets.thumbnail;
+      // 2. Single course video thumbnail
+      if (course.course_type === 'single' && course.video?.assets?.thumbnail) {
+        return course.video.assets.thumbnail;
+      }
+      // 3. Series first episode thumbnail
+      if (course.course_type === 'series' && course.series?.[0]?.video?.assets?.thumbnail) {
+        return course.series[0].video.assets.thumbnail;
+      }
+      // 4. Playlist first lesson thumbnail
+      if (course.course_type === 'playlist' && course.chapters?.[0]?.lessons?.[0]?.video?.assets?.thumbnail) {
+        return course.chapters[0].lessons[0].video.assets.thumbnail;
+      }
+      return null;
+    };
+
     const formatCourse = (course) => ({
       _id: course._id,
       id: course._id,
@@ -664,6 +684,7 @@ export const getProfileForYou = async (req, res) => {
       name: isArabic && course.name_ar ? course.name_ar : course.name,
       course_type: course.course_type,
       image: course.image?.data || null,
+      thumbnail: getCourseThumbnail(course),
       trailer: course.trailer,
       instructor: course.instructor
         ? {

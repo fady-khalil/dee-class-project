@@ -3,6 +3,20 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import Spinner from "../../components/RequestHandler/Spinner";
 import COLORS from "../../styles/colors";
+import BASE_URL from "../../config/BASE_URL";
+
+// Get server URL without /api for image paths
+const getServerUrl = () => {
+  return BASE_URL.replace("/api", "");
+};
+
+// Get full image URL (handles both full URLs and relative paths)
+const getImageUrl = (imagePath) => {
+  if (!imagePath || typeof imagePath !== 'string') return null;
+  if (imagePath.startsWith("http")) return imagePath;
+  return `${getServerUrl()}/${imagePath}`;
+};
+
 const CoursesList = ({ categoryName, courses = [], loading, navigation }) => {
   const { t } = useTranslation();
 
@@ -20,12 +34,10 @@ const CoursesList = ({ categoryName, courses = [], loading, navigation }) => {
 
   // Get thumbnail URL
   const getThumbnail = (item) => {
-    return (
-      item?.trailer?.assets?.thumbnail ||
-      item?.tralier_with_api_video_object?.assets?.thumbnail ||
-      item?.trailer_with_api_video_object?.assets?.thumbnail ||
-      null
-    );
+    console.log("CoursesList course:", item?.name, "type:", item?.course_type, "thumbnail:", item?.thumbnail, "trailer:", item?.trailer?.assets?.thumbnail);
+    if (item?.trailer?.assets?.thumbnail) return item.trailer.assets.thumbnail;
+    if (item?.thumbnail) return item.thumbnail;
+    return getImageUrl(item?.image || item?.mobileImage);
   };
 
   return (

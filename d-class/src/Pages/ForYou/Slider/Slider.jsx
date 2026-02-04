@@ -9,6 +9,15 @@ import { Link } from "react-router-dom";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import placeholder from "assests/courses/1.jpg";
 import BASE_URL from "Utilities/BASE_URL";
+
+// Get thumbnail URL
+const getCourseThumbnail = (course) => {
+  if (course?.trailer?.assets?.thumbnail) return course.trailer.assets.thumbnail;
+  if (course?.thumbnail) return course.thumbnail;
+  if (course?.image) return `${BASE_URL.replace("/api", "")}/${course.image}`;
+  return placeholder;
+};
+
 const Slider = ({ data, title }) => {
   const { i18n } = useTranslation();
   const prevRef = useRef(null);
@@ -57,11 +66,7 @@ const Slider = ({ data, title }) => {
           modules={[Navigation]}
         >
           {data?.length > 0 &&
-            data?.map(
-              (
-                { name, slug, trailer, image, time_slap, tags },
-                index
-              ) => (
+            data?.map((course, index) => (
                 <SwiperSlide
                   key={index}
                   className="!w-[350px] flex-shrink-0"
@@ -71,12 +76,12 @@ const Slider = ({ data, title }) => {
                     justifyContent: "flex-start",
                   }}
                 >
-                  <Link to={`/course/${slug}`} className="block">
+                  <Link to={`/course/${course.slug}`} className="block">
                     <div className="h-[200px] w-full relative">
-                      {tags?.map((tag, index) => (
+                      {course.tags?.map((tag, tagIndex) => (
                         <span
                           className="px-2 py-0.5 text-sm rounded-lg shadow-md capitalize absolute top-2 left-2"
-                          key={index}
+                          key={tagIndex}
                           style={{
                             backgroundColor: tag.color,
                             color: tag.text_color,
@@ -86,15 +91,12 @@ const Slider = ({ data, title }) => {
                         </span>
                       ))}
                       <img
-                        src={
-                          trailer?.assets?.thumbnail ||
-                          (image ? `${BASE_URL}/${image}` : placeholder)
-                        }
-                        alt={name}
+                        src={getCourseThumbnail(course)}
+                        alt={course.name}
                         className="!w-[350px] flex-shrink-0 object-contain h-full rounded-xl "
                       />
                     </div>
-                    <p className="text-white mt-2 relative z-[100]">{name}</p>
+                    <p className="text-white mt-2 relative z-[100]">{course.name}</p>
                   </Link>
                 </SwiperSlide>
               )

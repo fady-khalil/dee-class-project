@@ -11,6 +11,15 @@ import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
 import placeholder from "assests/courses/1.jpg";
 import BASE_URL from "Utilities/BASE_URL";
+
+// Get thumbnail URL
+const getCourseThumbnail = (course) => {
+  if (course?.trailer?.assets?.thumbnail) return course.trailer.assets.thumbnail;
+  if (course?.thumbnail) return course.thumbnail;
+  if (course?.image) return `${BASE_URL.replace("/api", "")}/${course.image}`;
+  return placeholder;
+};
+
 const ContinueWatching = ({ data }) => {
   const { t, i18n } = useTranslation();
   const prevRef = useRef(null);
@@ -86,10 +95,7 @@ const ContinueWatching = ({ data }) => {
               >
                 <div className="relative">
                   <img
-                    src={
-                      trailer?.assets?.thumbnail ||
-                      (image ? `${BASE_URL}/${image}` : placeholder)
-                    }
+                    src={getCourseThumbnail(course)}
                     alt={name}
                     className="!w-[350px] flex-shrink-0 object-contain h-full rounded-xl shadow-md shadow-white/10"
                     onError={(e) => { e.target.src = placeholder; }}

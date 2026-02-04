@@ -57,8 +57,8 @@ const PlaylistCourse = ({
   };
 
   const renderLesson = ({ item, index, chapterIndex }) => {
-    // Use video_id?.assets?.thumbnail like website
-    const thumbnailUri = item.video_id?.assets?.thumbnail || item.thumbnail;
+    // Use video_id?.assets?.thumbnail like website, with video_id?.thumbnail as fallback
+    const thumbnailUri = item.video_id?.assets?.thumbnail || item.video_id?.thumbnail || item.thumbnail;
 
     return (
       <View style={styles.lessonItem}>

@@ -49,7 +49,8 @@ const CompletedCourses = ({ data }) => {
 
     // Get thumbnail URL
     const thumbnailUrl = trailer?.assets?.thumbnail ||
-      (image ? `${BASE_URL}/${image}` : null);
+      item?.thumbnail ||
+      (image ? `${BASE_URL.replace("/api", "")}/${image}` : null);
 
     return (
       <TouchableOpacity

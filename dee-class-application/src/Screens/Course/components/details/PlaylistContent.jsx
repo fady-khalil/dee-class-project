@@ -64,7 +64,7 @@ const PlaylistContent = ({
       onVideoSelect({
         type: "playlist",
         videoId: lesson.video_id.videoId,
-        thumbnail: lesson.video_id.assets?.thumbnail,
+        thumbnail: lesson.video_id.assets?.thumbnail || lesson.video_id?.thumbnail,
         title: lesson.title,
         chapterIndex,
         lessonIndex,
@@ -74,7 +74,7 @@ const PlaylistContent = ({
 
   const renderLesson = (lesson, chapterIndex, lessonIndex) => {
     const videoId = lesson.video_id?.videoId;
-    const thumbnailUrl = lesson.video_id?.assets?.thumbnail || lesson.thumbnail;
+    const thumbnailUrl = lesson.video_id?.assets?.thumbnail || lesson.video_id?.thumbnail || lesson.thumbnail;
     const isCompleted = isVideoCompleted?.(videoId) || completedVideos[videoId] || lesson.is_done;
     const isSelected = selectedVideo?.videoId === videoId;
     const isLoading = loadingVideoId === videoId;

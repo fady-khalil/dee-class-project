@@ -26,9 +26,31 @@ const normalizeImagePath = (imagePath) => {
   return imagePath;
 };
 
+// Helper to get thumbnail from course based on type
+const getCourseThumbnail = (course) => {
+  // 1. Trailer thumbnail
+  if (course.trailer?.assets?.thumbnail) return course.trailer.assets.thumbnail;
+  // 2. Single course video thumbnail
+  if (course.course_type === 'single' && course.video?.assets?.thumbnail) {
+    return course.video.assets.thumbnail;
+  }
+  // 3. Series first episode thumbnail
+  if (course.course_type === 'series' && course.series?.[0]?.video?.assets?.thumbnail) {
+    return course.series[0].video.assets.thumbnail;
+  }
+  // 4. Playlist first lesson thumbnail
+  if (course.course_type === 'playlist' && course.chapters?.[0]?.lessons?.[0]?.video?.assets?.thumbnail) {
+    return course.chapters[0].lessons[0].video.assets.thumbnail;
+  }
+  return null;
+};
+
 // Helper function to transform course for response
 const transformCourse = (course, lang, isAdmin = false) => {
   const transformed = { ...course };
+
+  // Add thumbnail
+  transformed.thumbnail = getCourseThumbnail(course);
 
   // Normalize image path
   if (transformed.image?.data) {
@@ -90,7 +112,7 @@ export const getHomeData = async (req, res, next) => {
       const courses = await Course.find({ _id: { $in: heroSection.featured_courses } })
         .populate("category", "title translations slug")
         .populate("instructor", "name name_ar profileImage slug")
-        .select("name name_ar slug price image trailer category instructor")
+        .select("name name_ar slug price image trailer course_type video series chapters category instructor")
         .lean();
 
       featuredCourses = courses.map((course) => transformCourse(course, lang, isAdmin));
@@ -113,7 +135,7 @@ export const getHomeData = async (req, res, next) => {
       .limit(6)
       .populate("category", "title translations slug")
       .populate("instructor", "name name_ar profileImage slug")
-      .select("name name_ar slug price image trailer category instructor")
+      .select("name name_ar slug price image trailer course_type video series chapters category instructor")
       .lean();
 
     const transformedNewCourses = newlyAddedCourses.map((course) =>
@@ -131,7 +153,7 @@ export const getHomeData = async (req, res, next) => {
 
       for (const category of randomCategories) {
         const coursesForCategory = await Course.find({ category: category._id })
-          .select("name name_ar slug price image trailer category instructor")
+          .select("name name_ar slug price image trailer course_type video series chapters category instructor")
           .populate("category", "title translations slug")
           .populate("instructor", "name name_ar profileImage slug")
           .limit(1)
@@ -155,6 +177,10 @@ export const getHomeData = async (req, res, next) => {
               price: 1,
               image: 1,
               trailer: 1,
+              course_type: 1,
+              video: 1,
+              series: 1,
+              chapters: 1,
             },
           },
         ]);

@@ -23,28 +23,15 @@ const getServerUrl = () => {
   return BASE_URL.replace("/api", "");
 };
 
-// Get thumbnail URL - prefer trailer thumbnail, fallback to course image
-// Handles both regular courses and continue_watching items (which have nested course object)
+// Get thumbnail URL
 const getThumbnailUrl = (item) => {
-  // For continue_watching items, the course data is nested
   const course = item?.course || item;
-
-  // First try trailer thumbnail (full URL from api.video)
-  if (course?.trailer?.assets?.thumbnail) {
-    return course.trailer.assets.thumbnail;
-  }
-  // Also check item level trailer (for regular courses)
-  if (item?.trailer?.assets?.thumbnail) {
-    return item.trailer.assets.thumbnail;
-  }
-  // Fallback to course image (relative path needs server URL)
-  const image = course?.image || item?.image;
+  console.log("CourseSlider:", course?.name, "type:", course?.course_type, "thumbnail:", course?.thumbnail, "trailer:", course?.trailer?.assets?.thumbnail);
+  if (course?.trailer?.assets?.thumbnail) return course.trailer.assets.thumbnail;
+  if (course?.thumbnail) return course.thumbnail;
+  const image = course?.image || course?.mobileImage;
   if (image) {
-    // If it's already a full URL, return as is
-    if (image.startsWith("http")) {
-      return image;
-    }
-    // Otherwise prepend server URL
+    if (image.startsWith("http")) return image;
     return `${getServerUrl()}/${image}`;
   }
   return null;

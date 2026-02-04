@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { Video } from "expo-av";
 import LessonCompletedBadge from "../../../../components/common/LessonCompletedBadge";
 import COLORS from "../../../../styles/colors";
+import BASE_URL from "../../../../config/BASE_URL";
 import { LoginAuthContext } from "../../../../context/Authentication/LoginAuth";
 import { usePostData } from "../../../../Hooks/usePostData";
 import { usePostDataNoLang } from "../../../../Hooks/usePostDataNoLang";
@@ -28,6 +29,18 @@ import { useNetwork } from "../../../../context/Network";
 import { useDownload } from "../../../../context/Download/DownloadContext";
 
 const { width, height } = Dimensions.get("window");
+
+// Get server URL without /api for image paths
+const getServerUrl = () => {
+  return BASE_URL.replace("/api", "");
+};
+
+// Get full image URL (handles both full URLs and relative paths)
+const getImageUrl = (imagePath) => {
+  if (!imagePath || typeof imagePath !== 'string') return null;
+  if (imagePath.startsWith("http")) return imagePath;
+  return `${getServerUrl()}/${imagePath}`;
+};
 
 // Helper function to strip HTML tags
 const stripHtml = (html) => {
@@ -176,8 +189,47 @@ const TrailerVideo = ({
 
   // Extract the thumbnail URL - support both field names
   const thumbnailUrl = trailerData?.assets?.thumbnail ||
+    trailerData?.thumbnail ||
     data?.trailer_with_api_video_object?.assets?.thumbnail ||
-    data?.trailer?.assets?.thumbnail;
+    data?.trailer?.assets?.thumbnail ||
+    data?.trailer?.thumbnail;
+
+  // Get fallback thumbnail based on course type
+  const getFallbackThumbnail = () => {
+    // 1. Try trailer thumbnail first
+    if (thumbnailUrl) return thumbnailUrl;
+
+    // 2. Try course direct thumbnail
+    if (data?.thumbnail) return data.thumbnail;
+
+    // 3. For playlist courses, use first lesson's video thumbnail
+    if (data?.course_type === 'playlist' && data?.chapters?.length > 0) {
+      const firstLesson = data.chapters[0]?.lessons?.[0];
+      const lessonThumb = firstLesson?.video_id?.assets?.thumbnail;
+      if (lessonThumb) return lessonThumb;
+    }
+
+    // 4. For series courses, use first episode's video thumbnail
+    if (data?.course_type === 'series' && data?.series?.length > 0) {
+      const firstEpisode = data.series[0];
+      const seriesThumb = firstEpisode?.series_video_id?.assets?.thumbnail;
+      if (seriesThumb) return seriesThumb;
+    }
+
+    // 5. For single courses, use main video thumbnail
+    if (data?.course_type === 'single') {
+      const singleThumb = data?.api_video_object?.assets?.thumbnail;
+      if (singleThumb) return singleThumb;
+    }
+
+    // 6. Fall back to course image (needs URL prefix for relative paths)
+    if (data?.image) return getImageUrl(data.image);
+    if (data?.mobileImage) return getImageUrl(data.mobileImage);
+
+    return null;
+  };
+
+  const fallbackThumbnail = getFallbackThumbnail();
 
   // Handle video ready
   const handleVideoReady = () => {
@@ -317,9 +369,6 @@ const TrailerVideo = ({
   // Check if we have trailer data available (support both field names)
   // Need either a valid videoId for online playback or localVideoUri for offline
   const hasTrailerData = videoId || localVideoUri;
-
-  // Get a fallback thumbnail from course image if no trailer thumbnail
-  const fallbackThumbnail = thumbnailUrl || data?.thumbnail || data?.image;
 
   return (
     <SafeAreaView style={styles.container}>

@@ -1,18 +1,23 @@
 import React, { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
-
-import logo from "assests/logos/dclass.png";
-import { Link } from "react-router-dom";
-import BASE_URL from "Utilities/BASE_URL";
-import "./LatestCoursesStyle.css";
-
-// swiper
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
 import { CaretRight, CaretLeft } from "@phosphor-icons/react";
+import { Link } from "react-router-dom";
+import logo from "assests/logos/dclass.png";
+import BASE_URL from "Utilities/BASE_URL";
+import "./LatestCoursesStyle.css";
+
+// Get thumbnail URL
+const getCourseThumbnail = (course) => {
+  if (course?.trailer?.assets?.thumbnail) return course.trailer.assets.thumbnail;
+  if (course?.thumbnail) return course.thumbnail;
+  if (course?.image) return `${BASE_URL.replace("/api", "")}/${course.image}`;
+  return null;
+};
 
 const LatestCourses = ({ title, data }) => {
   const { i18n } = useTranslation();
@@ -132,10 +137,7 @@ const LatestCourses = ({ title, data }) => {
                   className={`w-full h-full object-cover rounded-[21px] ${
                     isCentered ? "relative z-[1000] " : "relative z-[0]"
                   }`}
-                  src={
-                    course?.trailer?.assets?.thumbnail ||
-                    (course?.image ? `${BASE_URL}/${course.image}` : null)
-                  }
+                  src={getCourseThumbnail(course)}
                   alt={course.name}
                 />
               </div>

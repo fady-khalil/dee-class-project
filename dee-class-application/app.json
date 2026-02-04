@@ -13,11 +13,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.deeclass.mainapp",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
@@ -30,8 +28,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.deeclass.app",
-      "supportsRTL": true
+      "package": "com.deeclass.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -41,8 +38,6 @@
         "projectId": "e4c30acf-aba7-4f71-93f0-f93a242be303"
       }
     },
-    "plugins": [
-      "expo-secure-store"
-    ]
+    "plugins": ["expo-secure-store"]
   }
 }

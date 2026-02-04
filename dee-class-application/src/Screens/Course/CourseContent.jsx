@@ -224,7 +224,7 @@ const CourseContent = ({ route, navigation }) => {
                 foundVideo = {
                   type: "playlist",
                   videoId: lesson.video_id.videoId,
-                  thumbnail: lesson.video_id.assets?.thumbnail,
+                  thumbnail: lesson.video_id.assets?.thumbnail || lesson.video_id?.thumbnail,
                   title: lesson.title,
                   chapterIndex,
                   lessonIndex,
@@ -301,7 +301,7 @@ const CourseContent = ({ route, navigation }) => {
           setSelectedVideo({
             type: "playlist",
             videoId: firstLesson.video_id.videoId,
-            thumbnail: firstLesson.video_id.assets?.thumbnail,
+            thumbnail: firstLesson.video_id.assets?.thumbnail || firstLesson.video_id?.thumbnail,
             title: firstLesson.title,
             chapterIndex: 0,
             lessonIndex: 0,

@@ -7,6 +7,15 @@ import ForYou from "Pages/ForYou/ForYou";
 import IsError from "Components/RequestHandler/IsError";
 import Container from "Components/Container/Container";
 import BASE_URL from "Utilities/BASE_URL";
+
+// Get thumbnail URL
+const getCourseThumbnail = (course) => {
+  if (course?.trailer?.assets?.thumbnail) return course.trailer.assets.thumbnail;
+  if (course?.thumbnail) return course.thumbnail;
+  if (course?.image) return `${BASE_URL.replace("/api", "")}/${course.image}`;
+  return null;
+};
+
 const CoursesDisplay = ({
   categories,
   activeCategorySlug,
@@ -88,10 +97,7 @@ const CoursesDisplay = ({
               )}
               <div className="relative overflow-hidden rounded-lg">
                 <img
-                  src={
-                    course?.trailer?.assets?.thumbnail ||
-                    (course?.image ? `${BASE_URL}/${course.image}` : null)
-                  }
+                  src={getCourseThumbnail(course)}
                   className="rounded-lg h-[160px] sm:h-[180px] md:h-[200px] lg:h-[260px] w-full object-cover transition-transform duration-300 hover:scale-105 "
                   alt={course.name}
                   loading="lazy"

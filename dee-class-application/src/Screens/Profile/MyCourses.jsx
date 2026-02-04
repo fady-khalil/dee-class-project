@@ -33,23 +33,12 @@ const stripHtmlTags = (html) => {
   return html.replace(/<[^>]*>?/gm, "").replace(/&nbsp;/g, " ");
 };
 
-// Get course thumbnail - same logic as website
+// Get course thumbnail
 const getCourseImage = (item) => {
-  // Try trailer thumbnail first
-  if (item?.trailer?.assets?.thumbnail) {
-    return item.trailer.assets.thumbnail;
-  }
-  // Try mobileImage
-  if (item?.mobileImage) {
-    return item.mobileImage;
-  }
-  // Try image
+  if (item?.trailer?.assets?.thumbnail) return item.trailer.assets.thumbnail;
+  if (item?.thumbnail) return item.thumbnail;
   if (item?.image) {
-    // If image is a full URL, use it directly
-    if (item.image.startsWith("http")) {
-      return item.image;
-    }
-    // Otherwise prepend BASE_URL
+    if (item.image.startsWith("http")) return item.image;
     return `${BASE_URL.replace("/api", "")}/${item.image}`;
   }
   return null;

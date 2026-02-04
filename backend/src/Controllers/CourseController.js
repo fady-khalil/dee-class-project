@@ -126,14 +126,21 @@ const transformCourseWithLanguage = (doc, lang = "en") => {
     updatedAt: docObj.updatedAt,
   };
 
-  // Add type-specific fields
+  // Add type-specific fields and thumbnail
+  // Debug all course types
+  console.log("COURSE DEBUG:", docObj.name, "type:", docObj.course_type, "trailer var:", trailer?.assets?.thumbnail, "docObj.trailer:", docObj.trailer?.assets?.thumbnail);
+
   if (docObj.course_type === "single") {
     baseResponse.api_video_object = video;
-    baseResponse.thumbnail = video?.assets?.thumbnail || null;
+    baseResponse.thumbnail = trailer?.assets?.thumbnail || video?.assets?.thumbnail || null;
   } else if (docObj.course_type === "series") {
     baseResponse.series = series;
+    baseResponse.thumbnail = trailer?.assets?.thumbnail || series?.[0]?.series_video_id?.assets?.thumbnail || null;
+    console.log("SERIES DEBUG:", docObj.name, "computed thumbnail:", baseResponse.thumbnail);
   } else if (docObj.course_type === "playlist") {
     baseResponse.chapters = chapters;
+    baseResponse.thumbnail = trailer?.assets?.thumbnail || chapters?.[0]?.lessons?.[0]?.video_id?.assets?.thumbnail || null;
+    console.log("PLAYLIST DEBUG:", docObj.name, "computed thumbnail:", baseResponse.thumbnail);
   }
 
   return baseResponse;

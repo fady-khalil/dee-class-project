@@ -55,16 +55,10 @@ const ContinueWatchingSlider = ({ data = [] }) => {
   // Get thumbnail URL
   const getThumbnailUrl = (item) => {
     const course = item.course || item;
-
-    // First try trailer thumbnail (full URL from api.video)
-    if (course?.trailer?.assets?.thumbnail) {
-      return course.trailer.assets.thumbnail;
-    }
-    // Fallback to course image
+    if (course?.trailer?.assets?.thumbnail) return course.trailer.assets.thumbnail;
+    if (course?.thumbnail) return course.thumbnail;
     if (course?.image) {
-      if (course.image.startsWith("http")) {
-        return course.image;
-      }
+      if (course.image.startsWith("http")) return course.image;
       return `${getServerUrl()}/${course.image}`;
     }
     return null;

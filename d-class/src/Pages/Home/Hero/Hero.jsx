@@ -12,6 +12,14 @@ import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 
+// Get thumbnail URL
+const getCourseThumbnail = (course) => {
+  if (course?.trailer?.assets?.thumbnail) return course.trailer.assets.thumbnail;
+  if (course?.thumbnail) return course.thumbnail;
+  if (course?.image) return `${BASE_URL.replace("/api", "")}/${course.image}`;
+  return null;
+};
+
 const Hero = ({ courses, hero }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -111,8 +119,7 @@ const Hero = ({ courses, hero }) => {
                     >
                       <img
                         src={
-                          course?.trailer?.assets?.thumbnail ||
-                          (course?.image ? `${BASE_URL}/${course.image}` : null)
+                          getCourseThumbnail(course)
                         }
                         alt={course.name}
                         className="w-full h-full object-cover"
@@ -138,8 +145,7 @@ const Hero = ({ courses, hero }) => {
                     >
                       <img
                         src={
-                          course?.trailer?.assets?.thumbnail ||
-                          (course?.image ? `${BASE_URL}/${course.image}` : null)
+                          getCourseThumbnail(course)
                         }
                         alt={course.name}
                         className="w-full h-full object-cover"
@@ -206,10 +212,7 @@ const Hero = ({ courses, hero }) => {
                 <SwiperSlide key={`mobile-${course.id}-${index}`} className="hero-mobile-slide">
                   <div className="relative overflow-hidden rounded-xl aspect-[3/4]">
                     <img
-                      src={
-                        course?.trailer?.assets?.thumbnail ||
-                        (course?.image ? `${BASE_URL}/${course.image}` : null)
-                      }
+                      src={getCourseThumbnail(course)}
                       alt={course.name}
                       className="w-full h-full object-cover"
                     />

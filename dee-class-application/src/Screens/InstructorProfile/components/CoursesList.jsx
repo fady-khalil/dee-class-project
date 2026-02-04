@@ -27,17 +27,12 @@ const CoursesList = ({ courses }) => {
     navigation.navigate("CourseDetail", { slug });
   };
 
-  // Get the best available thumbnail for a course
+  // Get thumbnail URL
   const getCourseImage = (item) => {
-    // First try trailer thumbnail
-    if (item.trailer?.assets?.thumbnail) {
-      return item.trailer.assets.thumbnail;
-    }
-    // Then try course image with BASE_URL
-    if (item.image) {
-      if (item.image.startsWith("http")) {
-        return item.image;
-      }
+    if (item?.trailer?.assets?.thumbnail) return item.trailer.assets.thumbnail;
+    if (item?.thumbnail) return item.thumbnail;
+    if (item?.image) {
+      if (item.image.startsWith("http")) return item.image;
       return `${BASE_URL.replace("/api", "")}/${item.image}`;
     }
     return null;
