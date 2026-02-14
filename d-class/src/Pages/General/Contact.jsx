@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import useFetch from "Hooks/useFetch";
+import useApiQuery from "Hooks/useApiQuery";
 import usePostData from "Hooks/usePostData";
 import { Spinner } from "Components/RequestHandler";
 import useInput from "Components/form/Hooks/user-input";
@@ -33,7 +33,7 @@ const SOCIAL_ICONS = {
 
 const Contact = () => {
   const { t, i18n } = useTranslation();
-  const { data, isLoading, fetchData } = useFetch();
+  const { data, isLoading } = useApiQuery("home/contact-info");
   const { postData, isLoading: isSending } = usePostData();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(null);
@@ -89,10 +89,6 @@ const Contact = () => {
     inputBlurHandler: messageBlurHandler,
     reset: resetMessage,
   } = useInput(defaultValidation);
-
-  useEffect(() => {
-    fetchData("home/contact-info");
-  }, [i18n.language]);
 
   const formIsValid = nameIsValid && emailIsValid && subjectIsValid && messageIsValid;
 
@@ -151,10 +147,10 @@ const Contact = () => {
   const inputErrorClass = "border-red-500 focus:border-red-500 focus:ring-red-500/50";
 
   return (
-    <div className="min-h-screen bg-bg py-16">
+    <div className="min-h-screen bg-bg py-pageTop lg:py-primary">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Page Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8 lg:mb-16">
           <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
             {t("contact.tagline", "We'd love to hear from you")}
           </span>

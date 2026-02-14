@@ -3,7 +3,7 @@
     "name": "d-class-application",
     "slug": "d-class-application",
     "scheme": "deeclass",
-    "version": "1.0.01",
+    "version": "1.0.02",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

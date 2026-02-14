@@ -11,7 +11,7 @@ const JoinUs = () => {
 
   return (
     <>
-      <div className="pb-16 sm:pb-20 lg:pb-28 xl:pb-32">
+      <div>
         <Container>
           <div className="flex items-center justify-center flex-col gap-y-4 lg:gap-y-0 lg:flex-row">
             <img

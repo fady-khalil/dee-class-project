@@ -13,6 +13,237 @@ html.arabic body {
   font-family: "Almarai", serif;
 }
 
+
+/* Hero scroll columns */
+@keyframes scroll-up {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-33.33%); }
+}
+
+@keyframes scroll-up-slow {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-33.33%); }
+}
+
+.animate-scroll-up {
+  animation: scroll-up 40s linear infinite;
+}
+
+.animate-scroll-up-slow {
+  animation: scroll-up-slow 50s linear infinite;
+}
+
+/* Hero mobile slider */
+.hero-mobile-slider {
+  padding-bottom: 40px;
+}
+
+.hero-mobile-slide {
+  width: 240px;
+  transition: transform 0.3s ease;
+}
+
+.hero-mobile-slide:not(.swiper-slide-active)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 0.75rem;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.hero-mobile-slider .swiper-pagination-bullet {
+  background: transparent;
+  border: 1px solid white;
+  opacity: 1;
+}
+
+.hero-mobile-slider .swiper-pagination-bullet-active {
+  background: white;
+  border: 1px solid white;
+}
+
+/* Reel scrollbar hide */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Generic hidden scrollbar */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Glowing NEW badge */
+.new-badge-glow {
+  box-shadow:
+    0 0 8px #ed1a4d,
+    0 0 20px rgba(237, 26, 77, 0.3);
+  animation: badge-pulse 2.5s ease-in-out infinite;
+}
+@keyframes badge-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 8px #ed1a4d,
+      0 0 20px rgba(237, 26, 77, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 14px #ed1a4d,
+      0 0 36px rgba(237, 26, 77, 0.5);
+  }
+}
+
+.shadow-glow {
+  box-shadow: 0 0 8px var(--color-primary);
+}
+
+/* Liquid Glass — reusable panel style (iOS 26 inspired) */
+.liquid-glass {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.04)
+  );
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.liquid-glass .glass-divider {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.liquid-glass .glass-item {
+  transition: background-color 0.15s ease;
+}
+
+.liquid-glass .glass-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Category card — hover elevation + glow */
+.category-card {
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow:
+    0 12px 40px rgba(237, 26, 77, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Category card — shine glare sweep on hover */
+.category-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.12) 45%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 55%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+  z-index: 5;
+  border-radius: inherit;
+}
+
+.category-card:hover::after {
+  transform: translateX(100%);
+}
+
+/* Coming Soon badge — shimmer border */
+.coming-soon-badge {
+  background: linear-gradient(
+    135deg,
+    rgba(237, 26, 77, 0.8),
+    rgba(237, 26, 77, 0.4)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 0 12px rgba(237, 26, 77, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.coming-soon-badge::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  animation: badgeShimmer 2.5s ease-in-out infinite;
+}
+
+@keyframes badgeShimmer {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Category card — staggered entrance */
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.category-card-enter {
+  opacity: 0;
+}
+
+.category-card-enter.is-visible {
+  animation: cardSlideIn 0.5s ease forwards;
+}
+
+/* Search bar expand animation */
+@keyframes searchExpand {
+  from {
+    width: 2.5rem;
+    opacity: 0.6;
+  }
+  to {
+    width: 20rem;
+    opacity: 1;
+  }
+}
+
 .slider-arrow:disabled {
   filter: grayscale(100%);
   opacity: 0.5;

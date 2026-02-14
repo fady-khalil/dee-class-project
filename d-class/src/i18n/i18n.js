@@ -31,8 +31,8 @@ i18n
   .init({
     compatibilityJSON: "v3",
     resources,
-    lng: localStorage.getItem("language") || "en",
-    fallbackLng: "en",
+    lng: localStorage.getItem("language") || "ar",
+    fallbackLng: "ar",
     interpolation: {
       escapeValue: false,
     },

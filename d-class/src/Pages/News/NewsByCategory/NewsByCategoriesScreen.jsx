@@ -1,33 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Container from "Components/Container/Container";
 import CategoryLanding from "./CategoryLanding/CategoryLanding";
 import CategoryTabs from "./CategoryTabs/GategoryTabs";
-import useFetch from "Hooks/useFetch";
-import IsLoading from "Components/RequestHandler/IsLoading";
+import useApiQuery from "Hooks/useApiQuery";
 
 const NewsByCategoriesScreen = () => {
   const { t, i18n } = useTranslation();
-  const { data, isLoading, isError, fetchData } = useFetch("");
+  const [activeCategory, setActiveCategory] = useState(null);
+
+  const { data } = useApiQuery("category-news");
   const {
     data: categoryData,
     isLoading: categoryLoading,
-    isError: categoryError,
-    fetchData: fetchCategoryData,
-  } = useFetch("");
-
-  const [activeCategory, setActiveCategory] = useState(null);
-
-  useEffect(() => {
-    fetchData("category-news");
-  }, []);
-
-  useEffect(() => {
-    fetchCategoryData(`newscategory/${activeCategory}`);
-  }, [activeCategory]);
+  } = useApiQuery(activeCategory ? `newscategory/${activeCategory}` : null);
 
   return (
-    <main className="py-secondary ">
+    <main className="py-pageTop lg:py-primary">
       <Container>
         <h1 className="text-white text-4xl font-bold mb-16">
           {t("news.newsMainTitle")}

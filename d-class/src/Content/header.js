@@ -10,13 +10,18 @@ const GetLinks = () => {
   const navigationContent = [
     {
       id: 1,
-      name: t("navigation.contact"),
-      path: "/contact",
+      name: t("navigation.plans"),
+      path: "/plans",
+    },
+    {
+      id: 2,
+      name: t("navigation.about"),
+      path: "/about",
     },
     {
       id: 3,
-      name: t("navigation.plans"),
-      path: "/plans",
+      name: t("navigation.gift"),
+      path: "/gift",
     },
     {
       id: 4,

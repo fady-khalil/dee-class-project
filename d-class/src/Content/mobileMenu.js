@@ -2,28 +2,17 @@ import { useTranslation } from "react-i18next";
 
 /**
  * Mobile menu links configuration
- * To be used in both authenticated and unauthenticated headers
+ * @param {boolean} isAuthenticated — true for plan subscribers
  */
-const GetMobileMenuLinks = () => {
+const GetMobileMenuLinks = (isAuthenticated) => {
   const { t } = useTranslation();
 
   const mobileMenuLinks = [
-    {
-      name: t("navigation.browse"),
-      path: "/categories",
-    },
-    {
-      name: t("navigation.my_progress"),
-      path: "/my-progress",
-    },
-    {
-      name: t("footer.nav.news"),
-      path: "/news",
-    },
-    {
-      name: t("navigation.contact"),
-      path: "/contact",
-    },
+    { name: t("navigation.browse"), path: "/categories" },
+    isAuthenticated
+      ? { name: t("navigation.my_progress"), path: "/my-progress" }
+      : { name: t("navigation.my_courses"), path: "/my-courses" },
+    { name: t("navigation.contact"), path: "/contact" },
   ];
 
   return mobileMenuLinks;

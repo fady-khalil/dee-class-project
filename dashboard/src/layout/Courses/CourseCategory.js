@@ -9,6 +9,7 @@ import {
   COffcanvasBody,
   CForm,
   CFormInput,
+  CFormSelect,
   CSpinner,
 } from '@coreui/react'
 import { api } from '../../services/api'
@@ -28,6 +29,8 @@ const CourseCategory = () => {
   const [currentCategory, setCurrentCategory] = useState({
     title: '',
     title_ar: '',
+    status: 'active',
+    image: null,
   })
   const [viewVisible, setViewVisible] = useState(false)
   const [deleteModal, setDeleteModal] = useState(false)
@@ -49,6 +52,19 @@ const CourseCategory = () => {
       },
     },
     { header: 'Slug', accessor: 'slug' },
+    {
+      header: 'Status',
+      accessor: (item) => {
+        const status = item.status || 'active'
+        return (
+          <span
+            className={`badge ${status === 'active' ? 'bg-success' : 'bg-warning text-dark'}`}
+          >
+            {status === 'active' ? 'Active' : 'Coming Soon'}
+          </span>
+        )
+      },
+    },
   ]
 
   useEffect(() => {
@@ -70,7 +86,7 @@ const CourseCategory = () => {
     if (!hasWritePermission) return
 
     setIsEditing(false)
-    setCurrentCategory({ title: '', title_ar: '', slug: '' })
+    setCurrentCategory({ title: '', title_ar: '', slug: '', status: 'active', image: null })
     setErrorMessage('')
     setVisible(true)
   }
@@ -105,6 +121,8 @@ const CourseCategory = () => {
         slug: categoryData.slug,
         title: '',
         title_ar: '',
+        status: categoryData.status || 'active',
+        image: categoryData.image || null,
       }
 
       // Extract translations if available
@@ -155,19 +173,21 @@ const CourseCategory = () => {
     e.preventDefault()
     setErrorMessage('')
     try {
+      const formData = new FormData()
+      formData.append('title', currentCategory.title)
+      formData.append('title_ar', currentCategory.title_ar)
+      formData.append('status', currentCategory.status)
+      if (currentCategory.imageFile) {
+        formData.append('image', currentCategory.imageFile)
+      }
+
       if (isEditing) {
-        await api.put(`/course-categories/${currentCategory.slug}`, {
-          title: currentCategory.title,
-          title_ar: currentCategory.title_ar,
-        })
+        await api.putWithFile(`/course-categories/${currentCategory.slug}`, formData)
       } else {
-        await api.post('/course-categories', {
-          title: currentCategory.title,
-          title_ar: currentCategory.title_ar,
-        })
+        await api.postWithFile('/course-categories', formData)
       }
       setVisible(false)
-      setCurrentCategory({ title: '', title_ar: '' })
+      setCurrentCategory({ title: '', title_ar: '', status: 'active', image: null })
       fetchCategories()
     } catch (error) {
       console.error('Failed to save category:', error?.message)
@@ -199,6 +219,8 @@ const CourseCategory = () => {
       ...category,
       title: category.translations?.en?.title || category.title || 'N/A',
       title_ar: category.translations?.ar?.title || 'N/A',
+      status: category.status || 'active',
+      image: category.image || null,
     }
 
     setCurrentCategory(formattedCategory)
@@ -334,6 +356,43 @@ const CourseCategory = () => {
               </div>
             </div>
 
+            {/* Status */}
+            <div className="mb-3">
+              <label className="form-label">Status</label>
+              <CFormSelect
+                name="status"
+                value={currentCategory.status}
+                onChange={handleInputChange}
+              >
+                <option value="active">Active</option>
+                <option value="coming_soon">Coming Soon</option>
+              </CFormSelect>
+            </div>
+
+            {/* Image Upload */}
+            <div className="mb-3">
+              <label className="form-label">Image (400x600 recommended)</label>
+              <CFormInput
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0]
+                  setCurrentCategory((prev) => ({
+                    ...prev,
+                    imageFile: file,
+                  }))
+                }}
+              />
+              {currentCategory.image && !currentCategory.imageFile && (
+                <img
+                  src={`${process.env.REACT_APP_BASE_URL?.replace('/api', '')}/${currentCategory.image}`}
+                  alt="Current"
+                  className="mt-2 rounded"
+                  style={{ maxHeight: '120px' }}
+                />
+              )}
+            </div>
+
             <div className="d-flex justify-content-end gap-2 mt-4">
               <CButton color="secondary" onClick={() => setVisible(false)}>
                 Cancel
@@ -369,6 +428,25 @@ const CourseCategory = () => {
             <h6 className="text-muted mb-2">Slug</h6>
             <p className="fs-5">{currentCategory.slug}</p>
           </div>
+          <div className="mb-4">
+            <h6 className="text-muted mb-2">Status</h6>
+            <span
+              className={`badge ${currentCategory.status === 'coming_soon' ? 'bg-warning text-dark' : 'bg-success'}`}
+            >
+              {currentCategory.status === 'coming_soon' ? 'Coming Soon' : 'Active'}
+            </span>
+          </div>
+          {currentCategory.image && (
+            <div className="mb-4">
+              <h6 className="text-muted mb-2">Image</h6>
+              <img
+                src={`${process.env.REACT_APP_BASE_URL?.replace('/api', '')}/${currentCategory.image}`}
+                alt="Category"
+                className="rounded"
+                style={{ maxHeight: '160px' }}
+              />
+            </div>
+          )}
           <div className="mb-4">
             <h6 className="text-muted mb-2">Created At</h6>
             <p className="fs-5">

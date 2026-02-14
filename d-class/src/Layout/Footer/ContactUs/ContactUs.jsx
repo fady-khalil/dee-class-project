@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import useFetch from "Hooks/useFetch";
+import useApiQuery from "Hooks/useApiQuery";
 import {
   FacebookLogo,
   InstagramLogo,
@@ -23,29 +23,21 @@ const SOCIAL_ICONS = {
   whatsapp: WhatsappLogo,
 };
 
+const SOCIAL_COLORS = {
+  facebook: "#3b5998",
+  instagram: "#e1306c",
+  twitter: "#1DA1F2",
+  youtube: "#FF0000",
+  linkedin: "#0077b5",
+  tiktok: "#ff0050",
+  whatsapp: "#25D366",
+};
+
 const ContactUs = () => {
   const { t, i18n } = useTranslation();
   const [hoveredItem, setHoveredItem] = useState(null);
-  const { data, fetchData } = useFetch();
-
-  useEffect(() => {
-    fetchData("home/contact-info");
-  }, []);
-
+  const { data } = useApiQuery("home/contact-info");
   const contactInfo = data?.data;
-
-  const getSocialColor = (platform) => {
-    const colors = {
-      facebook: "#3b5998",
-      instagram: "#e1306c",
-      twitter: "#1DA1F2",
-      youtube: "#FF0000",
-      linkedin: "#0077b5",
-      tiktok: "#ff0050",
-      whatsapp: "#25D366",
-    };
-    return colors[platform] || "#bbb";
-  };
 
   const renderSocialIcon = (platform) => {
     const IconComponent = SOCIAL_ICONS[platform];
@@ -104,7 +96,7 @@ const ContactUs = () => {
                 <span
                   className="transition-all duration-200"
                   style={{
-                    color: hoveredItem === index ? getSocialColor(social.platform) : "#bbb",
+                    color: hoveredItem === index ? (SOCIAL_COLORS[social.platform] || "#bbb") : "#bbb",
                     transform: hoveredItem === index ? "scale(1.2)" : "scale(1)",
                     display: "inline-block",
                   }}

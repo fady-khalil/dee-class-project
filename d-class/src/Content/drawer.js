@@ -21,12 +21,8 @@ const GetDrawerLinks = () => {
     //   path: "/for-business",
     // },
     {
-      name: t("footer.nav.news"),
-      path: "/news",
-    },
-    {
-      name: t("navigation.contact"),
-      path: "/contact",
+      name: t("navigation.gift"),
+      path: "/gift",
     },
   ];
 

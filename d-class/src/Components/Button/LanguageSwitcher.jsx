@@ -67,30 +67,23 @@ const LanguageSwitcher = ({ isDrawer }) => {
       {/* Desktop dropdown */}
       {isModalOpen && (
         <div
-          className={`absolute right-0 mt-3 rounded-lg shadow-xl z-10 hidden xl:block transform transition-all duration-200 ease-in-out ${
-            isDrawer
-              ? "bg-black text-white border border-white/30"
-              : "text-black bg-white border border-gray-200"
-          } min-w-[180px] overflow-hidden backdrop-blur-sm`}
-          style={{
-            animation: "fadeIn 0.2s ease-out",
-          }}
+          className="absolute right-0 rtl:right-auto rtl:left-0 mt-3 liquid-glass rounded-xl z-10 hidden xl:block min-w-[180px] overflow-hidden"
         >
           <div className="py-2">
-            <h3 className="px-5 pt-2 pb-3 text-sm font-medium border-b border-gray-200/20">
+            <h3 className="px-5 pt-2 pb-3 text-sm font-medium text-white border-b glass-divider">
               {t("labels.switch_language")}
             </h3>
             <button
-              className={`flex items-center justify-between w-full px-5 py-3 text-sm transition-colors duration-150 ${
-                isDrawer ? "hover:bg-white/10" : "hover:bg-gray-50"
-              } ${i18n.language === "en" ? "font-medium" : ""}`}
+              className={`glass-item flex items-center justify-between w-full px-5 py-3 text-sm text-white ${
+                i18n.language === "en" ? "font-medium" : ""
+              }`}
               onClick={() => {
                 changeLanguage("en");
                 toggleModal();
               }}
             >
               <div className="flex items-center gap-2">
-                <span className="inline-block w-5 h-5 rounded-full overflow-hidden bg-gray-100 text-[10px] flex items-center justify-center">
+                <span className="inline-flex w-5 h-5 rounded-full bg-white/10 text-[10px] items-center justify-center text-white/70">
                   EN
                 </span>
                 <span>English</span>
@@ -100,16 +93,16 @@ const LanguageSwitcher = ({ isDrawer }) => {
               )}
             </button>
             <button
-              className={`flex items-center justify-between w-full px-5 py-3 text-sm transition-colors duration-150 ${
-                isDrawer ? "hover:bg-white/10" : "hover:bg-gray-50"
-              } ${i18n.language === "ar" ? "font-medium" : ""}`}
+              className={`glass-item flex items-center justify-between w-full px-5 py-3 text-sm text-white ${
+                i18n.language === "ar" ? "font-medium" : ""
+              }`}
               onClick={() => {
                 changeLanguage("ar");
                 toggleModal();
               }}
             >
               <div className="flex items-center gap-2">
-                <span className="inline-block w-5 h-5 rounded-full overflow-hidden bg-gray-100 text-[10px] flex items-center justify-center">
+                <span className="inline-flex w-5 h-5 rounded-full bg-white/10 text-[10px] items-center justify-center text-white/70">
                   AR
                 </span>
                 <span>عربي</span>

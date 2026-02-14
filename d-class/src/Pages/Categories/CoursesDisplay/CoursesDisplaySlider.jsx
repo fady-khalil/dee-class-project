@@ -1,10 +1,8 @@
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import useFetch from "Hooks/useFetch";
+import useApiQuery from "Hooks/useApiQuery";
 import { Link } from "react-router-dom";
 import Spinner from "Components/RequestHandler/Spinner";
 import ForYou from "Pages/ForYou/ForYou";
-import IsError from "Components/RequestHandler/IsError";
 import Container from "Components/Container/Container";
 import BASE_URL from "Utilities/BASE_URL";
 
@@ -26,15 +24,11 @@ const CoursesDisplay = ({
     data: courses,
     isLoading: coursesLoading,
     isError: coursesError,
-    fetchData,
-  } = useFetch(``);
-
-  useEffect(() => {
-    // Only fetch data if we're not on the "for-you" tab
-    if (activeCategorySlug !== "for-you") {
-      fetchData(`categories/${activeCategorySlug}`);
-    }
-  }, [activeCategorySlug]);
+  } = useApiQuery(
+    activeCategorySlug && activeCategorySlug !== "for-you"
+      ? `categories/${activeCategorySlug}`
+      : null
+  );
 
   // Handle "For You" tab display
   if (activeCategorySlug === "for-you") {

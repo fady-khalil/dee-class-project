@@ -293,12 +293,14 @@ const MyAccount = () => {
     return name.charAt(0).toUpperCase();
   };
 
+  // Users with purchased courses must have been verified
+  const effectivelyVerified = isVerified || allowedCourses?.length > 0;
   const iconPosition = isRTL ? "right-4" : "left-4";
   const togglePosition = isRTL ? "left-4" : "right-4";
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-bg via-grey to-bg pt-24 pb-16">
+      <div className="min-h-screen bg-gradient-to-br from-bg via-grey to-bg pt-pageTop lg:pt-primary pb-16 lg:pb-primary">
         <Container>
           <div className="flex justify-center items-center h-64">
             <Spinner />
@@ -309,7 +311,7 @@ const MyAccount = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-bg via-grey to-bg pt-24 pb-16">
+    <div className="min-h-screen bg-gradient-to-br from-bg via-grey to-bg pt-pageTop lg:pt-primary pb-16 lg:pb-primary">
       <Container>
         <div className="max-w-2xl mx-auto">
           {/* Header with Avatar */}
@@ -344,7 +346,7 @@ const MyAccount = () => {
           )}
 
           {/* Not Verified Warning */}
-          {!isVerified && (
+          {!effectivelyVerified && (
             <div className="mb-6 p-4 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 flex items-center gap-3">
               <Warning size={20} className="text-yellow-400 flex-shrink-0" weight="fill" />
               <div className="flex-1">
@@ -370,7 +372,7 @@ const MyAccount = () => {
                   {t("account.profile_section")}
                 </h2>
               </div>
-              {isVerified && !isEditing && (
+              {effectivelyVerified && !isEditing && (
                 <button
                   onClick={() => setIsEditing(true)}
                   className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm"
@@ -466,7 +468,7 @@ const MyAccount = () => {
           </div>
 
           {/* Security Section */}
-          {isVerified && (
+          {effectivelyVerified && (
             <div className="bg-grey/80 backdrop-blur-sm rounded-2xl p-6 mb-6 shadow-xl border border-gray-700/50">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
@@ -665,7 +667,7 @@ const MyAccount = () => {
           )}
 
           {/* No Subscription */}
-          {isVerified && !allowedProfiles && allowedCourses?.length === 0 && (
+          {effectivelyVerified && !allowedProfiles && allowedCourses?.length === 0 && (
             <div className="bg-grey/80 backdrop-blur-sm rounded-2xl p-8 mb-6 shadow-xl border border-gray-700/50 text-center">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
                 <CreditCard size={28} className="text-primary" weight="bold" />

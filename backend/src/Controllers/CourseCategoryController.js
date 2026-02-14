@@ -1,4 +1,5 @@
 import CourseCategory from "../Modules/CourseCategory.model.js";
+import Course from "../Modules/Course.model.js";
 import { getAll, getOne, deleteOne } from "../Services/crud/crudFunctions.js";
 import {
   transformToLanguage,
@@ -13,7 +14,7 @@ const TRANSLATABLE_FIELDS = ["title"];
 export const createCourseCategory = async (req, res) => {
   try {
     // Create translations object
-    const { title, title_ar } = req.body;
+    const { title, title_ar, status } = req.body;
 
     // Validate required fields
     if (!title) {
@@ -26,12 +27,22 @@ export const createCourseCategory = async (req, res) => {
     }
 
     // Create category with translations
-    const courseCategory = await CourseCategory.create({
+    const categoryData = {
       translations: {
         en: { title },
-        ar: { title: title_ar || title }, // Use English title as fallback
+        ar: { title: title_ar || title },
       },
-    });
+    };
+
+    if (req.file) {
+      categoryData.image = `uploads/${req.file.filename}`;
+    }
+
+    if (status) {
+      categoryData.status = status;
+    }
+
+    const courseCategory = await CourseCategory.create(categoryData);
 
     res.status(201).json({
       status: 201,
@@ -41,6 +52,8 @@ export const createCourseCategory = async (req, res) => {
         _id: courseCategory._id,
         title: title,
         slug: courseCategory.slug,
+        image: courseCategory.image,
+        status: courseCategory.status,
       },
     });
   } catch (error) {
@@ -59,6 +72,15 @@ export const getCourseCategories = async (req, res) => {
   try {
     const categories = await CourseCategory.find().lean().exec();
 
+    // Get course counts per category in one query
+    const courseCounts = await Course.aggregate([
+      { $group: { _id: "$category", count: { $sum: 1 } } },
+    ]);
+    const countMap = {};
+    courseCounts.forEach((c) => {
+      countMap[String(c._id)] = c.count;
+    });
+
     // Transform categories based on language
     const language = req.language || "en";
     const transformedCategories = categories.map((category) => {
@@ -74,6 +96,9 @@ export const getCourseCategories = async (req, res) => {
         _id: category._id,
         title: title,
         slug: category.slug,
+        image: category.image,
+        status: category.status || "active",
+        courseCount: countMap[String(category._id)] || 0,
         createdAt: category.createdAt,
         updatedAt: category.updatedAt,
         translations: category.translations,
@@ -121,7 +146,6 @@ export const getCourseCategoryBySlug = async (req, res) => {
       category.title || // Fallback for legacy data
       "Untitled";
 
-    // Return in the same format as before
     res.status(200).json({
       status: 200,
       success: true,
@@ -130,6 +154,8 @@ export const getCourseCategoryBySlug = async (req, res) => {
         _id: category._id,
         title: title,
         slug: category.slug,
+        image: category.image,
+        status: category.status || "active",
         createdAt: category.createdAt,
         updatedAt: category.updatedAt,
       },
@@ -183,7 +209,7 @@ export const getCourseCategoryWithTranslations = async (req, res) => {
 export const updateCourseCategory = async (req, res) => {
   try {
     const slug = req.params.slug;
-    const { title, title_ar } = req.body;
+    const { title, title_ar, status } = req.body;
 
     // Find the category
     const category = await CourseCategory.findOne({ slug });
@@ -209,11 +235,17 @@ export const updateCourseCategory = async (req, res) => {
     if (title_ar) {
       category.translations.ar.title = title_ar;
     } else if (title && !category.translations.ar.title) {
-      // Use English as fallback if Arabic doesn't exist
       category.translations.ar.title = title;
     }
 
-    // Save the updated category (slug will be regenerated if English title changed)
+    if (req.file) {
+      category.image = `uploads/${req.file.filename}`;
+    }
+
+    if (status) {
+      category.status = status;
+    }
+
     await category.save();
 
     res.status(200).json({
@@ -224,6 +256,8 @@ export const updateCourseCategory = async (req, res) => {
         _id: category._id,
         title: category.translations.en.title,
         slug: category.slug,
+        image: category.image,
+        status: category.status,
       },
     });
   } catch (error) {

@@ -6,6 +6,7 @@ import ContactInfo from "../Modules/ContactInfo.model.js";
 import PrivacyPolicy from "../Modules/PrivacyPolicy.model.js";
 import TermsOfService from "../Modules/TermsOfService.model.js";
 import FAQ from "../Modules/FAQ.model.js";
+import BottomBanner from "../Modules/BottomBanner.model.js";
 
 // API.video API key
 const API_VIDEO_KEY = process.env.API_VIDEO_KEY || "NuUpsgLaoFKP0njYMJ3ekBN78nb0HmgTYdzf6LW0mYw";
@@ -300,7 +301,7 @@ export const fetchVideoData = async (req, res) => {
 // Add a reel to trending course
 export const addReel = async (req, res) => {
   try {
-    const { videoId, title, description, assets } = req.body;
+    const { videoId, title, description, assets, courseId } = req.body;
 
     if (!videoId) {
       return res.status(400).json({
@@ -327,7 +328,7 @@ export const addReel = async (req, res) => {
     }
 
     // Add new reel
-    trendingCourse.reels.push({
+    const newReel = {
       videoId,
       title: title || "",
       description: description || "",
@@ -335,7 +336,10 @@ export const addReel = async (req, res) => {
       assets: assets || {},
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
+    };
+    if (courseId) newReel.course = courseId;
+
+    trendingCourse.reels.push(newReel);
 
     await trendingCourse.save();
 
@@ -784,6 +788,74 @@ export const deleteFAQItem = async (req, res) => {
       status: 500,
       success: false,
       message: "An error occurred while deleting FAQ item",
+      data: error.message,
+    });
+  }
+};
+
+// =====================
+// BOTTOM BANNER
+// =====================
+
+// Get bottom banner (admin)
+export const getBottomBanner = async (req, res) => {
+  try {
+    let banner = await BottomBanner.findOne({ singleton: "bottom_banner" });
+
+    if (!banner) {
+      banner = await BottomBanner.create({ singleton: "bottom_banner" });
+    }
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Bottom banner retrieved successfully",
+      data: banner,
+    });
+  } catch (error) {
+    console.error("Error getting bottom banner:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while retrieving bottom banner",
+      data: error.message,
+    });
+  }
+};
+
+// Update bottom banner
+export const updateBottomBanner = async (req, res) => {
+  try {
+    const { isActive, registered_content, registered_content_ar, guest_content, guest_content_ar, app_store_url, play_store_url } = req.body;
+
+    let banner = await BottomBanner.findOne({ singleton: "bottom_banner" });
+
+    if (!banner) {
+      banner = new BottomBanner({ singleton: "bottom_banner" });
+    }
+
+    if (isActive !== undefined) banner.isActive = isActive;
+    if (registered_content !== undefined) banner.registered_content = registered_content;
+    if (registered_content_ar !== undefined) banner.registered_content_ar = registered_content_ar;
+    if (guest_content !== undefined) banner.guest_content = guest_content;
+    if (guest_content_ar !== undefined) banner.guest_content_ar = guest_content_ar;
+    if (app_store_url !== undefined) banner.app_store_url = app_store_url;
+    if (play_store_url !== undefined) banner.play_store_url = play_store_url;
+
+    await banner.save();
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Bottom banner updated successfully",
+      data: banner,
+    });
+  } catch (error) {
+    console.error("Error updating bottom banner:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while updating bottom banner",
       data: error.message,
     });
   }

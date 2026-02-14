@@ -12,6 +12,8 @@ const ContactInfo = React.lazy(() => import('./layout/Content/ContactInfo'))
 const PrivacyPolicy = React.lazy(() => import('./layout/Content/PrivacyPolicy'))
 const TermsOfService = React.lazy(() => import('./layout/Content/TermsOfService'))
 const FAQ = React.lazy(() => import('./layout/Content/FAQ'))
+const AboutPage = React.lazy(() => import('./layout/Content/AboutPage'))
+const BottomBanner = React.lazy(() => import('./layout/Content/BottomBanner'))
 
 // expert applications
 const ExpertApplications = React.lazy(() => import('./layout/ExpertApplications/ExpertApplications'))
@@ -86,6 +88,16 @@ const routes = [
     path: '/content/faq',
     name: 'FAQ',
     element: FAQ,
+  },
+  {
+    path: '/content/about',
+    name: 'About Page',
+    element: AboutPage,
+  },
+  {
+    path: '/content/bottom-banner',
+    name: 'Bottom Banner',
+    element: BottomBanner,
   },
   // expert applications
   {

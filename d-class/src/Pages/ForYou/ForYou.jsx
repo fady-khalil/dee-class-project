@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useContext } from "react";
+import { useTranslation } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
 import { LoginAuthContext } from "Context/Authentication/LoginAuth";
-import usePost from "Hooks/usePostData.js";
+import BASE_URL from "Utilities/BASE_URL";
 import Spinner from "Components/RequestHandler/Spinner";
 // inner components
 import ContinueWatching from "./ContinueWatching/ContinueWatching";
@@ -11,29 +11,35 @@ import Slider from "./Slider/Slider";
 const ForYou = () => {
   const { t, i18n } = useTranslation();
   const { selectedUser, token, logoutHandler } = useContext(LoginAuthContext);
-  const { postData, isLoading, error } = usePost();
-  const [forYouCourses, setForYouCourses] = useState([]);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [expiredToken, setExpiredToken] = useState(false);
 
-  const getForYouData = async () => {
-    const body = {
-      profile_id: selectedUser.id,
-    };
-    const response = await postData("profile-for-you", body, token);
-    if (response.success) {
-      setForYouCourses(response.data);
-      setErrorMessage(null); // Clear any previous error message
-    } else if (response.status === 401) {
-      setExpiredToken(true);
-    } else {
-      setErrorMessage(response?.message);
-    }
-  };
+  const { data: forYouCourses, isLoading, error } = useQuery({
+    queryKey: ["profile-for-you", selectedUser?.id, i18n.language],
+    queryFn: async () => {
+      const res = await fetch(
+        `${BASE_URL}/${i18n.language}/profile-for-you`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ profile_id: selectedUser.id }),
+        }
+      );
+      if (res.status === 401) {
+        const err = new Error("expired");
+        err.status = 401;
+        throw err;
+      }
+      const json = await res.json();
+      if (!json.success) throw new Error(json.message || "Request failed");
+      return json.data;
+    },
+    enabled: !!selectedUser?.id && !!token,
+  });
 
-  useEffect(() => {
-    getForYouData();
-  }, []);
+  const expiredToken = error?.status === 401;
+  const errorMessage = !expiredToken ? error?.message : null;
 
   if (isLoading) {
     return (
@@ -122,7 +128,7 @@ const ForYou = () => {
           : "custom_container-en-reverse"
       }`}
     >
-      <div className="flex flex-col gap-y-20">
+      <div className="flex flex-col gap-y-10 lg:gap-y-20">
         <ContinueWatching data={forYouCourses?.continue_watching} />
         <Slider
           title={t("for_you.recommended_courses")}

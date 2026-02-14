@@ -5,15 +5,12 @@ import FeaturedNews from "./FeaturedNews/FeaturedNews";
 import NewsCategories from "./NewsCategories/NewsCategories";
 import Subscribe from "./Subscribe/Subscribe";
 import LatestNews from "./LatestNews/LatestNews";
-import useFetch from "Hooks/useFetch";
-import { useEffect } from "react";
+import useApiQuery from "Hooks/useApiQuery";
 import IsLoading from "Components/RequestHandler/IsLoading";
+
 const NewsMainPage = () => {
   const { t } = useTranslation();
-  const { data, isLoading, isError, fetchData } = useFetch("");
-  useEffect(() => {
-    fetchData("category-news");
-  }, []);
+  const { data, isLoading, isError } = useApiQuery("category-news");
 
   if (isLoading) {
     return <IsLoading />;
@@ -25,7 +22,7 @@ const NewsMainPage = () => {
 
   if (data) {
     return (
-      <main className="pt-secondary lg:pt-primary">
+      <main className="pt-pageTop lg:pt-primary">
         <Container>
           <h1 className="text-white text-4xl font-bold mb-16">
             {t("news.newsMainTitle")}

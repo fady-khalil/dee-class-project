@@ -7,6 +7,7 @@ import ContactInfo from "../Modules/ContactInfo.model.js";
 import PrivacyPolicy from "../Modules/PrivacyPolicy.model.js";
 import TermsOfService from "../Modules/TermsOfService.model.js";
 import FAQ from "../Modules/FAQ.model.js";
+import BottomBanner from "../Modules/BottomBanner.model.js";
 
 // Helper function to normalize image path
 const normalizeImagePath = (imagePath) => {
@@ -89,15 +90,35 @@ const transformCourse = (course, lang, isAdmin = false) => {
   return transformed;
 };
 
+// Light select — only what the home page needs (no heavy video/series/chapters)
+const HOME_COURSE_SELECT = "name name_ar slug price image trailer category instructor course_type";
+
 // Get home page data
 export const getHomeData = async (req, res, next) => {
   try {
     const lang = req.language || "en";
     const isAdmin = req.isAdminRoute || false;
 
-    // 1. Get Hero Section
-    let heroSection = await HeroSection.findOne({ singleton: "hero_section" }).lean();
+    // Run ALL independent queries in parallel
+    const [heroSection, joinUsSection, newlyAddedCourses, trendingSection, faqDoc, allCategories, contactInfoDoc, courseCounts] =
+      await Promise.all([
+        HeroSection.findOne({ singleton: "hero_section" }).lean(),
+        JoinUs.findOne({ singleton: "join_us" }).lean(),
+        Course.find()
+          .sort({ createdAt: -1 })
+          .limit(6)
+          .populate("category", "title translations slug")
+          .populate("instructor", "name name_ar profileImage slug")
+          .select(HOME_COURSE_SELECT)
+          .lean(),
+        TrendingCourse.findOne({ singleton: "trending_course" }).populate("reels.course", "slug name name_ar").lean(),
+        FAQ.findOne({ singleton: "faq" }).lean(),
+        CourseCategory.find().lean(),
+        ContactInfo.findOne({ singleton: "contact_info" }).lean(),
+        Course.aggregate([{ $group: { _id: "$category", count: { $sum: 1 } } }]),
+      ]);
 
+    // Hero data
     let heroData = null;
     if (heroSection) {
       heroData = {
@@ -106,21 +127,18 @@ export const getHomeData = async (req, res, next) => {
       };
     }
 
-    // 2. Get Featured Courses (from hero section selection)
+    // Featured courses (depends on heroSection)
     let featuredCourses = [];
     if (heroSection?.featured_courses?.length > 0) {
       const courses = await Course.find({ _id: { $in: heroSection.featured_courses } })
         .populate("category", "title translations slug")
         .populate("instructor", "name name_ar profileImage slug")
-        .select("name name_ar slug price image trailer course_type video series chapters category instructor")
+        .select(HOME_COURSE_SELECT)
         .lean();
-
-      featuredCourses = courses.map((course) => transformCourse(course, lang, isAdmin));
+      featuredCourses = courses.map((c) => transformCourse(c, lang, isAdmin));
     }
 
-    // 3. Get Join Us Section
-    let joinUsSection = await JoinUs.findOne({ singleton: "join_us" }).lean();
-
+    // Join us
     let joinUsData = null;
     if (joinUsSection) {
       joinUsData = {
@@ -129,71 +147,49 @@ export const getHomeData = async (req, res, next) => {
       };
     }
 
-    // 4. Get Newly Added Courses (6 most recent)
-    const newlyAddedCourses = await Course.find()
-      .sort({ createdAt: -1 })
-      .limit(6)
-      .populate("category", "title translations slug")
-      .populate("instructor", "name name_ar profileImage slug")
-      .select("name name_ar slug price image trailer course_type video series chapters category instructor")
-      .lean();
-
-    const transformedNewCourses = newlyAddedCourses.map((course) =>
-      transformCourse(course, lang, isAdmin)
+    // Newly added
+    const transformedNewCourses = newlyAddedCourses.map((c) =>
+      transformCourse(c, lang, isAdmin)
     );
 
-    // 5. Get Recommended Courses
-    const categories = await CourseCategory.find().lean();
-    const recommendedCourses = [];
+    // Recommended — single aggregation instead of N+1 loop
+    const recommendedCourses = await Course.aggregate([
+      { $sample: { size: 6 } },
+      {
+        $project: {
+          name: 1, name_ar: 1, slug: 1, price: 1, image: 1,
+          trailer: 1, course_type: 1,
+        },
+      },
+    ]);
+    const transformedRecommended = recommendedCourses.map((c) =>
+      transformCourse(c, lang, isAdmin)
+    );
 
-    if (categories.length > 0) {
-      const randomCategories = categories
-        .sort(() => 0.5 - Math.random())
-        .slice(0, Math.min(6, categories.length));
+    // Categories — same format as GET /course-categories
+    const countMap = {};
+    courseCounts.forEach((c) => { countMap[String(c._id)] = c.count; });
+    const categoriesData = allCategories.map((cat) => ({
+      _id: cat._id,
+      title: cat.translations?.[lang]?.title || cat.translations?.en?.title || cat.title || "Untitled",
+      slug: cat.slug,
+      image: cat.image,
+      status: cat.status || "active",
+      courseCount: countMap[String(cat._id)] || 0,
+    }));
 
-      for (const category of randomCategories) {
-        const coursesForCategory = await Course.find({ category: category._id })
-          .select("name name_ar slug price image trailer course_type video series chapters category instructor")
-          .populate("category", "title translations slug")
-          .populate("instructor", "name name_ar profileImage slug")
-          .limit(1)
-          .lean();
-
-        if (coursesForCategory.length > 0) {
-          recommendedCourses.push(transformCourse(coursesForCategory[0], lang, isAdmin));
-        }
-      }
-
-      // Fill up to 6 if needed
-      if (recommendedCourses.length < 6) {
-        const additionalCourses = await Course.aggregate([
-          { $match: { _id: { $nin: recommendedCourses.map((c) => c._id) } } },
-          { $sample: { size: 6 - recommendedCourses.length } },
-          {
-            $project: {
-              name: 1,
-              name_ar: 1,
-              slug: 1,
-              price: 1,
-              image: 1,
-              trailer: 1,
-              course_type: 1,
-              video: 1,
-              series: 1,
-              chapters: 1,
-            },
-          },
-        ]);
-
-        additionalCourses.forEach((course) => {
-          recommendedCourses.push(transformCourse(course, lang, isAdmin));
-        });
-      }
+    // Contact info
+    let contactData = null;
+    if (contactInfoDoc) {
+      contactData = {
+        email: contactInfoDoc.email,
+        phone: contactInfoDoc.phone,
+        address: lang === "ar" ? contactInfoDoc.address_ar : contactInfoDoc.address,
+        socialMedia: contactInfoDoc.socialMedia,
+      };
     }
 
-    // 6. Get Trending Course / Reels Section
-    let trendingSection = await TrendingCourse.findOne({ singleton: "trending_course" }).lean();
-
+    // Trending
     let trendingData = null;
     if (trendingSection) {
       trendingData = {
@@ -203,7 +199,19 @@ export const getHomeData = async (req, res, next) => {
       };
     }
 
-    // Return combined home page data
+    // FAQ
+    let faqItems = [];
+    if (faqDoc?.items) {
+      faqItems = faqDoc.items
+        .filter((item) => item.isActive)
+        .sort((a, b) => a.order - b.order)
+        .map((item) => ({
+          _id: item._id,
+          question: lang === "ar" ? item.question_ar || item.question : item.question,
+          answer: lang === "ar" ? item.answer_ar || item.answer : item.answer,
+        }));
+    }
+
     res.status(200).json({
       status: 200,
       success: true,
@@ -213,8 +221,11 @@ export const getHomeData = async (req, res, next) => {
         featured_courses: featuredCourses,
         join_us: joinUsData,
         newlyAddedCourses: transformedNewCourses,
-        recommendedCourses: recommendedCourses,
+        recommendedCourses: transformedRecommended,
         trending: trendingData,
+        faq: faqItems,
+        categories: categoriesData,
+        contact_info: contactData,
       },
     });
   } catch (error) {
@@ -480,5 +491,39 @@ export const submitContactForm = async (req, res, next) => {
       success: false,
       message: "Failed to send message. Please try again later.",
     });
+  }
+};
+
+// Get Bottom Banner (public)
+export const getBottomBannerPublic = async (req, res, next) => {
+  try {
+    const banner = await BottomBanner.findOne({ singleton: "bottom_banner" }).lean();
+
+    if (!banner) {
+      return res.status(200).json({
+        status: 200,
+        success: true,
+        message: "Bottom banner retrieved successfully",
+        data: null,
+      });
+    }
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Bottom banner retrieved successfully",
+      data: {
+        isActive: banner.isActive,
+        registered_content: banner.registered_content,
+        registered_content_ar: banner.registered_content_ar,
+        guest_content: banner.guest_content,
+        guest_content_ar: banner.guest_content_ar,
+        app_store_url: banner.app_store_url,
+        play_store_url: banner.play_store_url,
+      },
+    });
+  } catch (error) {
+    console.error("Error in getBottomBannerPublic:", error);
+    next(error);
   }
 };

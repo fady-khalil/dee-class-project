@@ -1,86 +1,61 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import {
-  CCard,
-  CCardBody,
-  CButton,
-  COffcanvas,
-  COffcanvasHeader,
-  COffcanvasTitle,
-  COffcanvasBody,
-  CSpinner,
-} from '@coreui/react'
+import { useNavigate } from 'react-router-dom'
+import { CCard, CCardBody, CButton, CSpinner } from '@coreui/react'
 import { api } from '../../services/api'
 import EmptyState from '../../components/common/EmptyState'
 import ConfirmDeleteModal from '../../components/common/ConfirmDeleteModal'
-import ResourceTable from '../../components/common/ResourceTable'
 import { useAuth } from '../../context/AuthContext'
-import BACKEND_URL from '../../config'
+import CategorySection from './components/CategorySection'
+import CourseViewOffcanvas from './components/CourseViewOffcanvas'
 
 const Course = () => {
   const navigate = useNavigate()
   const { canWrite } = useAuth()
   const hasWritePermission = canWrite('courses')
 
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [courses, setCourses] = useState([])
+  const [grouped, setGrouped] = useState([])
   const [loading, setLoading] = useState(true)
   const [viewVisible, setViewVisible] = useState(false)
   const [currentCourse, setCurrentCourse] = useState(null)
   const [deleteModal, setDeleteModal] = useState(false)
   const [courseToDelete, setCourseToDelete] = useState(null)
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    totalPages: 1,
-    totalCount: 0,
-    pageSize: 10,
-    hasNextPage: false,
-    hasPrevPage: false,
-  })
-
-  // Define columns for ResourceTable
-  const tableColumns = [
-    {
-      header: 'Title',
-      accessor: (item) => item.name || 'N/A',
-    },
-    {
-      header: 'Category',
-      accessor: (item) => item.category?.title || 'N/A',
-    },
-    { header: 'Price', accessor: 'price' },
-  ]
-
-  // Get current page from URL or default to 1
-  const currentPage = parseInt(searchParams.get('page')) || 1
 
   useEffect(() => {
-    fetchCourses(currentPage)
-  }, [currentPage])
+    fetchGrouped()
+  }, [])
 
-  const fetchCourses = async (page = 1) => {
+  const fetchGrouped = async () => {
     try {
       setLoading(true)
-      const response = await api.get(`/courses?page=${page}&pageSize=10`)
-
-      if (response?.data) {
-        setCourses(response.data)
-      }
-
-      // Update pagination state if available in response
-      if (response?.pagination) {
-        setPagination(response.pagination)
-      }
+      const response = await api.get('/courses/grouped')
+      if (response?.data) setGrouped(response.data)
     } catch (error) {
-      console.error('Failed to fetch courses:', error)
+      console.error('Failed to fetch grouped courses:', error)
     } finally {
       setLoading(false)
     }
   }
 
+  const handleReorder = async (categoryId, orderedIds) => {
+    // Optimistic update
+    setGrouped((prev) =>
+      prev.map((cat) => {
+        if (cat._id !== categoryId) return cat
+        const reordered = orderedIds.map((id) => cat.courses.find((c) => c._id === id))
+        return { ...cat, courses: reordered }
+      }),
+    )
+
+    try {
+      await api.put('/courses/reorder', { orderedIds })
+    } catch (error) {
+      console.error('Failed to reorder:', error)
+      fetchGrouped() // rollback on failure
+    }
+  }
+
   const handleAddCourse = () => {
     if (!hasWritePermission) return
-
     navigate('/courses/new', { state: { isEditing: false } })
   }
 
@@ -88,49 +63,18 @@ const Course = () => {
     navigate(`/courses/${course.slug}/edit`, { state: { isEditing: true } })
   }
 
-  const initiateDelete = (course) => {
-    setCourseToDelete(course)
-    setDeleteModal(true)
-  }
-
   const handleDelete = async () => {
     try {
       await api.delete(`/courses/${courseToDelete.slug}`)
       setDeleteModal(false)
       setCourseToDelete(null)
-
-      // Refresh the current page, or go to previous page if this was the last item
-      const currentPageNumber = pagination.currentPage
-      const isLastItemOnPage =
-        courses.length === 1 && pagination.currentPage > 1
-
-      if (isLastItemOnPage) {
-        setSearchParams({ page: (currentPageNumber - 1).toString() })
-      } else {
-        fetchCourses(currentPageNumber)
-      }
+      fetchGrouped()
     } catch (error) {
       console.error('Failed to delete course:', error)
     }
   }
 
-  const handleView = (course) => {
-    setCurrentCourse(course)
-    setViewVisible(true)
-  }
-
-  const paginate = (pageNumber) => {
-    setSearchParams({ page: pageNumber.toString() })
-  }
-
-  const emptyStateComponent = (
-    <EmptyState
-      title="No Courses Found"
-      message="There are no courses in the database yet."
-      actionLabel={hasWritePermission ? 'Add Course' : null}
-      onAction={hasWritePermission ? handleAddCourse : null}
-    />
-  )
+  const totalCourses = grouped.reduce((sum, cat) => sum + cat.courses.length, 0)
 
   if (loading) {
     return (
@@ -147,10 +91,8 @@ const Course = () => {
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div>
               <h4>Courses</h4>
-              {pagination.totalCount > 0 && (
-                <p className="text-medium-emphasis">
-                  Showing {courses.length} of {pagination.totalCount} courses
-                </p>
+              {totalCourses > 0 && (
+                <p className="text-medium-emphasis">{totalCourses} courses total</p>
               )}
             </div>
             {hasWritePermission && (
@@ -160,83 +102,42 @@ const Course = () => {
             )}
           </div>
 
-          <ResourceTable
-            columns={tableColumns}
-            data={courses}
-            resourceType="courses"
-            onView={handleView}
-            onEdit={hasWritePermission ? handleEdit : undefined}
-            onDelete={hasWritePermission ? initiateDelete : undefined}
-            pagination={{
-              currentPage: pagination.currentPage,
-              totalPages: pagination.totalPages,
-              onPageChange: paginate,
-            }}
-            emptyState={emptyStateComponent}
-          />
+          {grouped.length === 0 ? (
+            <EmptyState
+              title="No Courses Found"
+              message="There are no courses in the database yet."
+              actionLabel={hasWritePermission ? 'Add Course' : null}
+              onAction={hasWritePermission ? handleAddCourse : null}
+            />
+          ) : (
+            grouped.map((category) => (
+              <CategorySection
+                key={category._id}
+                category={category}
+                onView={(course) => {
+                  setCurrentCourse(course)
+                  setViewVisible(true)
+                }}
+                onEdit={handleEdit}
+                onDelete={(course) => {
+                  setCourseToDelete(course)
+                  setDeleteModal(true)
+                }}
+                onReorder={handleReorder}
+                hasWritePermission={hasWritePermission}
+              />
+            ))
+          )}
         </CCardBody>
       </CCard>
 
-      {currentCourse && (
-        <COffcanvas
-          placement="end"
-          visible={viewVisible}
-          onHide={() => setViewVisible(false)}
-        >
-          <COffcanvasHeader>
-            <COffcanvasTitle>Course Details</COffcanvasTitle>
-          </COffcanvasHeader>
-          <COffcanvasBody>
-            <div className="mb-4">
-              <h6 className="text-muted mb-2">Title</h6>
-              <p className="fs-5">
-                {currentCourse.name || 'N/A'}
-              </p>
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-muted mb-2">Category</h6>
-              <p className="fs-5">
-                {currentCourse.category?.title || 'N/A'}
-              </p>
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-muted mb-2">Price</h6>
-              <p className="fs-5">{currentCourse.price}</p>
-            </div>
-
-            {currentCourse.image && (
-              <div className="mb-4">
-                <h6 className="text-muted mb-2">Image</h6>
-                <img
-                  src={`${BACKEND_URL}/${currentCourse.image.data || currentCourse.image}`}
-                  alt={currentCourse.name || 'Course'}
-                  className="img-fluid rounded"
-                  style={{ maxWidth: '100%', maxHeight: '200px' }}
-                />
-              </div>
-            )}
-
-            <div className="d-flex justify-content-end gap-2 mt-4">
-              <CButton color="secondary" onClick={() => setViewVisible(false)}>
-                Close
-              </CButton>
-              {hasWritePermission && (
-                <CButton
-                  color="warning"
-                  onClick={() => {
-                    setViewVisible(false)
-                    handleEdit(currentCourse)
-                  }}
-                >
-                  Edit
-                </CButton>
-              )}
-            </div>
-          </COffcanvasBody>
-        </COffcanvas>
-      )}
+      <CourseViewOffcanvas
+        visible={viewVisible}
+        course={currentCourse}
+        onHide={() => setViewVisible(false)}
+        onEdit={handleEdit}
+        hasWritePermission={hasWritePermission}
+      />
 
       <ConfirmDeleteModal
         visible={deleteModal}

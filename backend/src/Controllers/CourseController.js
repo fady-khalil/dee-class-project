@@ -127,20 +127,15 @@ const transformCourseWithLanguage = (doc, lang = "en") => {
   };
 
   // Add type-specific fields and thumbnail
-  // Debug all course types
-  console.log("COURSE DEBUG:", docObj.name, "type:", docObj.course_type, "trailer var:", trailer?.assets?.thumbnail, "docObj.trailer:", docObj.trailer?.assets?.thumbnail);
-
   if (docObj.course_type === "single") {
     baseResponse.api_video_object = video;
     baseResponse.thumbnail = trailer?.assets?.thumbnail || video?.assets?.thumbnail || null;
   } else if (docObj.course_type === "series") {
     baseResponse.series = series;
     baseResponse.thumbnail = trailer?.assets?.thumbnail || series?.[0]?.series_video_id?.assets?.thumbnail || null;
-    console.log("SERIES DEBUG:", docObj.name, "computed thumbnail:", baseResponse.thumbnail);
   } else if (docObj.course_type === "playlist") {
     baseResponse.chapters = chapters;
     baseResponse.thumbnail = trailer?.assets?.thumbnail || chapters?.[0]?.lessons?.[0]?.video_id?.assets?.thumbnail || null;
-    console.log("PLAYLIST DEBUG:", docObj.name, "computed thumbnail:", baseResponse.thumbnail);
   }
 
   return baseResponse;
@@ -509,6 +504,34 @@ export const getCourses = async (req, res) => {
   }
 };
 
+// Get the 10 most recently added courses
+export const getNewThisWeek = async (req, res) => {
+  try {
+    const lang = req.language || req.query.lang || "en";
+
+    const courses = await Course.find()
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .populate("category", "title translations slug")
+      .populate("instructor", "name name_ar profileImage slug");
+
+    const transformed = courses.map((c) => transformCourseWithLanguage(c, lang));
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      data: transformed,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "Error fetching new courses",
+      data: error.message,
+    });
+  }
+};
+
 // Get course by slug
 export const getCourseBySlug = async (req, res) => {
   try {
@@ -789,6 +812,7 @@ export const getCategoryWithCourses = async (req, res) => {
     }
 
     const courses = await Course.find({ category: category._id })
+      .sort({ displayOrder: 1, createdAt: -1 })
       .populate("category", "title translations slug")
       .populate("instructor", "name name_ar profileImage slug");
 
@@ -1003,6 +1027,85 @@ export const fetchVideoDetails = async (req, res) => {
       success: false,
       message,
       data: null,
+    });
+  }
+};
+
+// Get courses grouped by category (admin)
+export const getCoursesGrouped = async (req, res) => {
+  try {
+    const categories = await CourseCategory.find().sort({ order: 1, createdAt: 1 });
+
+    const grouped = await Promise.all(
+      categories.map(async (cat) => {
+        const courses = await Course.find({ category: cat._id })
+          .sort({ displayOrder: 1, createdAt: -1 })
+          .select("name slug price displayOrder course_type")
+          .populate("category", "title translations slug");
+
+        const title = cat.translations?.en?.title || cat.title || "Untitled";
+        return {
+          _id: cat._id,
+          title,
+          slug: cat.slug,
+          courses: courses.map((c) => c.toObject()),
+        };
+      })
+    );
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Grouped courses retrieved successfully",
+      data: grouped,
+    });
+  } catch (error) {
+    console.error("Error getting grouped courses:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while retrieving grouped courses",
+      data: error.message,
+    });
+  }
+};
+
+// Reorder courses within a category (admin)
+export const reorderCourses = async (req, res) => {
+  try {
+    const { orderedIds } = req.body;
+
+    if (!Array.isArray(orderedIds) || orderedIds.length === 0) {
+      return res.status(400).json({
+        status: 400,
+        success: false,
+        message: "orderedIds array is required",
+        data: null,
+      });
+    }
+
+    const bulkOps = orderedIds.map((id, index) => ({
+      updateOne: {
+        filter: { _id: id },
+        update: { $set: { displayOrder: index } },
+      },
+    }));
+
+    await Course.bulkWrite(bulkOps);
+
+    res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Courses reordered successfully",
+      data: null,
+    });
+  } catch (error) {
+    console.error("Error reordering courses:", error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "An error occurred while reordering courses",
+      data: error.message,
     });
   }
 };

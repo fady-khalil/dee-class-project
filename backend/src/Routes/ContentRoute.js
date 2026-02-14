@@ -21,6 +21,8 @@ import {
   addFAQItem,
   updateFAQItem,
   deleteFAQItem,
+  getBottomBanner,
+  updateBottomBanner,
 } from "../Controllers/ContentController.js";
 
 const router = express.Router();
@@ -72,5 +74,10 @@ router.post("/faq", updateFAQ);
 router.post("/faq/items", addFAQItem);
 router.put("/faq/items/:itemId", updateFAQItem);
 router.delete("/faq/items/:itemId", deleteFAQItem);
+
+// Bottom Banner routes
+router.get("/bottom-banner", getBottomBanner);
+router.put("/bottom-banner", updateBottomBanner);
+router.post("/bottom-banner", updateBottomBanner);
 
 export default router;

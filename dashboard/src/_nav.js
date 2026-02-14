@@ -60,6 +60,16 @@ const getNavItems = (role) => {
           name: 'FAQ',
           to: '/content/faq',
         },
+        {
+          component: CNavItem,
+          name: 'About Page',
+          to: '/content/about',
+        },
+        {
+          component: CNavItem,
+          name: 'Bottom Banner',
+          to: '/content/bottom-banner',
+        },
       ],
     },
     {

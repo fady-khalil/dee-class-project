@@ -12,7 +12,12 @@
     "all_categories": "جميع الفئات",
     "my_progress": "مسار تقدمي",
     "profile": "الملف الشخصي",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "my_account": "حسابي",
+    "my_courses": "دوراتي",
+    "about": "قصتنا",
+    "news": "الأخبار",
+    "gift": "أهدِ اشتراكاً"
   },
 
   "about": {
@@ -69,7 +74,8 @@
     "course": "متميّز",
     "watch_course": "استكشف الدورة الكاملة",
     "reels_cta": "انضم إلى التجربة",
-    "title": "تعلم من الأفضل، كن الأفضل!"
+    "title": "تعلم من الأفضل، كن الأفضل!",
+    "faq_title": "الأسئلة الشائعة"
   },
 
   "courses": {
@@ -204,6 +210,7 @@
     "join_us_subtitle": "ساهم في نشر المعرفة وابنِ مسيرتك المهنية على منصتنا",
     "join_us_button": "انضم كمدرب",
     "view_all_categories": "عرض جميع التصنيفات",
+    "coming_soon": "قريباً",
     "plans_title": "باقات الاشتراك",
     "plan_currency": "ريال شهرياً",
     "plans_description": "اختر الباقة المناسبة لك",
@@ -579,6 +586,28 @@
     "unlimited_access": "وصول غير محدود للدورات",
     "start_watching": "ابدأ المشاهدة",
     "back": "رجوع"
+  },
+
+  "search": {
+    "results_for": "نتائج البحث عن",
+    "no_results": "لا توجد نتائج",
+    "see_all": "عرض جميع النتائج لـ",
+    "suggestions": "عمليات بحث شائعة",
+    "courses": "الدورات",
+    "instructors": "المدربون",
+    "categories": "التصنيفات",
+    "try_different": "جرّب مصطلح بحث مختلف",
+    "searching": "جارٍ البحث..."
+  },
+
+  "banner": {
+    "get_plan_message_bold": "افتح وصولاً غير محدود",
+    "get_plan_message": "لجميع الدورات المتميزة",
+    "get_plan_button": "احصل على اشتراك",
+    "download_message_bold": "تعلّم أينما كنت",
+    "download_message": "حمّل التطبيق",
+    "register_button": "انضم الآن",
+    "gift_button": "إهداء"
   },
 
   "gift_plan": {

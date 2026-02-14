@@ -18,6 +18,12 @@ const courseCategorySchema = new mongoose.Schema(
       ar: translationSchema, // Arabic content
     },
     slug: { type: String, unique: true },
+    image: { type: String, default: null },
+    status: {
+      type: String,
+      enum: ["active", "coming_soon"],
+      default: "active",
+    },
   },
   { timestamps: true }
 );

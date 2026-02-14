@@ -15,7 +15,8 @@ module.exports = {
       spacing: {
         primary: "7.2rem",
         secondary: "3.6rem",
-        firstSectionMobile: "2rem",
+        pageTop: "3.2rem",
+        firstSectionMobile: "1.2rem",
       },
     },
     screens: {

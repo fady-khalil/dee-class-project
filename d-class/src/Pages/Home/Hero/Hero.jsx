@@ -25,26 +25,28 @@ const Hero = ({ courses, hero }) => {
   const navigate = useNavigate();
   const [isPaused, setIsPaused] = useState(false);
   const swiperRef = useRef(null);
-  const { isLoggedIn, allowedCourses } = useContext(LoginAuthContext);
+  const { isLoggedIn, isVerified, isAuthenticated, allowedCourses } = useContext(LoginAuthContext);
 
   // Determine button text and action based on user state
   const getButtonConfig = () => {
     if (!isLoggedIn) {
-      // Not logged in → Register page
       return {
         text: t("buttons.begin_journey") || t("buttons.register_now"),
         action: () => navigate("/register"),
       };
-    } else if (allowedCourses?.length > 0) {
-      // Logged in with courses → My Courses page
+    } else if (!isVerified) {
+      return {
+        text: t("general.verify_email") || "Verify Email",
+        action: () => navigate("/verify-email"),
+      };
+    } else if (isAuthenticated || allowedCourses?.length > 0) {
       return {
         text: t("buttons.check_my_courses") || "Check My Courses",
         action: () => navigate("/my-courses"),
       };
     } else {
-      // Logged in, no courses → Plans page
       return {
-        text: t("buttons.begin_journey") || t("buttons.register_now"),
+        text: t("general.finish_sign_up") || "Get a Plan",
         action: () => navigate("/plans"),
       };
     }
@@ -61,8 +63,6 @@ const Hero = ({ courses, hero }) => {
   const column2Images = [...column2, ...column2, ...column2];
 
 
-  console.log(hero)
-
   const handlePauseToggle = () => {
     setIsPaused(!isPaused);
     // Also control swiper autoplay
@@ -76,7 +76,7 @@ const Hero = ({ courses, hero }) => {
   };
 
   return (
-    <div className="relative h-screen overflow-hidden bg-black" style={{
+    <div className="relative min-h-0 lg:h-screen overflow-hidden bg-black" style={{
       backgroundImage: `url(${backgroud})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
@@ -108,7 +108,9 @@ const Hero = ({ courses, hero }) => {
             </div>
 
             {/* Right side - Infinite scrolling images */}
-            <div className="flex gap-4 h-screen overflow-hidden py-8">
+            <div className="relative flex gap-4 h-screen overflow-hidden">
+              {/* Top fade — hides images behind header */}
+              <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-black via-black/80 to-transparent z-10 pointer-events-none" />
               {/* Column 1 - Scrolling up */}
               <div className="flex-1 overflow-hidden">
                 <div className={`flex flex-col gap-4 ${isPaused ? '' : 'animate-scroll-up'}`}>
@@ -122,7 +124,7 @@ const Hero = ({ courses, hero }) => {
                           getCourseThumbnail(course)
                         }
                         alt={course.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover" loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                       <div className="absolute bottom-4 left-4 right-4">
@@ -135,8 +137,8 @@ const Hero = ({ courses, hero }) => {
                 </div>
               </div>
 
-              {/* Column 2 - Scrolling up (slower or offset) */}
-              <div className="flex-1 overflow-hidden mt-20">
+              {/* Column 2 - Scrolling up (slower, slight offset) */}
+              <div className="flex-1 overflow-hidden mt-8">
                 <div className={`flex flex-col gap-4 ${isPaused ? '' : 'animate-scroll-up-slow'}`}>
                   {column2Images.map((course, index) => (
                     <div
@@ -148,7 +150,7 @@ const Hero = ({ courses, hero }) => {
                           getCourseThumbnail(course)
                         }
                         alt={course.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover" loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                       <div className="absolute bottom-4 left-4 right-4">
@@ -166,10 +168,10 @@ const Hero = ({ courses, hero }) => {
       </div>
 
       {/* Mobile Layout */}
-      <div className="lg:hidden h-full flex flex-col justify-center relative z-10">
+      <div className="lg:hidden flex flex-col justify-center relative z-10 py-28">
         <Container>
           {/* Title section */}
-          <div className="text-center mb-8 pt-20">
+          <div className="text-center mb-8">
             <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight">
               {hero?.title || t("home.title")}
             </h1>
@@ -214,7 +216,7 @@ const Hero = ({ courses, hero }) => {
                     <img
                       src={getCourseThumbnail(course)}
                       alt={course.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover" loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                     <div className="absolute bottom-4 left-4 right-4">
@@ -243,70 +245,12 @@ const Hero = ({ courses, hero }) => {
       {/* Pause/Play button at bottom right */}
       <button
         onClick={handlePauseToggle}
-        className="absolute bottom-8 right-8 z-20 p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full transition-all duration-200 text-white"
+        className="absolute bottom-8 right-8 z-20 p-3 bg-white/20 hover:bg-white/30 rounded-full transition-colors duration-200 text-white"
         aria-label={isPaused ? "Play" : "Pause"}
       >
         {isPaused ? <Play size={24} weight="fill" /> : <Pause size={24} weight="fill" />}
       </button>
 
-      {/* CSS for animations and slider */}
-      <style>{`
-        @keyframes scroll-up {
-          0% {
-            transform: translateY(0);
-          }
-          100% {
-            transform: translateY(-33.33%);
-          }
-        }
-
-        @keyframes scroll-up-slow {
-          0% {
-            transform: translateY(0);
-          }
-          100% {
-            transform: translateY(-33.33%);
-          }
-        }
-
-        .animate-scroll-up {
-          animation: scroll-up 40s linear infinite;
-        }
-
-        .animate-scroll-up-slow {
-          animation: scroll-up-slow 50s linear infinite;
-        }
-
-        .hero-mobile-slider {
-          padding-bottom: 40px;
-        }
-
-        .hero-mobile-slide {
-          width: 240px;
-          transition: transform 0.3s ease;
-        }
-
-        .hero-mobile-slide:not(.swiper-slide-active)::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.5);
-          border-radius: 0.75rem;
-          pointer-events: none;
-          transition: opacity 0.3s ease;
-        }
-
-        .hero-mobile-slider .swiper-pagination-bullet {
-          background: transparent;
-          border: 1px solid white;
-          opacity: 1;
-        }
-
-        .hero-mobile-slider .swiper-pagination-bullet-active {
-          background: white;
-          border: 1px solid white;
-        }
-      `}</style>
     </div>
   );
 };

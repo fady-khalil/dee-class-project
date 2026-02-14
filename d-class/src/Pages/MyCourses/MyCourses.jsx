@@ -31,8 +31,8 @@ const MyCourses = () => {
   }
 
   return (
-    <main className="py-secondary lg:py-primary min-h-screen">
-      <Container className="flex flex-col gap-y-20 lg:gap-y-28">
+    <main className="py-pageTop lg:py-primary min-h-screen">
+      <Container className="flex flex-col gap-y-10 lg:gap-y-28">
         <CategorySlider />
 
         {/* Purchased Courses */}

@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import Container from "Components/Container/Container";
-import useFetch from "Hooks/useFetch";
+import useApiQuery from "Hooks/useApiQuery";
 import IsLoading from "Components/RequestHandler/IsLoading";
 import PlanTitle from "./PlanTitle";
 import FrequentlyAskedQuestions from "Components/FQ/FrequentlyAskedQuestions";
@@ -15,7 +15,7 @@ import { FRONTEND_URL } from "Utilities/BASE_URL";
 const Plans = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { data, isLoading, isError, fetchData } = useFetch("");
+  const { data, isLoading, isError } = useApiQuery("packages");
   const { user, isLoggedIn, token } = useContext(LoginAuthContext);
   const {
     postData,
@@ -55,17 +55,13 @@ const Plans = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData("packages");
-  }, []);
-
   if (isLoading) {
     return <IsLoading />;
   }
 
   if (data) {
     return (
-      <section className="lg:py-primary py-secondary">
+      <section className="py-pageTop lg:py-primary">
         <Container>
           <PlanTitle />
 
@@ -98,7 +94,7 @@ const Plans = () => {
             </div>
           </div>
 
-          <div className="flex flex-col xl:flex-row justify-center items-center xl:items-end gap-6 md:gap-10 mt-10 lg:mt-0">
+          <div className="flex flex-col xl:flex-row justify-center items-center xl:items-end gap-6 lg:gap-10 mt-6 lg:mt-0">
             {data?.data?.packages?.map((plan, index) => {
               const price = billingCycle === "yearly" ? plan.yearlyPrice : plan.monthlyPrice;
               const priceFormatted = billingCycle === "yearly" ? plan.yearlyPriceFormatted : plan.monthlyPriceFormatted;
@@ -218,7 +214,10 @@ const Plans = () => {
             })}
           </div>
 
-          <FrequentlyAskedQuestions title="Plans" data={data?.data?.faqs} />
+          <FrequentlyAskedQuestions
+            title={t("home.faq_title")}
+            items={data?.data?.faq}
+          />
         </Container>
       </section>
     );

@@ -1,67 +1,74 @@
-import React, { useEffect, useState } from "react";
-import CategoriesTabs from "./CategoriesTabs/CategoriesTabs";
-import CoursesDisplay from "./CoursesDisplay/CoursesDisplay";
-import { useContext } from "react";
-import { CategoriesContext } from "Context/General/CategoriesContext";
-import IsLoading from "Components/RequestHandler/IsLoading";
+import { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
-import IsError from "Components/RequestHandler/IsError";
+import { useTranslation } from "react-i18next";
+import { CategoriesContext } from "Context/General/CategoriesContext";
 import { LoginAuthContext } from "Context/Authentication/LoginAuth";
+import IsLoading from "Components/RequestHandler/IsLoading";
+import IsError from "Components/RequestHandler/IsError";
+import Container from "Components/Container/Container";
+import CategoryPills from "./CategoryPills";
+import ExploreSearch from "./ExploreSearch";
+import NewThisWeek from "./NewThisWeek/NewThisWeek";
+import CoursesDisplay from "./CoursesDisplay/CoursesDisplay";
+
 const MainCategoryLandingScreen = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const [activeCategorySlug, setActiveCategorySlug] = useState(undefined);
-  const { categories, getCategoriesLoading, getCategoriesError } =
+  const { categories, getCategoriesLoading, getCategoriesError, fetchCategories } =
     useContext(CategoriesContext);
-  const { isLoggedIn } = useContext(LoginAuthContext);
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    if (location.state?.isAuthenticated) {
-      setIsAuthenticated(true);
-    }
+    fetchCategories();
+  }, []);
+  const { isAuthenticated } = useContext(LoginAuthContext);
 
-    // If slug is passed via navigation, always use it
+  useEffect(() => {
     if (location?.state?.slug) {
       setActiveCategorySlug(location.state.slug);
-    } else if (isLoggedIn && location.state?.isAuthenticated) {
-      // If user is authenticated, set "For You" tab as default
+    } else if (isAuthenticated) {
       setActiveCategorySlug("for-you");
     } else {
-      // Default to first category
       setActiveCategorySlug(categories?.[0]?.slug);
     }
   }, [
     categories,
     location?.state?.slug,
-    location.state?.isAuthenticated,
-    isLoggedIn,
+    isAuthenticated,
   ]);
 
-  if (getCategoriesLoading) {
-    return <IsLoading />;
-  }
-
-  if (getCategoriesError) {
-    return <IsError />;
-  }
-
-  if (categories?.length === 0) {
-    return <div>No categories found</div>;
-  }
+  if (getCategoriesLoading) return <IsLoading />;
+  if (getCategoriesError) return <IsError />;
+  if (categories?.length === 0) return <div>No categories found</div>;
 
   if (categories) {
     return (
-      <div className="pb-primary lg:pt-[6rem]">
-        <div className="grid grid-cols-12 gap-4 lg:gap-6">
-          <CategoriesTabs
-            isAuthenticated={isAuthenticated}
+      <div className="pb-16 lg:pb-primary pt-pageTop lg:pt-primary">
+        <Container>
+          {/* Page title + search */}
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <h1 className="shrink-0 text-3xl font-bold text-white sm:text-4xl">
+              {t("navigation.explore", "Explore")}
+            </h1>
+            <ExploreSearch />
+          </div>
+
+          {/* Horizontal category pills */}
+          <CategoryPills
             categories={categories}
             activeCategorySlug={activeCategorySlug}
             setActiveCategorySlug={setActiveCategorySlug}
+            isAuthenticated={isAuthenticated}
           />
-          <CoursesDisplay activeCategorySlug={activeCategorySlug} />
-        </div>
+
+          {/* New this week — cinematic horizontal row */}
+          <NewThisWeek />
+
+          {/* Courses grid */}
+          <div className="mt-8 lg:mt-10">
+            <CoursesDisplay activeCategorySlug={activeCategorySlug} />
+          </div>
+        </Container>
       </div>
     );
   }

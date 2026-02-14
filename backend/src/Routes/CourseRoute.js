@@ -3,6 +3,7 @@ import {
   createCourse,
   updateCourse,
   getCourses,
+  getNewThisWeek,
   getCourseBySlug,
   deleteCourse,
   getCategoryWithCourses,
@@ -11,6 +12,8 @@ import {
   saveTrailer,
   removeTrailer,
   fetchVideoDetails,
+  getCoursesGrouped,
+  reorderCourses,
 } from "../Controllers/CourseController.js";
 import upload from "../upload/upload.js";
 import { OptionalIdentifier } from "../middlewares/Identifications.js";
@@ -32,6 +35,9 @@ router.get(
 // Get all courses
 router.get("/", getCourses);
 
+// Get new courses this week
+router.get("/new-this-week", getNewThisWeek);
+
 // Get courses by category
 router.get("/by-category/:categorySlug", getCoursesByCategory);
 
@@ -47,6 +53,12 @@ router.get(
 
 // Fetch video details from api.video - requires admin auth (MUST be before /:slug)
 router.get("/video/:videoId", AdminIdentifier, fetchVideoDetails);
+
+// Get courses grouped by category (admin)
+router.get("/grouped", AdminIdentifier, getCoursesGrouped);
+
+// Reorder courses within a category (admin)
+router.put("/reorder", AdminIdentifier, reorderCourses);
 
 // Get a specific course by slug
 router.get("/:slug", OptionalIdentifier, getCourseBySlug);

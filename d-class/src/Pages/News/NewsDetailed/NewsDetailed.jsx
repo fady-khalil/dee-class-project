@@ -1,29 +1,23 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Container from "Components/Container/Container";
 import Banner from "./Banner/Banner";
 import Landing from "./Landing/Landing";
-import useFetch from "Hooks/useFetch";
+import useApiQuery from "Hooks/useApiQuery";
 import IsLoading from "Components/RequestHandler/IsLoading";
 
 const NewsDetailed = () => {
   const { t, i18n } = useTranslation();
   const { id } = useParams();
-  const { data, isLoading, isError, fetchData } = useFetch("");
-
-  useEffect(() => {
-    if (id) {
-      fetchData(`news/${id}`);
-    }
-  }, [id]);
+  const { data, isLoading, isError } = useApiQuery(id ? `news/${id}` : null);
 
   if (isLoading) {
     return <IsLoading />;
   }
 
   return (
-    <main className="pt-secondary lg:pt-primary">
+    <main className="pt-pageTop lg:pt-primary">
       <Container>
         <h1 className="text-white text-4xl font-bold mb-16">
           {t("news.newsMainTitle")}

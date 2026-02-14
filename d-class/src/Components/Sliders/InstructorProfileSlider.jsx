@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
+
 import { Link } from "react-router-dom";
 
 // swiper
@@ -13,6 +14,7 @@ import "./InstructorProfileSliderStyle.css";
 
 const InstructorProfileSlider = ({ title, data }) => {
   const { i18n } = useTranslation();
+
   const prevRef = useRef(null);
   const nextRef = useRef(null);
 

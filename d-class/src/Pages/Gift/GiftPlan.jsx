@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { LoginAuthContext } from "Context/Authentication/LoginAuth";
-import useFetch from "Hooks/useFetch";
+import useApiQuery from "Hooks/useApiQuery";
 import usePostDataNoLang from "Hooks/usePostDataNoLang";
 import Spinner from "Components/RequestHandler/Spinner";
 import {
@@ -38,11 +38,10 @@ const GiftPlan = () => {
   const [myGifts, setMyGifts] = useState([]);
   const [isLoadingGifts, setIsLoadingGifts] = useState(true);
 
-  const { data, isLoading, isError, fetchData } = useFetch();
+  const { data, isLoading, isError } = useApiQuery("packages", { token });
   const { postData } = usePostDataNoLang();
 
   useEffect(() => {
-    fetchData("packages", token);
     fetchGiftHistory();
   }, []);
 
@@ -205,7 +204,7 @@ const GiftPlan = () => {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-bg via-grey to-bg py-16 px-4">
+    <main className="min-h-screen bg-gradient-to-br from-bg via-grey to-bg py-pageTop lg:py-primary px-4">
       <div className="max-w-4xl mx-auto">
         {/* Back Button */}
         <button

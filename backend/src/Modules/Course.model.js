@@ -152,6 +152,11 @@ const courseSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    // Display order within category (for admin sorting)
+    displayOrder: {
+      type: Number,
+      default: 0,
+    },
     // Trailer video from api.video
     trailer: videoSchema,
 

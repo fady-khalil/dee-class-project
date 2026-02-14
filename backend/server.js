@@ -36,6 +36,8 @@ import planRoute, { adminPlanRouter } from "./src/Routes/PlanRoute.js";
 import stripeRoute, { protectedStripeRouter } from "./src/Routes/StripeRoute.js";
 import profileRoute from "./src/Routes/ProfileRoute.js";
 import accountRoute from "./src/Routes/AccountRoute.js";
+import searchRoute from "./src/Routes/SearchRoute.js";
+import aboutPageRoute from "./src/Routes/AboutPageRoute.js";
 import giftRoute, { protectedGiftRouter } from "./src/Routes/GiftRoute.js";
 import { handleWebhook } from "./src/Controllers/StripeController.js";
 import { Identifier } from "./src/middlewares/Identifications.js";
@@ -96,9 +98,22 @@ app.use(
   express.static(path.join(__dirname, "uploads"))
 );
 
-// Log requests
+// Log requests — numbered, with response time and status
+let requestCount = 0;
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  // Skip static file requests (uploads/images)
+  if (req.url.startsWith("/uploads")) return next();
+
+  const num = ++requestCount;
+  const start = Date.now();
+  const time = new Date().toLocaleTimeString();
+
+  res.on("finish", () => {
+    const ms = Date.now() - start;
+    console.log(
+      `#${num} [${time}] ${res.statusCode} ${req.method} ${req.originalUrl} — ${ms}ms`
+    );
+  });
   next();
 });
 
@@ -119,6 +134,7 @@ app.use("/api/admin", adminLanguageMiddleware, adminRouter);
 app.use("/api/admin/content", adminLanguageMiddleware, contentRoute);
 app.use("/api/admin/expert-applications", adminLanguageMiddleware, expertApplicationRoute);
 app.use("/api/admin/plans", adminLanguageMiddleware, adminPlanRouter);
+app.use("/api/admin/content/about", adminLanguageMiddleware, aboutPageRoute);
 app.use("/api/database", adminLanguageMiddleware, databaseRoute);
 
 // Public route for expert application submission
@@ -153,6 +169,8 @@ app.use("/api/:language", languageMiddleware, courseEngagementRoute);
 app.use("/api/:language", languageMiddleware, profileRoute);
 // Account routes (edit profile, subscription details)
 app.use("/api/:language/account", languageMiddleware, accountRoute);
+// Search routes
+app.use("/api/:language/search", languageMiddleware, searchRoute);
 
 // Regular API routes (without language in URL)
 // Fallback routes for backward compatibility - these should use language middleware too

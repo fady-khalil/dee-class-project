@@ -1,20 +1,16 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import useFetch from "Hooks/useFetch";
+import useApiQuery from "Hooks/useApiQuery";
 import { Spinner } from "Components/RequestHandler";
 
 const Privacy = () => {
   const { t, i18n } = useTranslation();
-  const { data, isLoading, isError, fetchData } = useFetch();
-
-  useEffect(() => {
-    fetchData("home/privacy-policy");
-  }, [i18n.language]);
+  const { data, isLoading, isError } = useApiQuery("home/privacy-policy");
 
   const content = data?.data?.content;
 
   return (
-    <div className="min-h-screen bg-bg py-12">
+    <div className="min-h-screen bg-bg py-pageTop lg:py-primary">
       <div className="container mx-auto px-4 max-w-4xl">
         <h1 className="text-4xl font-bold mb-8 text-white text-center">
           {t("privacy.title", "Privacy Policy")}

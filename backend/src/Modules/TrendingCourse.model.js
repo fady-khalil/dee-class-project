@@ -4,6 +4,7 @@ const reelSchema = new mongoose.Schema({
   videoId: { type: String, required: true },
   title: { type: String, default: "" },
   description: { type: String, default: "" },
+  course: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
   public: { type: Boolean, default: true },
   assets: {
     hls: { type: String },

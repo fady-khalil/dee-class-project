@@ -7,6 +7,7 @@ import {
   CFormInput,
   CFormTextarea,
   CFormLabel,
+  CFormSelect,
   CButton,
   CRow,
   CCol,
@@ -48,9 +49,14 @@ const TrendingCourse = () => {
   const [fetchingVideo, setFetchingVideo] = useState(false)
   const [fetchedVideo, setFetchedVideo] = useState(null)
 
+  // Courses for linking
+  const [courses, setCourses] = useState([])
+  const [selectedCourseId, setSelectedCourseId] = useState('')
+
   // Load data on mount
   useEffect(() => {
     loadData()
+    loadCourses()
   }, [])
 
   const loadData = async () => {
@@ -76,6 +82,17 @@ const TrendingCourse = () => {
       console.error(err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadCourses = async () => {
+    try {
+      const response = await api.get('/admin/content/courses-list')
+      if (response?.data) {
+        setCourses(response.data)
+      }
+    } catch (err) {
+      console.error('Failed to load courses', err)
     }
   }
 
@@ -190,17 +207,21 @@ const TrendingCourse = () => {
     setError(null)
 
     try {
-      const response = await api.post('/admin/content/trending/reels', {
+      const payload = {
         videoId: fetchedVideo.videoId,
         title: fetchedVideo.title,
         description: fetchedVideo.description,
         assets: fetchedVideo.assets,
-      })
+      }
+      if (selectedCourseId) payload.courseId = selectedCourseId
+
+      const response = await api.post('/admin/content/trending/reels', payload)
 
       if (response?.success) {
         setReels(response.data.reels || [])
         setFetchedVideo(null)
         setVideoId('')
+        setSelectedCourseId('')
         setHasData(true)
         setSuccess('Reel added successfully!')
         setTimeout(() => setSuccess(null), 3000)
@@ -343,6 +364,20 @@ const TrendingCourse = () => {
                     </CButton>
                   </CInputGroup>
                 </CCol>
+                <CCol md={4}>
+                  <CFormLabel>Link to Course</CFormLabel>
+                  <CFormSelect
+                    value={selectedCourseId}
+                    onChange={(e) => setSelectedCourseId(e.target.value)}
+                  >
+                    <option value="">-- No Course --</option>
+                    {courses.map((c) => (
+                      <option key={c._id} value={c._id}>
+                        {c.name} {c.name_ar ? `- ${c.name_ar}` : ''}
+                      </option>
+                    ))}
+                  </CFormSelect>
+                </CCol>
               </CRow>
 
               {/* Fetched Video Preview */}
@@ -411,6 +446,13 @@ const TrendingCourse = () => {
                     <div className="flex-grow-1">
                       <h6 className="mb-0">{reel.title || 'Untitled'}</h6>
                       <small className="text-muted">ID: {reel.videoId}</small>
+                      {reel.course && (
+                        <div>
+                          <small className="text-primary">
+                            Course: {courses.find((c) => c._id === reel.course)?.name || reel.course}
+                          </small>
+                        </div>
+                      )}
                     </div>
                     <div>
                       <span className="badge bg-secondary me-2">#{index + 1}</span>

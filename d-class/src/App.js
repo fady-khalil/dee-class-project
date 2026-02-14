@@ -5,8 +5,7 @@ import { useTranslation } from "react-i18next";
 import ScrollToTop from "Helpers/ScrollToTop";
 // Layout
 import Footer from "Layout/Footer/Footer";
-import Header from "Layout/Header/Header";
-import AutenticatedHeader from "Layout/Header/AutenticatedHeader";
+import Header from "Layout/Header";
 // Pages
 import Home from "Pages/Home/Home";
 import About from "Pages/About/About";
@@ -52,6 +51,9 @@ import AssessmentComplete from "Pages/Assesments/AssessmentComplete";
 import { LoginAuthContext } from "Context/Authentication/LoginAuth";
 // instructor profile
 import InstructorProfile from "Pages/InstructorProfile/InstructorProfile";
+// search
+import SearchResults from "Pages/SearchResults/SearchResults";
+import BottomBanner from "Components/BottomBanner/BottomBanner";
 // authenticated page
 import ManageProfiles from "Pages/Profiles/ManageProfiles";
 import MyAccount from "Pages/Account/MyAccount";
@@ -59,7 +61,7 @@ import MyProgress from "Pages/MyProgress/MyProgress";
 
 const App = () => {
   const { i18n } = useTranslation();
-  const { isAuthenticated } = useContext(LoginAuthContext);
+  const { isAuthenticated, isLoggedIn } = useContext(LoginAuthContext);
 
   useEffect(() => {
     const updateFontClass = () => {
@@ -87,7 +89,7 @@ const App = () => {
 
   return (
     <div className="App">
-      {isAuthenticated ? <AutenticatedHeader /> : <Header />}
+      <Header />
       <ScrollToTop />
       <Routes>
         {/* Common routes */}
@@ -106,6 +108,8 @@ const App = () => {
         <Route path="/plans" element={<Plans />} />
         <Route path="/my-courses" element={<MyCourses />} />
 
+        {/* search results */}
+        <Route path="/search-results" element={<SearchResults />} />
         {/* instructor profile */}
         <Route
           path="/instructor-profile/:slug"
@@ -131,13 +135,15 @@ const App = () => {
         <Route path="/gift/verify-email" element={<GiftVerifyEmail />} />
         <Route path="/gift/success" element={<GiftSuccess />} />
 
+        {/* My Account - available for any logged-in user */}
+        {isLoggedIn && <Route path="/my-account" element={<MyAccount />} />}
+
         {/* Conditional routes based on authentication status */}
         {isAuthenticated ? (
           <>
             {/* Redirect root to categories for authenticated users */}
             <Route index element={<Navigate to="/categories" replace />} />
             <Route path="/my-profiles" element={<ManageProfiles />} />
-            <Route path="/my-account" element={<MyAccount />} />
             <Route path="/my-progress" element={<MyProgress />} />
             {/* Gift plan purchase - only for authenticated users */}
             <Route path="/gift/plan" element={<GiftPlan />} />
@@ -159,6 +165,7 @@ const App = () => {
         )}
       </Routes>
       <Footer />
+      <BottomBanner />
     </div>
   );
 };

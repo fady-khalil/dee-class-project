@@ -12,7 +12,12 @@
     "my_progress": "My Progress",
     "profile": "Profile",
     "logout": "Logout",
-    "all_categories": "All Categories"
+    "all_categories": "All Categories",
+    "my_account": "My Account",
+    "my_courses": "My Courses",
+    "about": "Our Story",
+    "news": "News",
+    "gift": "Gift a Plan"
   },
 
   "about": {
@@ -65,7 +70,8 @@
     "course": "Premium",
     "watch_course": "Explore Full Course",
     "reels_cta": "Join the experience",
-    "title": "Learn from the best, become the best!"
+    "title": "Learn from the best, become the best!",
+    "faq_title": "Frequently Asked Questions"
   },
 
   "courses": {
@@ -203,6 +209,7 @@
     "join_us_subtitle": "Transform lives through your knowledge and build your legacy on our premium platform",
     "join_us_button": "Become an Expert Instructor",
     "view_all_categories": "Explore All Categories",
+    "coming_soon": "Coming Soon",
     "plans_title": "Elite Membership Options",
     "plan_currency": "SAR per month",
     "plans_description": "Elevate Your Potential with Premium Access to Excellence",
@@ -569,6 +576,28 @@
     "unlimited_access": "Unlimited Course Access",
     "start_watching": "Start Watching",
     "back": "Back"
+  },
+
+  "search": {
+    "results_for": "Search results for",
+    "no_results": "No results found",
+    "see_all": "See all results for",
+    "suggestions": "Popular Searches",
+    "courses": "Courses",
+    "instructors": "Instructors",
+    "categories": "Categories",
+    "try_different": "Try a different search term",
+    "searching": "Searching..."
+  },
+
+  "banner": {
+    "get_plan_message_bold": "Unlock unlimited access",
+    "get_plan_message": "to all premium courses",
+    "get_plan_button": "Get a Plan",
+    "download_message_bold": "Take your learning on the go",
+    "download_message": "download the app",
+    "register_button": "Join Now",
+    "gift_button": "Gift"
   },
 
   "gift_plan": {

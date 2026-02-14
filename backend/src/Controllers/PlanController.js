@@ -1,4 +1,5 @@
 import Plan from "../Modules/Plan.model.js";
+import FAQ from "../Modules/FAQ.model.js";
 
 // ==================== PUBLIC ENDPOINTS ====================
 
@@ -34,10 +35,25 @@ export const getActivePlans = async (req, res) => {
       isPopular: plan.isPopular,
     }));
 
+    // Get FAQ items
+    let faqItems = [];
+    const faqDoc = await FAQ.findOne({ singleton: "faq" }).lean();
+    if (faqDoc?.items) {
+      faqItems = faqDoc.items
+        .filter((item) => item.isActive)
+        .sort((a, b) => a.order - b.order)
+        .map((item) => ({
+          _id: item._id,
+          question: language === "ar" ? item.question_ar || item.question : item.question,
+          answer: language === "ar" ? item.answer_ar || item.answer : item.answer,
+        }));
+    }
+
     res.status(200).json({
       success: true,
       data: {
         packages: formattedPlans,
+        faq: faqItems,
       },
     });
   } catch (error) {
