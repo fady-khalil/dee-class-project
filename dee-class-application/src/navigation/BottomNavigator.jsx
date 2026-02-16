@@ -6,6 +6,7 @@ import COLORS from "../styles/colors";
 import HomeMainScreen from "../Screens/Home/HomeMainScreen";
 import MyProgress from "../Screens/My Progress/MyProgress";
 import Library from "../Screens/Librarie/Library";
+import PlansScreen from "../Screens/Plans/PlansScreen";
 import { useAuth } from "../context/Authentication/LoginAuth";
 import OfflineIndicator from "../components/common/OfflineIndicator";
 import OfflineScreen from "../components/common/OfflineScreen";
@@ -61,8 +62,8 @@ const BottomTabNavigator = () => {
       },
     });
 
-    // Add My Progress tab if user is authenticated
     if (isAuthenticated) {
+      // Add My Progress tab if user is authenticated
       screens.push({
         name: "MyProgress",
         component: isConnected ? MyProgress : OfflineScreen,
@@ -72,6 +73,20 @@ const BottomTabNavigator = () => {
               focused,
               iconName: "person",
               iconOutlineName: "person-outline",
+            }),
+        },
+      });
+    } else {
+      // Add Plans tab for non-authenticated users
+      screens.push({
+        name: "Plans",
+        component: isConnected ? PlansScreen : OfflineScreen,
+        options: {
+          tabBarIcon: ({ focused }) =>
+            TabBarIcon({
+              focused,
+              iconName: "pricetag",
+              iconOutlineName: "pricetag-outline",
             }),
         },
       });

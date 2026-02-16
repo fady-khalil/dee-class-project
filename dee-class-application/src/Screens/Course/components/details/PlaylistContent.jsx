@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import LessonCompletedBadge from "../../../../components/common/LessonCompletedBadge";
 
@@ -231,7 +232,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    padding: 16,
+    padding: SPACING.lg,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",
   },
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   statsText: {
     color: COLORS.darkWhite,
@@ -260,23 +261,23 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   chaptersList: {
-    padding: 16,
+    padding: SPACING.lg,
   },
   chapterContainer: {
     backgroundColor: COLORS.grey,
     borderRadius: 12,
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
     overflow: "hidden",
   },
   chapterHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 16,
+    padding: SPACING.lg,
   },
   chapterTitleContainer: {
     flex: 1,
-    marginRight: 12,
+    marginRight: SPACING.md,
   },
   chapterNumber: {
     color: COLORS.primary,
@@ -284,18 +285,18 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 0.5,
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   chapterTitle: {
     color: COLORS.white,
     fontSize: 16,
     fontWeight: "600",
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   chapterStats: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: SPACING.sm,
   },
   chapterProgress: {
     color: COLORS.darkWhite,
@@ -304,21 +305,21 @@ const styles = StyleSheet.create({
   chapterProgressBar: {
     height: 2,
     backgroundColor: "rgba(255,255,255,0.1)",
-    marginHorizontal: 16,
+    marginHorizontal: SPACING.lg,
   },
   chapterProgressFill: {
     height: "100%",
     backgroundColor: COLORS.primary,
   },
   lessonsContainer: {
-    padding: 12,
-    paddingTop: 16,
+    padding: SPACING.md,
+    paddingTop: SPACING.lg,
   },
   lessonCard: {
     flexDirection: "row",
     backgroundColor: "rgba(255,255,255,0.05)",
     borderRadius: 10,
-    marginBottom: 10,
+    marginBottom: SPACING.md,
     overflow: "hidden",
   },
   selectedCard: {
@@ -343,7 +344,7 @@ const styles = StyleSheet.create({
   },
   lessonInfo: {
     flex: 1,
-    padding: 10,
+    padding: SPACING.md,
     justifyContent: "center",
   },
   lessonHeader: {

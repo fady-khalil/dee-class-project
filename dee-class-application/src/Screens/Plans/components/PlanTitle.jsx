@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../../styles/colors";
+import SPACING from "../../../styles/spacing";
 
 const PlanTitle = () => {
   const { t } = useTranslation();
@@ -16,16 +17,16 @@ const PlanTitle = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 30,
-    paddingHorizontal: 16,
-    marginTop: 44,
+    marginBottom: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
+    marginTop: SPACING.xxl,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
     color: COLORS.white,
     textAlign: "center",
-    marginBottom: 10,
+    marginBottom: SPACING.md,
   },
   subtitle: {
     fontSize: 16,

@@ -49,6 +49,8 @@ export default {
     edit_profile: "Edit Profile",
     change_password: "Change Password",
     subscription_details: "My Subscription",
+    redeem_code: "Redeem Code",
+    gift_success: "Gift Redeemed",
   },
   for_you: {
     title: "Curated For You",
@@ -129,12 +131,15 @@ export default {
     join_us_subtitle:
       "Embark on a journey of excellence with premium video masterclasses accessible anytime, anywhere, on any device.",
     categories: "Areas of Excellence",
+    coming_soon: "Coming Soon",
+    courses_count: "Courses",
     hours: "hours",
     min: "min",
     not_specified: "Not specified",
     english: "English",
     faq_title: "Frequently Asked Questions",
     check_all_courses: "Check All Courses",
+    view_all_categories: "View All Categories",
     check_our_packages: "Check Our Packages",
   },
   forms: {

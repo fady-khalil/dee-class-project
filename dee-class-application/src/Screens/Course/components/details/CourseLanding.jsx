@@ -12,6 +12,7 @@ import {
   I18nView,
 } from "../../../../components/common/I18nComponents";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
 const CourseLanding = ({ data, isAuthenticated, isLoggedIn, navigation }) => {
@@ -146,20 +147,20 @@ const CourseLanding = ({ data, isAuthenticated, isLoggedIn, navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: SPACING.lg,
     backgroundColor: COLORS.backgroundColor,
   },
   sectionTitle: {
     color: COLORS.white,
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
   descriptionCard: {
     backgroundColor: COLORS.grey,
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    padding: SPACING.lg,
+    marginBottom: SPACING.xl,
   },
   description: {
     color: COLORS.white,
@@ -169,14 +170,14 @@ const styles = StyleSheet.create({
   detailsCard: {
     backgroundColor: COLORS.grey,
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    padding: SPACING.lg,
+    marginBottom: SPACING.xl,
   },
   detailsTitle: {
     color: COLORS.white,
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
   detailsGrid: {
     flexDirection: "row",
@@ -186,13 +187,13 @@ const styles = StyleSheet.create({
   detailItem: {
     width: "48%",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   detailValue: {
     color: COLORS.white,
     fontSize: 16,
     fontWeight: "bold",
-    marginTop: 4,
+    marginTop: SPACING.xs,
   },
   detailLabel: {
     color: COLORS.darkWhite,
@@ -202,35 +203,35 @@ const styles = StyleSheet.create({
   learnCard: {
     backgroundColor: COLORS.grey,
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    padding: SPACING.lg,
+    marginBottom: SPACING.xl,
   },
   cardTitle: {
     color: COLORS.white,
     fontSize: 16,
     fontWeight: "bold",
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
   learnList: {
-    marginTop: 8,
+    marginTop: SPACING.sm,
   },
   learnItem: {
     flexDirection: "row",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
     alignItems: "flex-start",
   },
   learnText: {
     color: COLORS.white,
     fontSize: 14,
-    marginLeft: 8,
+    marginLeft: SPACING.sm,
     flex: 1,
     lineHeight: 20,
   },
   enrollmentCard: {
     backgroundColor: COLORS.grey,
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    padding: SPACING.lg,
+    marginBottom: SPACING.xl,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -247,7 +248,7 @@ const styles = StyleSheet.create({
     color: COLORS.darkWhite,
     fontSize: 14,
     textDecorationLine: "line-through",
-    marginTop: 4,
+    marginTop: SPACING.xs,
   },
   freeText: {
     color: COLORS.primary,
@@ -256,8 +257,8 @@ const styles = StyleSheet.create({
   },
   enrollButton: {
     backgroundColor: COLORS.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
     borderRadius: 8,
   },
   enrolledButton: {

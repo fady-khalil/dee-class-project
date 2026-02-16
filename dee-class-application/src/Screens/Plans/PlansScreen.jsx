@@ -16,6 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import usePostDataNoLang from "../../Hooks/usePostDataNoLang";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { GlobalStyle } from "../../styles/GlobalStyle";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Spinner from "../../components/RequestHandler/Spinner";
@@ -294,8 +295,8 @@ const styles = StyleSheet.create({
   },
   toggleContainer: {
     alignItems: "center",
-    marginBottom: 20,
-    paddingHorizontal: 16,
+    marginBottom: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
   },
   toggleWrapper: {
     flexDirection: "row",
@@ -323,10 +324,10 @@ const styles = StyleSheet.create({
   },
   saveBadge: {
     backgroundColor: "#22c55e",
-    paddingHorizontal: 8,
+    paddingHorizontal: SPACING.sm,
     paddingVertical: 2,
     borderRadius: 10,
-    marginLeft: 8,
+    marginLeft: SPACING.sm,
   },
   saveBadgeText: {
     color: COLORS.white,
@@ -334,14 +335,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   plansContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 30,
+    paddingHorizontal: SPACING.lg,
+    marginBottom: SPACING.lg,
   },
   planCard: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 20,
-    marginBottom: 20,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
   },
   popularPlan: {
     borderWidth: 2,
@@ -349,10 +350,10 @@ const styles = StyleSheet.create({
   },
   popularBadge: {
     backgroundColor: COLORS.primary,
-    paddingVertical: 8,
-    marginHorizontal: -20,
-    marginTop: -20,
-    marginBottom: 16,
+    paddingVertical: SPACING.sm,
+    marginHorizontal: -SPACING.lg,
+    marginTop: -SPACING.lg,
+    marginBottom: SPACING.lg,
     borderTopLeftRadius: 14,
     borderTopRightRadius: 14,
   },
@@ -366,12 +367,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   priceContainer: {
     flexDirection: "row",
     alignItems: "baseline",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   price: {
     fontSize: 40,
@@ -381,29 +382,29 @@ const styles = StyleSheet.create({
   currency: {
     fontSize: 14,
     color: COLORS.darkWhite,
-    marginLeft: 8,
+    marginLeft: SPACING.sm,
   },
   savingsText: {
     fontSize: 12,
     color: "#22c55e",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   description: {
     fontSize: 14,
     color: COLORS.darkWhite,
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
     lineHeight: 20,
   },
   featuresContainer: {
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   featureItem: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 10,
+    marginBottom: SPACING.md,
   },
   featureIcon: {
-    marginRight: 10,
+    marginRight: SPACING.md,
     marginTop: 2,
   },
   featureText: {
@@ -414,10 +415,10 @@ const styles = StyleSheet.create({
   infoItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   infoIcon: {
-    marginRight: 10,
+    marginRight: SPACING.md,
   },
   infoText: {
     fontSize: 14,
@@ -429,7 +430,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 16,
+    marginTop: SPACING.lg,
   },
   buttonText: {
     color: COLORS.white,

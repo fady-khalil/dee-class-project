@@ -10,6 +10,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { I18nText } from "../../../components/common/I18nComponents";
 import COLORS from "../../../styles/colors";
+import SPACING from "../../../styles/spacing";
 
 const ContinueWatching = ({ data = [] }) => {
   const { t } = useTranslation();
@@ -63,21 +64,21 @@ const ContinueWatching = ({ data = [] }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 16,
+    marginBottom: SPACING.xl,
   },
   sectionTitle: {
     color: COLORS.white,
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 16,
-    paddingHorizontal: 16,
+    marginBottom: SPACING.md,
+    paddingHorizontal: SPACING.lg,
   },
   listContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.lg,
   },
   courseCard: {
     width: 280,
-    marginRight: 16,
+    marginRight: SPACING.md,
     backgroundColor: COLORS.cardBackground,
     borderRadius: 12,
     overflow: "hidden",
@@ -96,13 +97,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
   courseInfo: {
-    padding: 12,
+    padding: SPACING.md,
   },
   courseTitle: {
     color: COLORS.white,
     fontSize: 16,
     fontWeight: "600",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   progressText: {
     color: COLORS.darkWhite,

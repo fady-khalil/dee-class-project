@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import Spinner from "../../components/RequestHandler/Spinner";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import BASE_URL from "../../config/BASE_URL";
 
 // Get server URL without /api for image paths
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
   sectionTitle: {
     color: COLORS.white,
@@ -93,11 +94,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   coursesLoadingContainer: {
-    padding: 24,
+    padding: SPACING.xl,
     alignItems: "center",
   },
   noCoursesContainer: {
-    padding: 24,
+    padding: SPACING.xl,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.grey,
     borderRadius: 12,
     overflow: "hidden",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   courseImage: {
     width: "100%",
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   courseContent: {
-    padding: 10,
+    padding: SPACING.md,
   },
   courseTitle: {
     color: COLORS.white,

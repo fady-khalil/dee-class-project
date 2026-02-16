@@ -1,6 +1,7 @@
 import React from "react";
 import { View, TextInput, Text, StyleSheet } from "react-native";
 import COLORS from "../../../styles/colors";
+import SPACING from "../../../styles/spacing";
 
 /**
  * Reusable Input component for React Native
@@ -46,12 +47,12 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: "100%",
     textAlign: "start",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   input: {
     backgroundColor: COLORS.darkWhite,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
     borderRadius: 8,
     fontSize: 14,
     borderWidth: 1,
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: COLORS.red,
     fontSize: 12,
-    marginTop: 4,
+    marginTop: SPACING.xs,
   },
 });
 

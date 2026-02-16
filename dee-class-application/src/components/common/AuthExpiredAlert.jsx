@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { useNavigation } from "@react-navigation/native";
 import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import { useContext } from "react";
@@ -84,8 +85,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFBEB", // amber-50
     borderLeftWidth: 4,
     borderLeftColor: COLORS.warning,
-    padding: 16,
-    marginBottom: 16,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
     borderRadius: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -96,14 +97,14 @@ const styles = StyleSheet.create({
   },
   content: {
     flexDirection: "column",
-    gap: 12,
+    gap: SPACING.md,
   },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
   },
   icon: {
-    marginRight: 8,
+    marginRight: SPACING.sm,
   },
   title: {
     color: "#92400E", // amber-800
@@ -112,12 +113,12 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: "row",
-    gap: 12,
-    marginTop: 8,
+    gap: SPACING.md,
+    marginTop: SPACING.sm,
   },
   primaryButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
     backgroundColor: COLORS.warning,
     borderRadius: 6,
   },
@@ -126,8 +127,8 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   secondaryButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
     backgroundColor: "#E5E7EB", // gray-200
     borderRadius: 6,
   },

@@ -11,6 +11,7 @@ import {
 import LessonCompletedBadge from "../../../../components/common/LessonCompletedBadge";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import PurchaseModal from "../purchase/PurchaseModal";
 
@@ -190,23 +191,23 @@ const PlaylistCourse = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: SPACING.lg,
     backgroundColor: COLORS.backgroundColor,
   },
   courseTitle: {
     color: COLORS.white,
     fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: SPACING.xl,
     lineHeight: 28,
     textAlign: "center",
   },
   courseCompletedBadge: {
     alignSelf: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   chaptersList: {
-    paddingBottom: 16,
+    paddingBottom: SPACING.lg,
   },
   lessonBadgeIcon: {
     position: "absolute",
@@ -225,13 +226,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.grey,
     borderRadius: 12,
     overflow: "hidden",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   chapterHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
+    padding: SPACING.lg,
   },
   chapterInfo: {
     flex: 1,
@@ -257,7 +258,7 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.darkBlue,
   },
   lessonItem: {
-    padding: 12,
+    padding: SPACING.md,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: COLORS.darkBlue + "20",
@@ -267,7 +268,7 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 8,
     overflow: "hidden",
-    marginRight: 12,
+    marginRight: SPACING.md,
   },
   lessonThumbnail: {
     width: "100%",
@@ -285,7 +286,7 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 14,
     fontWeight: "500",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
     textAlign: "left",
     flexWrap: "wrap",
     flexShrink: 1,
@@ -294,7 +295,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     borderRadius: 8,
     paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingHorizontal: SPACING.md,
     alignSelf: "flex-start",
   },
   watchButtonText: {

@@ -21,6 +21,7 @@ import {
 } from "../../components/RequestHandler";
 import Spinner from "../../components/RequestHandler/Spinner";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import {
   I18nText,
   I18nView,
@@ -245,12 +246,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.7)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    padding: SPACING.lg,
   },
   modalContent: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
-    padding: 32,
+    padding: SPACING.xxl,
     width: "100%",
     maxWidth: 450,
     shadowColor: "#000",
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 32,
+    marginBottom: SPACING.xxl,
   },
   title: {
     fontSize: 24,
@@ -274,12 +275,12 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   closeButton: {
-    padding: 8,
+    padding: SPACING.sm,
     borderRadius: 20,
   },
   avatarPreviewContainer: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   avatarUploadButton: {
     width: 112,
@@ -308,19 +309,19 @@ const styles = StyleSheet.create({
   uploadText: {
     fontSize: 14,
     color: "#6B7280",
-    marginTop: 8,
+    marginTop: SPACING.sm,
   },
   maxSizeText: {
     fontSize: 12,
     color: "#9CA3AF",
-    marginTop: 4,
+    marginTop: SPACING.xs,
   },
   formGroup: {
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   input: {
     backgroundColor: "#FFFFFF",
-    padding: 16,
+    padding: SPACING.lg,
     borderRadius: 12,
     color: "#1F2937",
     fontSize: 16,
@@ -337,12 +338,12 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 12,
-    marginTop: 32,
+    gap: SPACING.md,
+    marginTop: SPACING.xxl,
   },
   button: {
     flex: 1,
-    padding: 16,
+    padding: SPACING.lg,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
@@ -372,7 +373,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: "#EF4444",
     fontSize: 14,
-    marginTop: 8,
+    marginTop: SPACING.sm,
     textAlign: "center",
   },
 });

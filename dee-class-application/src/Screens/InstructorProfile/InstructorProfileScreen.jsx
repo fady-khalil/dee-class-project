@@ -13,6 +13,7 @@ import InstructorHero from "./components/InstructorHero";
 import AboutSection from "./components/AboutSection";
 import CoursesList from "./components/CoursesList";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { I18nText, I18nView } from "../../components/common/I18nComponents";
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.backgroundColor,
   },
   loadingText: {
-    marginTop: 16,
+    marginTop: SPACING.lg,
     color: COLORS.white,
     fontSize: 16,
   },
@@ -115,26 +116,26 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: COLORS.backgroundColor,
-    padding: 20,
+    padding: SPACING.lg,
   },
   errorText: {
     color: COLORS.white,
     fontSize: 16,
     textAlign: "center",
-    marginTop: 12,
-    marginBottom: 16,
+    marginTop: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   retryText: {
     color: COLORS.primary,
     fontSize: 16,
     fontWeight: "600",
-    padding: 10,
+    padding: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.primary,
     borderRadius: 8,
   },
   bottomSpacing: {
-    height: 24,
+    height: SPACING.xl,
   },
 });
 

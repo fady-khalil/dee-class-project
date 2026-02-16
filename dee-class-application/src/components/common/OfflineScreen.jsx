@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { useDownload } from "../../context/Download/DownloadContext";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 
 const OfflineScreen = () => {
   const { t } = useTranslation();
@@ -56,14 +57,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#121212",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: SPACING.xl,
   },
   contentContainer: {
     alignItems: "center",
     maxWidth: 300,
   },
   iconContainer: {
-    marginBottom: 20,
+    marginBottom: SPACING.xl,
     position: "relative",
     width: 80,
     height: 80,
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     color: "#fff",
-    marginBottom: 10,
+    marginBottom: SPACING.md,
     textAlign: "center",
   },
   message: {
@@ -104,16 +105,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.xl,
     borderRadius: 10,
-    marginTop: 24,
+    marginTop: SPACING.xl,
   },
   downloadButtonText: {
     color: COLORS.white,
     fontSize: 16,
     fontWeight: "600",
-    marginLeft: 8,
+    marginLeft: SPACING.sm,
   },
 });
 

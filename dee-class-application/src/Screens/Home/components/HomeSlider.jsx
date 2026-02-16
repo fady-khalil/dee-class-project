@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback, memo, useMemo } from "react";
+import React, { useState, useRef, useCallback, memo } from "react";
 import {
   View,
   StyleSheet,
@@ -11,39 +11,29 @@ import {
 import { useTranslation } from "react-i18next";
 import { LinearGradient } from "expo-linear-gradient";
 import COLORS from "../../../styles/colors";
+import SPACING from "../../../styles/spacing";
 import BASE_URL from "../../../config/BASE_URL";
 
 const { width } = Dimensions.get("window");
-const CARD_WIDTH = width * 0.75;
-const CARD_HEIGHT = 380;
-const CARD_MARGIN = 10;
-const SNAP_INTERVAL = CARD_WIDTH + CARD_MARGIN * 2;
-const AUTO_SCROLL_INTERVAL = 4000;
+const CARD_WIDTH = width * 0.7;
+const CARD_HEIGHT = 400;
+const CARD_GAP = SPACING.md;
+const SNAP_INTERVAL = CARD_WIDTH + CARD_GAP;
 
-// Number of times to repeat data for "infinite" feel
-const REPEAT_COUNT = 100;
+const getServerUrl = () => BASE_URL.replace("/api", "");
 
-// Get server URL without /api for image paths
-const getServerUrl = () => {
-  return BASE_URL.replace("/api", "");
-};
-
-// Get full image URL (handles both full URLs and relative paths)
 const getImageUrl = (imagePath) => {
-  if (!imagePath || typeof imagePath !== 'string') return null;
+  if (!imagePath || typeof imagePath !== "string") return null;
   if (imagePath.startsWith("http")) return imagePath;
   return `${getServerUrl()}/${imagePath}`;
 };
 
-// Get thumbnail URL
 const getThumbnailUrl = (item) => {
-  console.log("HomeSlider course:", item?.name, "type:", item?.course_type, "thumbnail:", item?.thumbnail, "trailer:", item?.trailer?.assets?.thumbnail);
   if (item?.trailer?.assets?.thumbnail) return item.trailer.assets.thumbnail;
   if (item?.thumbnail) return item.thumbnail;
   return getImageUrl(item?.image || item?.mobileImage);
 };
 
-// Memoized card component for better performance
 const SliderCard = memo(({ item, onPress, t }) => {
   const thumbnailUrl = getThumbnailUrl(item);
 
@@ -59,7 +49,7 @@ const SliderCard = memo(({ item, onPress, t }) => {
         resizeMode="cover"
       />
       <LinearGradient
-        colors={["transparent", "rgba(0,0,0,0.85)"]}
+        colors={["transparent", "rgba(0,0,0,0.95)"]}
         locations={[0.4, 1]}
         style={styles.gradient}
       >
@@ -80,112 +70,19 @@ const SliderCard = memo(({ item, onPress, t }) => {
   );
 });
 
-const HomeSlider = ({ data = [], hero, navigation, autoScroll = false }) => {
+const HomeSlider = ({ data = [], hero, navigation }) => {
   const { t } = useTranslation();
-
-  // Use hero data from API or fallback to translations
   const heroTitle = hero?.title || t("home.slider_subtitle");
   const heroText = hero?.text || "";
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const autoScrollTimer = useRef(null);
-  const isUserScrolling = useRef(false);
-  const hasInitialized = useRef(false);
 
-  // Create repeated data for infinite scroll effect
-  const infiniteData = useMemo(() => {
-    if (!data || data.length === 0) return [];
-
-    const repeated = [];
-    for (let i = 0; i < REPEAT_COUNT; i++) {
-      data.forEach((item, index) => {
-        repeated.push({
-          ...item,
-          uniqueKey: `${i}-${item.id || item._id || index}`,
-        });
-      });
-    }
-    return repeated;
-  }, [data]);
-
-  // Start position in the middle for bi-directional infinite scroll
-  const startIndex = useMemo(() => {
-    if (data.length === 0) return 0;
-    return Math.floor(REPEAT_COUNT / 2) * data.length;
-  }, [data.length]);
-
-  // Initialize to middle position
-  useEffect(() => {
-    if (infiniteData.length > 0 && !hasInitialized.current) {
-      hasInitialized.current = true;
-      setTimeout(() => {
-        flatListRef.current?.scrollToOffset({
-          offset: startIndex * SNAP_INTERVAL,
-          animated: false,
-        });
-      }, 100);
-    }
-  }, [infiniteData.length, startIndex]);
-
-  // Get actual index in original data
-  const getActualIndex = useCallback((index) => {
-    if (data.length === 0) return 0;
-    return index % data.length;
-  }, [data.length]);
-
-  // Handle course press
-  const handleCoursePress = useCallback((item) => {
-    navigation.navigate("CourseDetail", { slug: item.slug });
-  }, [navigation]);
-
-  // Auto scroll logic
-  const startAutoScroll = useCallback(() => {
-    if (!autoScroll || data.length <= 1) return;
-
-    if (autoScrollTimer.current) {
-      clearInterval(autoScrollTimer.current);
-    }
-
-    autoScrollTimer.current = setInterval(() => {
-      if (!isUserScrolling.current && flatListRef.current) {
-        setCurrentIndex((prev) => {
-          const nextIndex = prev + 1;
-          flatListRef.current?.scrollToOffset({
-            offset: nextIndex * SNAP_INTERVAL,
-            animated: true,
-          });
-          return nextIndex;
-        });
-      }
-    }, AUTO_SCROLL_INTERVAL);
-  }, [autoScroll, data.length]);
-
-  const stopAutoScroll = useCallback(() => {
-    if (autoScrollTimer.current) {
-      clearInterval(autoScrollTimer.current);
-      autoScrollTimer.current = null;
-    }
-  }, []);
-
-  // Setup auto scroll
-  useEffect(() => {
-    if (autoScroll && data.length > 1) {
-      startAutoScroll();
-    }
-    return () => stopAutoScroll();
-  }, [autoScroll, data.length, startAutoScroll, stopAutoScroll]);
-
-  const handleScrollBeginDrag = useCallback(() => {
-    isUserScrolling.current = true;
-    stopAutoScroll();
-  }, [stopAutoScroll]);
-
-  const handleScrollEndDrag = useCallback(() => {
-    isUserScrolling.current = false;
-    if (autoScroll) {
-      startAutoScroll();
-    }
-  }, [autoScroll, startAutoScroll]);
+  const handleCoursePress = useCallback(
+    (item) => {
+      navigation.navigate("CourseDetail", { slug: item.slug });
+    },
+    [navigation],
+  );
 
   const handleMomentumScrollEnd = useCallback((event) => {
     const offsetX = event.nativeEvent.contentOffset.x;
@@ -193,25 +90,28 @@ const HomeSlider = ({ data = [], hero, navigation, autoScroll = false }) => {
     setCurrentIndex(index);
   }, []);
 
-  const renderItem = useCallback(({ item }) => (
-    <SliderCard
-      item={item}
-      onPress={() => handleCoursePress(item)}
-      t={t}
-    />
-  ), [handleCoursePress, t]);
+  const renderItem = useCallback(
+    ({ item }) => (
+      <SliderCard item={item} onPress={() => handleCoursePress(item)} t={t} />
+    ),
+    [handleCoursePress, t],
+  );
 
-  const keyExtractor = useCallback((item) => item.uniqueKey, []);
+  const keyExtractor = useCallback(
+    (item) => item.id || item._id || item.slug,
+    [],
+  );
 
-  const getItemLayout = useCallback((_, index) => ({
-    length: SNAP_INTERVAL,
-    offset: SNAP_INTERVAL * index,
-    index,
-  }), []);
+  const getItemLayout = useCallback(
+    (_, index) => ({
+      length: SNAP_INTERVAL,
+      offset: SNAP_INTERVAL * index,
+      index,
+    }),
+    [],
+  );
 
   if (!data || data.length === 0) return null;
-
-  const actualIndex = getActualIndex(currentIndex);
 
   return (
     <View style={styles.container}>
@@ -224,27 +124,24 @@ const HomeSlider = ({ data = [], hero, navigation, autoScroll = false }) => {
 
       <FlatList
         ref={flatListRef}
-        data={infiniteData}
+        data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         horizontal
         showsHorizontalScrollIndicator={false}
         decelerationRate="fast"
         snapToInterval={SNAP_INTERVAL}
-        snapToAlignment="start"
+        snapToAlignment="center"
         disableIntervalMomentum={true}
         getItemLayout={getItemLayout}
-        onScrollBeginDrag={handleScrollBeginDrag}
-        onScrollEndDrag={handleScrollEndDrag}
         onMomentumScrollEnd={handleMomentumScrollEnd}
-        initialNumToRender={5}
+        initialNumToRender={3}
         maxToRenderPerBatch={3}
         windowSize={5}
         removeClippedSubviews={true}
         contentContainerStyle={styles.listContent}
       />
 
-      {/* Pagination dots */}
       {data.length > 1 && (
         <View style={styles.pagination}>
           {data.map((_, index) => (
@@ -252,7 +149,7 @@ const HomeSlider = ({ data = [], hero, navigation, autoScroll = false }) => {
               key={index}
               style={[
                 styles.paginationDot,
-                actualIndex === index && styles.paginationDotActive,
+                currentIndex === index && styles.paginationDotActive,
               ]}
             />
           ))}
@@ -264,11 +161,10 @@ const HomeSlider = ({ data = [], hero, navigation, autoScroll = false }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 16,
+    marginBottom: SPACING.xl,
   },
   headerContainer: {
-    marginBottom: 16,
-    marginTop: 10,
+    marginTop: SPACING.md,
   },
   sectionTitle: {
     fontSize: 24,
@@ -278,25 +174,22 @@ const styles = StyleSheet.create({
   sectionSubtitle: {
     fontSize: 14,
     color: "rgba(255, 255, 255, 0.7)",
-    marginTop: 8,
+    marginTop: SPACING.sm,
     lineHeight: 20,
   },
   listContent: {
-    paddingHorizontal: 6,
+    // paddingHorizontal: 16,
+    gap: CARD_GAP,
   },
   courseCard: {
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
-    marginHorizontal: CARD_MARGIN,
     borderRadius: 16,
     overflow: "hidden",
     backgroundColor: COLORS.grey,
     elevation: 8,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
   },
@@ -316,7 +209,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     justifyContent: "flex-end",
-    padding: 20,
+    padding: 6,
   },
   textContainer: {
     alignItems: "flex-start",
@@ -325,7 +218,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 22,
     fontWeight: "700",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
     textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
@@ -345,8 +238,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 16,
-    gap: 8,
+    marginTop: SPACING.lg,
+    gap: SPACING.sm,
   },
   paginationDot: {
     width: 8,

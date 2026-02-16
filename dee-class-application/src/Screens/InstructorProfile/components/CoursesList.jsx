@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { I18nText, I18nView } from "../../../components/common/I18nComponents";
 import COLORS from "../../../styles/colors";
+import SPACING from "../../../styles/spacing";
 import Icon from "react-native-vector-icons/Ionicons";
 import BASE_URL from "../../../config/BASE_URL";
 
@@ -102,7 +103,7 @@ const CoursesList = ({ courses }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
     marginTop: 44,
     flexDirection: "column",
   },
@@ -110,8 +111,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    marginBottom: 16,
+    paddingHorizontal: SPACING.lg,
+    marginBottom: SPACING.md,
   },
   sectionTitle: {
     color: COLORS.white,
@@ -124,15 +125,15 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   listContent: {
-    paddingLeft: 20,
-    paddingRight: 16,
-    paddingBottom: 8,
+    paddingLeft: SPACING.lg,
+    paddingRight: SPACING.lg,
+    paddingBottom: SPACING.sm,
   },
   courseCard: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
     overflow: "hidden",
-    marginRight: 16,
+    marginRight: SPACING.md,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.15,
@@ -162,10 +163,10 @@ const styles = StyleSheet.create({
     color: COLORS.darkWhite,
     fontSize: 12,
     textAlign: "center",
-    marginTop: 8,
+    marginTop: SPACING.sm,
   },
   courseInfo: {
-    padding: 16,
+    padding: SPACING.lg,
     alignItems: "flex-start",
     justifyContent: "flex-start",
     flexDirection: "row",
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     lineHeight: 22,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   courseMetaContainer: {
     flexDirection: "row",

@@ -19,6 +19,8 @@ import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import { usePostData } from "../../Hooks/usePostData";
 import usePostDataNoLang from "../../Hooks/usePostDataNoLang";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
+import HeaderBack from "../../components/navigation/HeaderBack";
 import logo from "../../Assests/logos/dclass.png";
 
 const Register = () => {
@@ -73,16 +75,22 @@ const Register = () => {
             const successUrl = `${baseSuccessUrl}?session_id={CHECKOUT_SESSION_ID}&type=plan`;
             const cancelUrl = Linking.createURL("payment/cancel");
 
-            const paymentResponse = await postDataNoLang("create-checkout-session", {
-              type: "package",
-              user_id: user?._id,
-              id: plan_id,
-              source: "application",
-              success_url: successUrl,
-              cancel_url: cancelUrl,
-            });
+            const paymentResponse = await postDataNoLang(
+              "create-checkout-session",
+              {
+                type: "package",
+                user_id: user?._id,
+                id: plan_id,
+                source: "application",
+                success_url: successUrl,
+                cancel_url: cancelUrl,
+              },
+            );
 
-            if (paymentResponse?.status === 200 && paymentResponse?.data?.checkout_url) {
+            if (
+              paymentResponse?.status === 200 &&
+              paymentResponse?.data?.checkout_url
+            ) {
               Linking.openURL(paymentResponse.data.checkout_url);
             }
           } catch (error) {
@@ -107,6 +115,7 @@ const Register = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <HeaderBack screenName="register" />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
@@ -137,7 +146,12 @@ const Register = () => {
 
           {/* Email Input */}
           <View style={styles.inputWrapper}>
-            <View style={[styles.inputContainer, (isSubmitted && !emailIsValid) && styles.inputError]}>
+            <View
+              style={[
+                styles.inputContainer,
+                isSubmitted && !emailIsValid && styles.inputError,
+              ]}
+            >
               <Ionicons
                 name="mail-outline"
                 size={20}
@@ -156,13 +170,20 @@ const Register = () => {
               />
             </View>
             {isSubmitted && !emailIsValid && (
-              <Text style={styles.fieldError}>{t("auth.register.emailError")}</Text>
+              <Text style={styles.fieldError}>
+                {t("auth.register.emailError")}
+              </Text>
             )}
           </View>
 
           {/* Password Input */}
           <View style={styles.inputWrapper}>
-            <View style={[styles.inputContainer, (isSubmitted && !passwordIsValid) && styles.inputError]}>
+            <View
+              style={[
+                styles.inputContainer,
+                isSubmitted && !passwordIsValid && styles.inputError,
+              ]}
+            >
               <Ionicons
                 name="lock-closed-outline"
                 size={20}
@@ -190,13 +211,17 @@ const Register = () => {
               </TouchableOpacity>
             </View>
             {isSubmitted && !passwordIsValid && (
-              <Text style={styles.fieldError}>{t("auth.register.passwordError")}</Text>
+              <Text style={styles.fieldError}>
+                {t("auth.register.passwordError")}
+              </Text>
             )}
           </View>
 
           {/* Terms Agreement */}
           <View style={styles.termsContainer}>
-            <Text style={styles.termsText}>{t("auth.register.agreeText")} </Text>
+            <Text style={styles.termsText}>
+              {t("auth.register.agreeText")}{" "}
+            </Text>
             <TouchableOpacity onPress={() => navigation.navigate("Terms")}>
               <Text style={styles.termsLink}>{t("auth.register.terms")}</Text>
             </TouchableOpacity>
@@ -221,11 +246,20 @@ const Register = () => {
 
           {/* Login Link */}
           <View style={styles.loginContainer}>
-            <Text style={styles.loginText}>{t("auth.register.hasAccount")} </Text>
+            <Text style={styles.loginText}>
+              {t("auth.register.hasAccount")}{" "}
+            </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate("Login", plan_id ? { plan_id, is_register } : undefined)}
+              onPress={() =>
+                navigation.navigate(
+                  "Login",
+                  plan_id ? { plan_id, is_register } : undefined,
+                )
+              }
             >
-              <Text style={styles.loginLink}>{t("auth.register.loginLink")}</Text>
+              <Text style={styles.loginLink}>
+                {t("auth.register.loginLink")}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -245,11 +279,11 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: 16,
+    padding: SPACING.sm,
   },
   logoContainer: {
     alignItems: "center",
-    marginBottom: 32,
+    marginBottom: SPACING.xxl,
   },
   logo: {
     height: 48,
@@ -258,19 +292,19 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 24,
+    padding: SPACING.lg,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
   headerContainer: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   subtitle: {
     fontSize: 14,
@@ -282,8 +316,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(239, 68, 68, 0.5)",
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
+    padding: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   errorText: {
     color: "#f87171",
@@ -291,7 +325,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   inputWrapper: {
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   inputContainer: {
     flexDirection: "row",
@@ -300,17 +334,17 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.2)",
-    paddingHorizontal: 12,
+    paddingHorizontal: SPACING.md,
   },
   inputError: {
     borderColor: "#ef4444",
   },
   inputIcon: {
-    marginRight: 12,
+    marginRight: SPACING.md,
   },
   inputIconRTL: {
     marginRight: 0,
-    marginLeft: 12,
+    marginLeft: SPACING.md,
   },
   input: {
     flex: 1,
@@ -326,7 +360,7 @@ const styles = StyleSheet.create({
   },
   eyeIconRTL: {
     marginLeft: 0,
-    marginRight: 8,
+    marginRight: SPACING.sm,
   },
   fieldError: {
     color: "#f87171",
@@ -337,7 +371,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
   },
   termsText: {
     color: COLORS.darkWhite,
@@ -365,7 +399,7 @@ const styles = StyleSheet.create({
   loginContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 24,
+    marginTop: SPACING.lg,
     flexWrap: "wrap",
   },
   loginText: {

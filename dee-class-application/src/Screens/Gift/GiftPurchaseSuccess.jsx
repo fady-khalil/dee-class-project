@@ -15,6 +15,7 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import usePostDataNoLang from "../../Hooks/usePostDataNoLang";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import logo from "../../Assests/logos/dclass.png";
 
 const GiftPurchaseSuccess = () => {
@@ -209,29 +210,29 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.backgroundColor,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    padding: SPACING.lg,
   },
   loadingContainer: {
     flex: 1,
     backgroundColor: COLORS.backgroundColor,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    padding: SPACING.lg,
   },
   logo: {
     height: 48,
     width: 150,
-    marginBottom: 32,
+    marginBottom: SPACING.xxl,
   },
   loadingText: {
     color: COLORS.darkWhite,
     fontSize: 14,
-    marginTop: 16,
+    marginTop: SPACING.lg,
   },
   errorCard: {
     backgroundColor: COLORS.grey,
     borderRadius: 20,
-    padding: 32,
+    padding: SPACING.xxl,
     width: "100%",
     maxWidth: 400,
     alignItems: "center",
@@ -240,20 +241,20 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: COLORS.white,
-    marginTop: 16,
-    marginBottom: 8,
+    marginTop: SPACING.lg,
+    marginBottom: SPACING.sm,
   },
   errorText: {
     fontSize: 14,
     color: COLORS.darkWhite,
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   retryButton: {
     backgroundColor: COLORS.primary,
     borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 32,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.xxl,
   },
   retryButtonText: {
     color: COLORS.white,
@@ -263,7 +264,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.grey,
     borderRadius: 20,
-    padding: 24,
+    padding: SPACING.xl,
     width: "100%",
     maxWidth: 400,
     alignItems: "center",
@@ -277,29 +278,29 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(99, 102, 241, 0.1)",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
     textAlign: "center",
   },
   subtitle: {
     fontSize: 14,
     color: COLORS.darkWhite,
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   codeContainer: {
     width: "100%",
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
   },
   codeLabel: {
     fontSize: 12,
     color: COLORS.darkWhite,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
     textAlign: "center",
   },
   codeBox: {
@@ -308,7 +309,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: COLORS.backgroundColor,
     borderRadius: 12,
-    padding: 16,
+    padding: SPACING.lg,
     borderWidth: 2,
     borderColor: COLORS.primary,
     borderStyle: "dashed",
@@ -322,17 +323,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   copyButton: {
-    padding: 8,
+    padding: SPACING.sm,
     backgroundColor: COLORS.primary,
     borderRadius: 8,
   },
   planInfo: {
     backgroundColor: "rgba(99, 102, 241, 0.1)",
     borderRadius: 12,
-    padding: 16,
+    padding: SPACING.lg,
     width: "100%",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
   },
   planLabel: {
     fontSize: 12,
@@ -354,15 +355,15 @@ const styles = StyleSheet.create({
   instructionsBox: {
     backgroundColor: "rgba(255,255,255,0.05)",
     borderRadius: 12,
-    padding: 16,
+    padding: SPACING.lg,
     width: "100%",
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
   },
   instructionsTitle: {
     fontSize: 14,
     fontWeight: "600",
     color: COLORS.white,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   instructionsText: {
     fontSize: 13,
@@ -373,13 +374,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     borderRadius: 12,
     paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingHorizontal: SPACING.xl,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
     width: "100%",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   shareButtonText: {
     color: COLORS.white,
@@ -405,7 +406,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 24,
+    padding: SPACING.xl,
     alignItems: "center",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
@@ -413,7 +414,7 @@ const styles = StyleSheet.create({
   modalText: {
     color: COLORS.white,
     fontSize: 16,
-    marginTop: 12,
+    marginTop: SPACING.md,
     fontWeight: "500",
   },
 });

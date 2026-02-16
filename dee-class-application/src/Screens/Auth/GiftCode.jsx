@@ -18,6 +18,8 @@ import Spinner from "../../components/RequestHandler/Spinner";
 import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import usePostDataNoLang from "../../Hooks/usePostDataNoLang";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
+import HeaderBack from "../../components/navigation/HeaderBack";
 import logo from "../../Assests/logos/dclass.png";
 
 const GiftCode = () => {
@@ -60,7 +62,9 @@ const GiftCode = () => {
     setErrorMessage("");
 
     try {
-      const response = await postData("gift/validate", { code: giftCode.trim() });
+      const response = await postData("gift/validate", {
+        code: giftCode.trim(),
+      });
 
       if (response.success) {
         setValidatedPlan(response.data);
@@ -79,7 +83,7 @@ const GiftCode = () => {
   const handleLogin = () => {
     navigation.navigate("GiftLogin", {
       giftCode: giftCode.trim(),
-      planInfo: validatedPlan
+      planInfo: validatedPlan,
     });
   };
 
@@ -87,7 +91,7 @@ const GiftCode = () => {
   const handleRegister = () => {
     navigation.navigate("GiftRegister", {
       giftCode: giftCode.trim(),
-      planInfo: validatedPlan
+      planInfo: validatedPlan,
     });
   };
 
@@ -104,19 +108,12 @@ const GiftCode = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <HeaderBack screenName="redeem_code" />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Back Button */}
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="arrow-back" size={24} color={COLORS.white} />
-        </TouchableOpacity>
-
         {/* Logo */}
         <TouchableOpacity
           style={styles.logoContainer}
@@ -133,7 +130,11 @@ const GiftCode = () => {
               {/* Header */}
               <View style={styles.headerContainer}>
                 <View style={styles.giftIconContainer}>
-                  <MaterialIcons name="card-giftcard" size={40} color={COLORS.primary} />
+                  <MaterialIcons
+                    name="card-giftcard"
+                    size={40}
+                    color={COLORS.primary}
+                  />
                 </View>
                 <Text style={styles.title}>{t("gift.redeem_title")}</Text>
                 <Text style={styles.subtitle}>{t("gift.redeem_subtitle")}</Text>
@@ -194,8 +195,12 @@ const GiftCode = () => {
                   <Text style={styles.linkText}>{t("auth.login.title")}</Text>
                 </TouchableOpacity>
                 <Text style={styles.linkSeparator}>|</Text>
-                <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-                  <Text style={styles.linkText}>{t("auth.register.title")}</Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Register")}
+                >
+                  <Text style={styles.linkText}>
+                    {t("auth.register.title")}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </>
@@ -214,7 +219,9 @@ const GiftCode = () => {
               {/* Plan Info Card */}
               <View style={styles.planCard}>
                 <Text style={styles.planTitle}>
-                  {isRTL ? validatedPlan?.plan?.title_ar : validatedPlan?.plan?.title}
+                  {isRTL
+                    ? validatedPlan?.plan?.title_ar
+                    : validatedPlan?.plan?.title}
                 </Text>
                 <Text style={styles.planDuration}>
                   {validatedPlan?.billingCycle === "yearly"
@@ -225,26 +232,32 @@ const GiftCode = () => {
                   <View style={styles.featureItem}>
                     <Ionicons name="people" size={16} color={COLORS.primary} />
                     <Text style={styles.featureText}>
-                      {validatedPlan?.plan?.profilesAllowed} {t("gift.profiles")}
+                      {validatedPlan?.plan?.profilesAllowed}{" "}
+                      {t("gift.profiles")}
                     </Text>
                   </View>
                   {validatedPlan?.plan?.canDownload && (
                     <View style={styles.featureItem}>
-                      <Ionicons name="download" size={16} color={COLORS.primary} />
-                      <Text style={styles.featureText}>{t("gift.downloads_included")}</Text>
+                      <Ionicons
+                        name="download"
+                        size={16}
+                        color={COLORS.primary}
+                      />
+                      <Text style={styles.featureText}>
+                        {t("gift.downloads_included")}
+                      </Text>
                     </View>
                   )}
                 </View>
               </View>
 
               {/* Question */}
-              <Text style={styles.questionText}>{t("gift.have_account_question")}</Text>
+              <Text style={styles.questionText}>
+                {t("gift.have_account_question")}
+              </Text>
 
               {/* Login Button */}
-              <TouchableOpacity
-                style={styles.button}
-                onPress={handleLogin}
-              >
+              <TouchableOpacity style={styles.button} onPress={handleLogin}>
                 <Text style={styles.buttonText}>{t("gift.yes_login")}</Text>
               </TouchableOpacity>
 
@@ -253,12 +266,16 @@ const GiftCode = () => {
                 style={styles.secondaryButton}
                 onPress={handleRegister}
               >
-                <Text style={styles.secondaryButtonText}>{t("gift.no_create_account")}</Text>
+                <Text style={styles.secondaryButtonText}>
+                  {t("gift.no_create_account")}
+                </Text>
               </TouchableOpacity>
 
               {/* Back Link */}
               <TouchableOpacity style={styles.backLink} onPress={handleBack}>
-                <Text style={styles.backLinkText}>{t("gift.use_different_code")}</Text>
+                <Text style={styles.backLinkText}>
+                  {t("gift.use_different_code")}
+                </Text>
               </TouchableOpacity>
             </>
           )}
@@ -279,18 +296,18 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: 16,
+    padding: SPACING.sm,
   },
   backButton: {
     position: "absolute",
     top: 50,
     left: 16,
     zIndex: 10,
-    padding: 8,
+    padding: SPACING.sm,
   },
   logoContainer: {
     alignItems: "center",
-    marginBottom: 32,
+    marginBottom: SPACING.xxl,
   },
   logo: {
     height: 48,
@@ -299,13 +316,13 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 24,
+    padding: SPACING.lg,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
   headerContainer: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   giftIconContainer: {
     width: 80,
@@ -314,16 +331,16 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(99, 102, 241, 0.1)",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   successIconContainer: {
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
     textAlign: "center",
   },
   subtitle: {
@@ -336,8 +353,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(239, 68, 68, 0.5)",
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
+    padding: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   errorText: {
     color: "#f87171",
@@ -345,7 +362,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   inputWrapper: {
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
   },
   inputContainer: {
     flexDirection: "row",
@@ -354,21 +371,21 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.2)",
-    paddingHorizontal: 12,
+    paddingHorizontal: SPACING.md,
   },
   inputIcon: {
-    marginRight: 12,
+    marginRight: SPACING.md,
   },
   inputIconRTL: {
     marginRight: 0,
-    marginLeft: 12,
+    marginLeft: SPACING.md,
   },
   input: {
     flex: 1,
     color: COLORS.white,
     fontSize: 18,
     fontWeight: "600",
-    paddingVertical: 16,
+    paddingVertical: SPACING.lg,
     textAlign: "center",
     letterSpacing: 2,
   },
@@ -398,7 +415,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 12,
+    marginTop: SPACING.md,
   },
   secondaryButtonText: {
     color: COLORS.primary,
@@ -408,7 +425,7 @@ const styles = StyleSheet.create({
   dividerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 24,
+    marginVertical: SPACING.lg,
   },
   divider: {
     flex: 1,
@@ -417,7 +434,7 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     color: COLORS.darkWhite,
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.lg,
     fontSize: 14,
   },
   linksContainer: {
@@ -432,13 +449,13 @@ const styles = StyleSheet.create({
   },
   linkSeparator: {
     color: COLORS.darkWhite,
-    marginHorizontal: 16,
+    marginHorizontal: SPACING.lg,
   },
   planCard: {
     backgroundColor: "rgba(99, 102, 241, 0.1)",
     borderRadius: 12,
-    padding: 20,
-    marginBottom: 24,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
     borderWidth: 1,
     borderColor: "rgba(99, 102, 241, 0.3)",
   },
@@ -447,24 +464,24 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: COLORS.white,
     textAlign: "center",
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   planDuration: {
     fontSize: 14,
     color: COLORS.primary,
     textAlign: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   planFeatures: {
     flexDirection: "row",
     justifyContent: "center",
     flexWrap: "wrap",
-    gap: 16,
+    gap: SPACING.lg,
   },
   featureItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: SPACING.sm,
   },
   featureText: {
     color: COLORS.darkWhite,
@@ -474,10 +491,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.white,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
   },
   backLink: {
-    marginTop: 20,
+    marginTop: SPACING.lg,
     alignItems: "center",
   },
   backLinkText: {

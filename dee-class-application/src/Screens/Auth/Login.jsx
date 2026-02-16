@@ -19,6 +19,8 @@ import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import { usePostData } from "../../Hooks/usePostData";
 import usePostDataNoLang from "../../Hooks/usePostDataNoLang";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
+import HeaderBack from "../../components/navigation/HeaderBack";
 import logo from "../../Assests/logos/dclass.png";
 
 const Login = () => {
@@ -65,7 +67,8 @@ const Login = () => {
         const profiles = user?.profiles || [];
         const hasActiveSubscription = user?.hasActiveSubscription || false;
         const allowedProfiles = user?.subscription?.profilesAllowed || 0;
-        const purchasedCourses = user?.purchasedItems?.courses?.map(c => c.courseId || c._id) || [];
+        const purchasedCourses =
+          user?.purchasedItems?.courses?.map((c) => c.courseId || c._id) || [];
         const userIsVerified = user?.verified === true;
 
         // Check if user is verified
@@ -82,7 +85,7 @@ const Login = () => {
           user,
           hasActiveSubscription ? allowedProfiles : 0,
           purchasedCourses,
-          profiles
+          profiles,
         );
 
         // Handle payment if needed
@@ -92,16 +95,22 @@ const Login = () => {
             const successUrl = `${baseSuccessUrl}?session_id={CHECKOUT_SESSION_ID}&type=plan`;
             const cancelUrl = Linking.createURL("payment/cancel");
 
-            const paymentResponse = await postDataNoLang("create-checkout-session", {
-              type: "package",
-              user_id: user?._id,
-              id: plan_id,
-              source: "application",
-              success_url: successUrl,
-              cancel_url: cancelUrl,
-            });
+            const paymentResponse = await postDataNoLang(
+              "create-checkout-session",
+              {
+                type: "package",
+                user_id: user?._id,
+                id: plan_id,
+                source: "application",
+                success_url: successUrl,
+                cancel_url: cancelUrl,
+              },
+            );
 
-            if (paymentResponse?.status === 200 && paymentResponse?.data?.checkout_url) {
+            if (
+              paymentResponse?.status === 200 &&
+              paymentResponse?.data?.checkout_url
+            ) {
               Linking.openURL(paymentResponse.data.checkout_url);
             }
           } catch (error) {
@@ -141,6 +150,7 @@ const Login = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <HeaderBack screenName="login" />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
@@ -171,7 +181,12 @@ const Login = () => {
 
           {/* Email Input */}
           <View style={styles.inputWrapper}>
-            <View style={[styles.inputContainer, (isSubmitted && !emailIsValid) && styles.inputError]}>
+            <View
+              style={[
+                styles.inputContainer,
+                isSubmitted && !emailIsValid && styles.inputError,
+              ]}
+            >
               <Ionicons
                 name="mail-outline"
                 size={20}
@@ -190,13 +205,20 @@ const Login = () => {
               />
             </View>
             {isSubmitted && !emailIsValid && (
-              <Text style={styles.fieldError}>{t("auth.login.emailError")}</Text>
+              <Text style={styles.fieldError}>
+                {t("auth.login.emailError")}
+              </Text>
             )}
           </View>
 
           {/* Password Input */}
           <View style={styles.inputWrapper}>
-            <View style={[styles.inputContainer, (isSubmitted && !passwordIsValid) && styles.inputError]}>
+            <View
+              style={[
+                styles.inputContainer,
+                isSubmitted && !passwordIsValid && styles.inputError,
+              ]}
+            >
               <Ionicons
                 name="lock-closed-outline"
                 size={20}
@@ -224,7 +246,9 @@ const Login = () => {
               </TouchableOpacity>
             </View>
             {isSubmitted && !passwordIsValid && (
-              <Text style={styles.fieldError}>{t("auth.login.passwordError")}</Text>
+              <Text style={styles.fieldError}>
+                {t("auth.login.passwordError")}
+              </Text>
             )}
           </View>
 
@@ -260,11 +284,20 @@ const Login = () => {
 
           {/* Register Link */}
           <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>{t("auth.login.noAccount")} </Text>
+            <Text style={styles.registerText}>
+              {t("auth.login.noAccount")}{" "}
+            </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate("Register", plan_id ? { plan_id, is_register } : undefined)}
+              onPress={() =>
+                navigation.navigate(
+                  "Register",
+                  plan_id ? { plan_id, is_register } : undefined,
+                )
+              }
             >
-              <Text style={styles.registerLink}>{t("auth.login.createAccount")}</Text>
+              <Text style={styles.registerLink}>
+                {t("auth.login.createAccount")}
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -292,11 +325,11 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: 16,
+    padding: SPACING.sm,
   },
   logoContainer: {
     alignItems: "center",
-    marginBottom: 32,
+    marginBottom: SPACING.xxl,
   },
   logo: {
     height: 48,
@@ -305,19 +338,19 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 24,
+    padding: SPACING.lg,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
   headerContainer: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   subtitle: {
     fontSize: 14,
@@ -329,8 +362,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(239, 68, 68, 0.5)",
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
+    padding: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   errorText: {
     color: "#f87171",
@@ -338,7 +371,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   inputWrapper: {
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   inputContainer: {
     flexDirection: "row",
@@ -347,17 +380,17 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.2)",
-    paddingHorizontal: 12,
+    paddingHorizontal: SPACING.md,
   },
   inputError: {
     borderColor: "#ef4444",
   },
   inputIcon: {
-    marginRight: 12,
+    marginRight: SPACING.md,
   },
   inputIconRTL: {
     marginRight: 0,
-    marginLeft: 12,
+    marginLeft: SPACING.md,
   },
   input: {
     flex: 1,
@@ -373,7 +406,7 @@ const styles = StyleSheet.create({
   },
   eyeIconRTL: {
     marginLeft: 0,
-    marginRight: 8,
+    marginRight: SPACING.sm,
   },
   fieldError: {
     color: "#f87171",
@@ -382,7 +415,7 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     alignSelf: "flex-end",
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
   },
   forgotPasswordText: {
     color: COLORS.primary,
@@ -406,7 +439,7 @@ const styles = StyleSheet.create({
   dividerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 24,
+    marginVertical: SPACING.lg,
   },
   divider: {
     flex: 1,
@@ -415,7 +448,7 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     color: COLORS.darkWhite,
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.lg,
     fontSize: 14,
   },
   registerContainer: {
@@ -434,8 +467,8 @@ const styles = StyleSheet.create({
   },
   giftCodeContainer: {
     alignItems: "center",
-    marginTop: 20,
-    paddingTop: 20,
+    marginTop: SPACING.lg,
+    paddingTop: SPACING.lg,
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.1)",
   },

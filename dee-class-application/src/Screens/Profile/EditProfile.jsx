@@ -17,6 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/Feather";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { GlobalStyle } from "../../styles/GlobalStyle";
 import HeaderBack from "../../components/navigation/HeaderBack";
 import { useAuth } from "../../context/Authentication/LoginAuth";
@@ -271,25 +272,25 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 16,
+    padding: SPACING.lg,
     paddingBottom: 40,
   },
   form: {
     gap: 20,
   },
   inputGroup: {
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   label: {
     color: COLORS.white,
     fontSize: 14,
     fontWeight: "500",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   input: {
     backgroundColor: "rgba(255,255,255,0.08)",
     borderRadius: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.lg,
     paddingVertical: 14,
     fontSize: 16,
     color: COLORS.white,
@@ -310,11 +311,11 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   buttonContainer: {
-    marginTop: 32,
-    gap: 12,
+    marginTop: SPACING.xxl,
+    gap: SPACING.md,
   },
   button: {
-    paddingVertical: 16,
+    paddingVertical: SPACING.lg,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
@@ -347,7 +348,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "#2A2A2A",
     borderRadius: 16,
-    padding: 24,
+    padding: SPACING.xl,
     width: width * 0.85,
     alignItems: "center",
     borderWidth: 1,
@@ -359,7 +360,7 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   successIconContainer: {
     backgroundColor: "rgba(16, 185, 129, 0.15)",
@@ -371,14 +372,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     color: "#FFFFFF",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
     textAlign: "center",
   },
   modalMessage: {
     fontSize: 15,
     color: "#E0E0E0",
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
     lineHeight: 22,
   },
   modalButton: {

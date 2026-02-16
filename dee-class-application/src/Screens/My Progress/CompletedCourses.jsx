@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import placeholder from "../../Assests/courses/1.jpg";
 import BASE_URL from "../../config/BASE_URL";
 
@@ -112,21 +113,21 @@ const CompletedCourses = ({ data }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 16,
+    marginBottom: SPACING.xl,
   },
   sectionTitle: {
     color: COLORS.white,
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 12,
-    paddingHorizontal: 16,
+    marginBottom: SPACING.md,
+    paddingHorizontal: SPACING.lg,
   },
   listContainer: {
-    paddingHorizontal: 12,
+    paddingHorizontal: SPACING.md,
   },
   courseCard: {
     width: 160,
-    marginHorizontal: 4,
+    marginHorizontal: SPACING.xs,
     backgroundColor: COLORS.grey,
     borderRadius: 12,
     overflow: "hidden",
@@ -141,11 +142,11 @@ const styles = StyleSheet.create({
   },
   completedBadge: {
     position: "absolute",
-    top: 8,
-    right: 8,
+    top: SPACING.sm,
+    right: SPACING.sm,
     backgroundColor: "#22c55e",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
     borderRadius: 12,
     flexDirection: "row",
     alignItems: "center",
@@ -154,21 +155,21 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 10,
     fontWeight: "600",
-    marginLeft: 4,
+    marginLeft: SPACING.xs,
   },
   courseInfo: {
-    padding: 10,
+    padding: SPACING.md,
   },
   courseName: {
     color: COLORS.white,
     fontSize: 13,
     fontWeight: "600",
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   instructorName: {
     color: COLORS.darkWhite,
     fontSize: 11,
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   completedDate: {
     color: COLORS.darkWhite,

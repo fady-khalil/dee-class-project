@@ -16,6 +16,7 @@ import { HeaderBack } from "../../components/navigation";
 import { useDownload } from "../../context/Download/DownloadContext";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 
 const { width } = Dimensions.get("window");
 
@@ -242,21 +243,21 @@ const styles = StyleSheet.create({
   },
   listContent: {
     flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingBottom: 24,
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: SPACING.xl,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: COLORS.white,
-    marginTop: 24,
-    marginBottom: 16,
+    marginTop: SPACING.xl,
+    marginBottom: SPACING.md,
   },
   courseItem: {
     flexDirection: "row",
     backgroundColor: COLORS.black,
     borderRadius: 12,
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
     overflow: "hidden",
   },
   courseImage: {
@@ -265,13 +266,13 @@ const styles = StyleSheet.create({
   },
   courseInfo: {
     flex: 1,
-    padding: 12,
+    padding: SPACING.md,
   },
   courseTitle: {
     fontSize: 16,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   courseMetadata: {
     flexDirection: "row",
@@ -280,7 +281,7 @@ const styles = StyleSheet.create({
   metadataItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 16,
+    marginRight: SPACING.lg,
   },
   metadataText: {
     fontSize: 12,
@@ -288,12 +289,12 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   deleteButton: {
-    padding: 12,
+    padding: SPACING.md,
     justifyContent: "center",
     alignItems: "center",
   },
   currentDownload: {
-    marginTop: 16,
+    marginTop: SPACING.lg,
   },
   downloadItem: {
     flexDirection: "row",
@@ -307,13 +308,13 @@ const styles = StyleSheet.create({
   },
   downloadInfo: {
     flex: 1,
-    padding: 12,
+    padding: SPACING.md,
   },
   downloadTitle: {
     fontSize: 16,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   progressContainer: {
     height: 8,
@@ -333,14 +334,14 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   queuedDownloads: {
-    marginTop: 16,
+    marginTop: SPACING.lg,
   },
   queueItem: {
     flexDirection: "row",
     backgroundColor: COLORS.black,
     borderRadius: 12,
     overflow: "hidden",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   queueImage: {
     width: 120,
@@ -348,14 +349,14 @@ const styles = StyleSheet.create({
   },
   queueInfo: {
     flex: 1,
-    padding: 12,
+    padding: SPACING.md,
     justifyContent: "center",
   },
   queueTitle: {
     fontSize: 16,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   queuePosition: {
     fontSize: 12,
@@ -372,7 +373,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: COLORS.white,
     textAlign: "center",
-    marginTop: 16,
+    marginTop: SPACING.lg,
     opacity: 0.7,
   },
 });

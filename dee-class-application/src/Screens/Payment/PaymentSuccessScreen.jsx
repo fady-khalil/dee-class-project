@@ -8,6 +8,7 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { usePostDataNoLang } from "../../Hooks/usePostData";
 import { useAuth } from "../../context/Authentication/LoginAuth";
 import { I18nView } from "../../components/common/I18nComponents";
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: COLORS.backgroundColor,
-    padding: 24,
+    padding: SPACING.xl,
   },
   contentContainer: {
     alignItems: "center",
@@ -185,13 +186,13 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     alignItems: "center",
-    marginBottom: 32,
+    marginBottom: SPACING.xxl,
   },
   divider: {
     width: 96,
     height: 4,
     backgroundColor: "#22c55e",
-    marginTop: 16,
+    marginTop: SPACING.lg,
     borderRadius: 2,
   },
   errorDivider: {
@@ -199,23 +200,23 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   title: {
     fontSize: 28,
     fontWeight: "600",
     color: COLORS.white,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   message: {
     fontSize: 16,
     color: COLORS.darkWhite,
     textAlign: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: SPACING.lg,
     lineHeight: 24,
   },
   loader: {
-    marginTop: 24,
+    marginTop: SPACING.xl,
   },
   helpContainer: {
     alignItems: "center",

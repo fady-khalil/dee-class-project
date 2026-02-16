@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { usePostData } from "../../Hooks/usePostData";
 import { useAuth } from "../../context/Authentication/LoginAuth";
 import { useNavigation } from "@react-navigation/native";
@@ -179,16 +180,16 @@ const styles = StyleSheet.create({
   loadingText: {
     color: COLORS.white,
     fontSize: 16,
-    marginTop: 12,
+    marginTop: SPACING.md,
   },
   errorContainer: {
-    padding: 16,
+    padding: SPACING.lg,
     backgroundColor: COLORS.errorBackground,
     borderRadius: 8,
-    margin: 16,
+    margin: SPACING.lg,
   },
   errorContent: {
-    gap: 16,
+    gap: SPACING.lg,
   },
   errorTitle: {
     color: COLORS.error,
@@ -201,11 +202,11 @@ const styles = StyleSheet.create({
   },
   errorButtons: {
     flexDirection: "row",
-    gap: 12,
+    gap: SPACING.md,
   },
   errorButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
     borderRadius: 6,
   },
   primaryButton: {
@@ -226,7 +227,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 32,
+    padding: SPACING.xxl,
   },
   emptyText: {
     color: COLORS.darkWhite,

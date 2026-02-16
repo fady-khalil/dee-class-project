@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../../styles/colors";
+import SPACING from "../../../styles/spacing";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
 // Enable layout animations for Android
@@ -89,18 +90,18 @@ const FrequentlyAskedQuestions = ({ title, data }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
-    marginBottom: 20,
-    paddingHorizontal: 16,
+    marginTop: SPACING.xxl,
+    marginBottom: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 20,
+    marginBottom: SPACING.md,
   },
   faqItem: {
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
     backgroundColor: COLORS.grey,
     borderRadius: 12,
     overflow: "hidden",
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
+    padding: SPACING.lg,
   },
   question: {
     fontSize: 16,
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   answerContainer: {
-    padding: 16,
+    padding: SPACING.lg,
     paddingTop: 0,
     borderTopWidth: 1,
     borderTopColor: COLORS.darkGrey,
@@ -132,13 +133,13 @@ const styles = StyleSheet.create({
     textAlign: "left",
   },
   categorySection: {
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
   },
   categoryTitle: {
     fontSize: 20,
     fontWeight: "700",
     color: COLORS.white,
-    marginBottom: 10,
+    marginBottom: SPACING.md,
     flexDirection: "row",
     alignItems: "flex-start",
     textAlign: "left",

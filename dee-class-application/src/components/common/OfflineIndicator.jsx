@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useNetwork } from "../../context/Network";
 import { AntDesign, Feather, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import SPACING from "../../styles/spacing";
 
 const OfflineIndicator = () => {
   const { t } = useTranslation();
@@ -127,11 +128,11 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     bottom: 70, // Above the bottom navigation
-    left: 10,
-    right: 10,
+    left: SPACING.md,
+    right: SPACING.md,
     backgroundColor: "rgba(33, 33, 33, 0.95)",
     borderRadius: 12,
-    padding: 12,
+    padding: SPACING.md,
     flexDirection: "row",
     alignItems: "center",
     shadowColor: "#000",
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   textContainer: {
-    marginLeft: 12,
+    marginLeft: SPACING.md,
     flex: 1,
   },
   textBold: {
@@ -158,22 +159,22 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 12,
     opacity: 0.9,
-    marginLeft: 8,
+    marginLeft: SPACING.sm,
   },
   downloadButton: {
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
     borderRadius: 8,
-    marginLeft: 8,
+    marginLeft: SPACING.sm,
   },
   downloadText: {
     color: "#FFFFFF",
     fontSize: 12,
     fontWeight: "600",
-    marginLeft: 4,
+    marginLeft: SPACING.xs,
   },
 });
 

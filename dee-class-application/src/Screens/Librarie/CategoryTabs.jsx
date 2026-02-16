@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/Ionicons";
 
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { useAuth } from "../../context/Authentication/LoginAuth";
 
 const CategoryTabs = ({
@@ -46,6 +47,7 @@ const CategoryTabs = ({
   const renderItem = ({ item, index }) => {
     const isActive = activeCategorySlug === item.slug;
     const isForYou = item.slug === "for-you";
+    const isComingSoon = item.status === "coming_soon";
 
     return (
       <TouchableOpacity
@@ -53,7 +55,9 @@ const CategoryTabs = ({
           styles.categoryTab,
           isActive && styles.activeTab,
           isForYou && styles.forYouTab,
+          isComingSoon && styles.comingSoonTab,
         ]}
+        disabled={isComingSoon}
         onPress={() => {
           if (isForYou) {
             handleForYouClick();
@@ -66,7 +70,7 @@ const CategoryTabs = ({
           <Icon
             name="sparkles"
             size={16}
-            color={isActive ? COLORS.white : COLORS.white}
+            color={COLORS.white}
             style={styles.forYouIcon}
           />
         )}
@@ -75,10 +79,18 @@ const CategoryTabs = ({
             styles.categoryText,
             isActive && styles.activeText,
             isForYou && styles.forYouText,
+            isComingSoon && styles.comingSoonText,
           ]}
         >
           {item.name || item.title}
         </Text>
+        {isComingSoon && (
+          <View style={styles.comingSoonBadge}>
+            <Text style={styles.comingSoonBadgeText}>
+              {t("general.coming_soon", "Soon")}
+            </Text>
+          </View>
+        )}
       </TouchableOpacity>
     );
   };
@@ -119,17 +131,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.lightGrey,
     paddingVertical: 10,
-    marginTop: 12,
-    marginBottom: 12,
+    marginTop: SPACING.md,
+    marginBottom: SPACING.md,
   },
   categoriesScrollContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.lg,
   },
   categoryTab: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.sm,
     borderRadius: 20,
-    marginHorizontal: 4,
+    marginHorizontal: SPACING.xs,
     backgroundColor: COLORS.grey,
     flexDirection: "row",
     alignItems: "center",
@@ -155,6 +167,27 @@ const styles = StyleSheet.create({
   },
   forYouIcon: {
     marginRight: 2,
+  },
+  comingSoonTab: {
+    backgroundColor: "rgba(255,255,255,0.05)",
+  },
+  comingSoonText: {
+    color: "rgba(255,255,255,0.3)",
+  },
+  comingSoonBadge: {
+    marginLeft: 6,
+    borderWidth: 1,
+    borderColor: "rgba(237,26,77,0.5)",
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  comingSoonBadgeText: {
+    color: "rgba(237,26,77,0.7)",
+    fontSize: 9,
+    fontWeight: "700",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
 });
 

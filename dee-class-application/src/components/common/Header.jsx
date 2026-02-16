@@ -11,6 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { changeLanguage } from "../../translations/i18n";
 import Logo from "../../Assests/logos/dclass.png";
 import { GlobalStyle } from "../../styles/GlobalStyle";
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
   container: {
     borderBottomWidth: 1,
     borderBottomColor: COLORS.lightGrey,
-    paddingTop: 10,
+    paddingTop: SPACING.sm,
   },
   content: {
     justifyContent: "space-between",
@@ -143,8 +144,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   authButton: {
-    marginRight: 12,
-    padding: 4,
+    marginRight: SPACING.md,
+    padding: SPACING.xs,
   },
   languageButton: {
     backgroundColor: COLORS.grey,

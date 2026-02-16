@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../../styles/colors";
+import SPACING from "../../../styles/spacing";
 import { I18nText } from "../../../components/common/I18nComponents";
 
 const AboutSection = ({ data }) => {
@@ -39,14 +40,14 @@ const AboutSection = ({ data }) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.lg,
     paddingVertical: 0,
     marginBottom: 0,
   },
   card: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 8,
+    padding: SPACING.sm,
   },
   sectionTitle: {
     color: COLORS.white,

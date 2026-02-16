@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
-  ActivityIndicator,
 } from "react-native";
 import { LoginAuthProvider } from "./src/context/Authentication/LoginAuth";
 import AppNavigator from "./src/navigation/AppNavigator";
@@ -11,9 +10,11 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "./src/translations/i18n";
 import { NetworkProvider } from "./src/context/Network";
 import { DownloadProvider } from "./src/context/Download/DownloadContext";
+import SplashScreen from "./src/Screens/Splash";
 
 export default function App() {
   const [isLanguageLoaded, setIsLanguageLoaded] = useState(false);
+  const [isSplashDone, setIsSplashDone] = useState(false);
 
   useEffect(() => {
     const initLanguage = async () => {
@@ -23,14 +24,12 @@ export default function App() {
     initLanguage();
   }, []);
 
-  // Show loading screen while language settings are being loaded
-  // This ensures RTL direction is properly set before rendering the UI
   if (!isLanguageLoaded) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#D4AF37" />
-      </View>
-    );
+    return <View style={styles.loadingContainer} />;
+  }
+
+  if (!isSplashDone) {
+    return <SplashScreen onFinish={() => setIsSplashDone(true)} />;
   }
 
   return (
@@ -53,7 +52,7 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#121212",
+    backgroundColor: "#000",
     justifyContent: "center",
     alignItems: "center",
   },

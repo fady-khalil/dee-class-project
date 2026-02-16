@@ -10,6 +10,7 @@ import {
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 import { LoginAuthContext } from "../../../../context/Authentication/LoginAuth";
 import { usePostData } from "../../../../Hooks/usePostData";
 import AuthExpiredAlert from "../../../../components/common/AuthExpiredAlert";
@@ -422,17 +423,17 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     backgroundColor: COLORS.black,
-    paddingVertical: 12,
-    paddingHorizontal: width < 350 ? 8 : 16,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: width < 350 ? SPACING.sm : SPACING.lg,
   },
   alertContainer: {
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   iconButtonsRow: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: width < 350 ? 12 : 16,
+    gap: width < 350 ? SPACING.md : SPACING.lg,
   },
   iconButton: {
     backgroundColor: COLORS.grey,

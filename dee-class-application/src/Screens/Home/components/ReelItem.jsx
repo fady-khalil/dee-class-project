@@ -15,6 +15,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import ApiVideoPlayer from "@api.video/react-native-player";
 import COLORS from "../../../styles/colors";
+import SPACING from "../../../styles/spacing";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -360,14 +361,14 @@ const styles = StyleSheet.create({
     zIndex: 3,
   },
   infoContainer: {
-    padding: 16,
+    padding: SPACING.lg,
     paddingBottom: 40,
   },
   title: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
     textShadowColor: "rgba(0, 0, 0, 0.75)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
@@ -375,7 +376,7 @@ const styles = StyleSheet.create({
   description: {
     color: "#eee",
     fontSize: 14,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
     textShadowColor: "rgba(0, 0, 0, 0.75)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
@@ -398,7 +399,7 @@ const styles = StyleSheet.create({
     zIndex: 3,
   },
   actionContainer: {
-    paddingRight: 16,
+    paddingRight: SPACING.lg,
     paddingBottom: 40,
     alignItems: "center",
   },
@@ -409,7 +410,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.3)",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   likeAnimation: {
     position: "absolute",

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import LessonCompletedBadge from "../../../../components/common/LessonCompletedBadge";
 import PurchaseModal from "../purchase/PurchaseModal";
@@ -143,19 +144,19 @@ const SingleCourse = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: SPACING.lg,
     backgroundColor: COLORS.backgroundColor,
   },
   courseTitle: {
     color: COLORS.white,
     fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: SPACING.xl,
     lineHeight: 28,
     textAlign: "center",
   },
   heroSection: {
-    marginBottom: 20,
+    marginBottom: SPACING.xl,
   },
   thumbnailContainer: {
     width: "100%",
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
     backgroundColor: COLORS.grey,
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   thumbnail: {
     width: "100%",
@@ -176,13 +177,13 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   courseDescription: {
     color: COLORS.darkWhite,
     fontSize: 14,
     lineHeight: 20,
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   actionButton: {
     paddingVertical: 12,
@@ -206,40 +207,40 @@ const styles = StyleSheet.create({
   learnCard: {
     backgroundColor: COLORS.grey,
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    padding: SPACING.lg,
+    marginBottom: SPACING.xl,
   },
   cardTitle: {
     color: COLORS.white,
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
   learnList: {
-    marginTop: 8,
+    marginTop: SPACING.sm,
   },
   learnItem: {
     flexDirection: "row",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
     alignItems: "flex-start",
   },
   learnText: {
     color: COLORS.white,
     fontSize: 14,
-    marginLeft: 8,
+    marginLeft: SPACING.sm,
     flex: 1,
     lineHeight: 20,
   },
   courseCompletedBadge: {
     alignSelf: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   videoPreviewContainer: {
     width: "100%",
     borderRadius: 12,
     overflow: "hidden",
     aspectRatio: 16 / 9,
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   videoPreview: {
     width: "100%",
@@ -247,8 +248,8 @@ const styles = StyleSheet.create({
   },
   videoBadge: {
     position: "absolute",
-    top: 12,
-    right: 12,
+    top: SPACING.md,
+    right: SPACING.md,
   },
 });
 

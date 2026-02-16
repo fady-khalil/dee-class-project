@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { LinearGradient } from "expo-linear-gradient";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import BASE_URL from "../../config/BASE_URL";
 
 // Get server URL without /api for image paths
@@ -130,21 +131,21 @@ const ContinueWatchingSlider = ({ data = [] }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 16,
+    marginBottom: SPACING.xl,
   },
   sectionTitle: {
     color: COLORS.white,
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 12,
-    paddingHorizontal: 16,
+    marginBottom: SPACING.md,
+    paddingHorizontal: SPACING.lg,
   },
   listContainer: {
-    paddingHorizontal: 12,
+    paddingHorizontal: SPACING.md,
   },
   card: {
     width: 200,
-    marginHorizontal: 4,
+    marginHorizontal: SPACING.xs,
     borderRadius: 12,
     overflow: "hidden",
   },
@@ -171,10 +172,10 @@ const styles = StyleSheet.create({
   timeBadge: {
     position: "absolute",
     bottom: 50,
-    right: 8,
+    right: SPACING.sm,
     backgroundColor: "rgba(0, 0, 0, 0.85)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
     borderRadius: 4,
   },
   timeBadgeText: {
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 12,
+    padding: SPACING.md,
   },
   courseName: {
     color: COLORS.white,

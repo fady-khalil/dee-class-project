@@ -1,164 +1,219 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  Text,
   FlatList,
+  Image,
 } from "react-native";
 import { useTranslation } from "react-i18next";
-import { I18nText } from "../../components/common/I18nComponents";
+import { LinearGradient } from "expo-linear-gradient";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Ionicons";
+import BASE_URL from "../../config/BASE_URL";
+import { I18nText } from "../../components/common/I18nComponents";
 
-const { width } = Dimensions.get("window");
-const SLIDE_WIDTH = width * 0.28; // 28% of screen width
-const SLIDE_SPACING = 10;
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const CARD_WIDTH = SCREEN_WIDTH * 0.42;
+const CARD_HEIGHT = CARD_WIDTH * 1.6; // 2:3 aspect ratio
+const CARD_SPACING = SPACING.md;
 
-// Map category slugs to icons
-const getCategoryIcon = (slug) => {
-  const iconMap = {
-    "business": "briefcase",
-    "technology": "laptop",
-    "design": "color-palette",
-    "marketing": "megaphone",
-    "development": "code-slash",
-    "finance": "cash",
-    "health": "fitness",
-    "music": "musical-notes",
-    "photography": "camera",
-    "lifestyle": "heart",
-    "personal-development": "person",
-    "teaching": "school",
-    "academics": "book",
-    "language": "language",
-    "it-software": "hardware-chip",
-  };
-  return iconMap[slug] || "grid";
+const PLACEHOLDER_IMAGES = [
+  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&h=600&fit=crop",
+];
+
+const getServerUrl = () => BASE_URL.replace("/api", "");
+
+const getCategoryImage = (category, index) => {
+  if (category.image) {
+    const img = category.image;
+    if (img.startsWith("http")) return img;
+    return `${getServerUrl()}/${img}`;
+  }
+  return PLACEHOLDER_IMAGES[index % PLACEHOLDER_IMAGES.length];
 };
 
-const CategoryTabs = ({ categories }) => {
+const CategoryCard = ({ item, index }) => {
   const { t } = useTranslation();
-  const flatListRef = useRef(null);
   const navigation = useNavigation();
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const isComingSoon = item.status === "coming_soon";
+  const imageUrl = getCategoryImage(item, index);
 
-  const renderCategoryItem = ({ item }) => {
-    const iconName = getCategoryIcon(item.slug);
-
-    return (
-      <TouchableOpacity
-        style={styles.categorySlide}
-        onPress={() =>
-          navigation.navigate("Library", { categorySlug: item.slug })
-        }
-        activeOpacity={0.7}
-      >
-        <View style={styles.categoryIconContainer}>
-          <Icon name={iconName} size={32} color={COLORS.primary} />
-        </View>
-        <I18nText style={styles.categoryText} numberOfLines={2}>
-          {item.title || item.name}
-        </I18nText>
-      </TouchableOpacity>
-    );
+  const handlePress = () => {
+    if (!isComingSoon) {
+      navigation.navigate("Library", { categorySlug: item.slug });
+    }
   };
 
   return (
-    <View style={styles.sectionContainer}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.sectionTitle}>{t("general.categories")}</Text>
-      </View>
-
-      <View style={styles.listContainer}>
-        <FlatList
-          ref={flatListRef}
-          data={categories}
-          renderItem={renderCategoryItem}
-          keyExtractor={(item) => item.slug}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={SLIDE_WIDTH + SLIDE_SPACING}
-          decelerationRate="fast"
-          contentContainerStyle={styles.flatListContent}
-          ItemSeparatorComponent={() => (
-            <View style={{ width: SLIDE_SPACING }} />
-          )}
-          getItemLayout={(data, index) => ({
-            length: SLIDE_WIDTH + SLIDE_SPACING,
-            offset: (SLIDE_WIDTH + SLIDE_SPACING) * index,
-            index,
-          })}
-          onMomentumScrollEnd={(event) => {
-            const contentOffset = event.nativeEvent.contentOffset.x;
-            const index = Math.round(
-              contentOffset / (SLIDE_WIDTH + SLIDE_SPACING)
-            );
-          }}
+    <TouchableOpacity
+      onPress={handlePress}
+      activeOpacity={isComingSoon ? 0.9 : 0.7}
+      style={styles.cardWrapper}
+    >
+      <View style={styles.card}>
+        {!imageLoaded && <View style={styles.skeleton} />}
+        <Image
+          source={{ uri: imageUrl }}
+          style={[styles.image, !imageLoaded && styles.hiddenImage]}
+          resizeMode="cover"
+          onLoad={() => setImageLoaded(true)}
         />
+        <LinearGradient
+          colors={["transparent", "rgba(0,0,0,0.4)", "rgba(0,0,0,0.9)"]}
+          locations={[0.3, 0.6, 1]}
+          style={styles.gradient}
+        />
+        {isComingSoon ? (
+          <>
+            <View style={styles.blurOverlay} />
+            <View style={styles.comingSoonCenter}>
+              <I18nText style={styles.cardTitle}>
+                {item.title || item.name}
+              </I18nText>
+              <View style={styles.comingSoonBadge}>
+                <I18nText style={styles.comingSoonText}>
+                  {t("general.coming_soon")}
+                </I18nText>
+              </View>
+            </View>
+          </>
+        ) : (
+          <View style={styles.bottomInfo}>
+            <I18nText style={styles.cardTitle} numberOfLines={2}>
+              {item.title || item.name}
+            </I18nText>
+            <I18nText style={styles.courseCount}>
+              {item.courseCount || 0} {t("general.courses_count")}
+            </I18nText>
+          </View>
+        )}
       </View>
+    </TouchableOpacity>
+  );
+};
+
+const CategorySlider = ({ categories }) => {
+  const { t } = useTranslation();
+  if (!categories || categories.length === 0) return null;
+
+  return (
+    <View style={styles.container}>
+      <I18nText style={styles.sectionTitle}>{t("general.categories")}</I18nText>
+      <FlatList
+        data={categories}
+        renderItem={({ item, index }) => (
+          <CategoryCard item={item} index={index} />
+        )}
+        keyExtractor={(item) => item._id || item.slug}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        snapToInterval={CARD_WIDTH + CARD_SPACING}
+        decelerationRate="fast"
+        contentContainerStyle={styles.listContent}
+        initialNumToRender={4}
+        maxToRenderPerBatch={4}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginBottom: 24,
-  },
-  headerContainer: {
-    flexDirection: "row",
-    marginBottom: 16,
-    paddingHorizontal: 16,
+  container: {
+    marginBottom: SPACING.xl,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     color: COLORS.white,
-    marginRight: 10,
+    marginBottom: SPACING.md,
+    // paddingHorizontal: SPACING.lg,
   },
-  headerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  listContent: {
+    // paddingHorizontal: SPACING.md,
   },
-  listContainer: {
-    height: 150,
-    paddingHorizontal: 16,
+  cardWrapper: {
+    marginRight: SPACING.md,
   },
-  flatListContent: {
-    paddingVertical: 10,
-    paddingRight: 16, // Extra padding at the end
-  },
-  categorySlide: {
-    width: SLIDE_WIDTH,
-    height: 120,
+  card: {
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
+    borderRadius: 16,
+    overflow: "hidden",
     borderWidth: 1,
-    borderColor: COLORS.white,
-    borderRadius: 8,
-    padding: 8,
-    alignItems: "center",
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  skeleton: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#2a2a2a",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  hiddenImage: {
+    opacity: 0,
+  },
+  gradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: "70%",
+  },
+  blurOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.45)",
+  },
+  comingSoonCenter: {
+    ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
-    backgroundColor: "transparent",
-  },
-  activeSlide: {
-    borderColor: COLORS.primary,
-  },
-  categoryIconContainer: {
-    width: 50,
-    height: 50,
     alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 8,
-    backgroundColor: "rgba(237, 26, 77, 0.15)",
-    borderRadius: 25,
+    gap: SPACING.md,
   },
-  categoryText: {
+  comingSoonBadge: {
+    backgroundColor: "rgba(237,26,77,0.7)",
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.25)",
+  },
+  comingSoonText: {
     color: COLORS.white,
+    fontSize: 10,
+    fontWeight: "bold",
+    textTransform: "uppercase",
+    letterSpacing: 1.5,
+  },
+  bottomInfo: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: SPACING.md,
+  },
+  cardTitle: {
+    color: COLORS.white,
+    fontSize: 15,
+    fontWeight: "bold",
+    textAlign: "start",
+  },
+  courseCount: {
+    color: "rgba(255,255,255,0.6)",
     fontSize: 12,
-    textAlign: "center",
-    fontWeight: "500",
+    marginTop: 3,
   },
 });
 
-export default CategoryTabs;
+export default CategorySlider;

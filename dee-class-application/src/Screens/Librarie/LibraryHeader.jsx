@@ -9,6 +9,7 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import Logo from "../../Assests/logos/dclass.png";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 
 const LibraryHeader = () => {
   const [searchVisible, setSearchVisible] = useState(false);
@@ -35,8 +36,8 @@ const LibraryHeader = () => {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
   },
   headerContent: {
     flexDirection: "row",
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   searchIconContainer: {
-    padding: 8,
+    padding: SPACING.sm,
     backgroundColor: COLORS.grey,
     borderRadius: 50,
     width: 40,

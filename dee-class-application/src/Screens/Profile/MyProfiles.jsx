@@ -15,6 +15,7 @@ import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import AddProfileForm from "./AddProfileForm";
 import DeleteProfileModal from "./DeleteProfileModal";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { I18nText, I18nView } from "../../components/common/I18nComponents";
 import { HeaderBack } from "../../components/navigation";
 import Icon from "react-native-vector-icons/Feather";
@@ -276,8 +277,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingBottom: 24,
+    paddingHorizontal: SPACING.lg,
+    paddingBottom: SPACING.xl,
     alignItems: "center",
   },
   title: {
@@ -285,23 +286,23 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: COLORS.white,
     textAlign: "center",
-    marginVertical: 20,
+    marginBottom: SPACING.lg,
   },
   profilesListContainer: {
-    paddingBottom: 24,
+    paddingBottom: SPACING.xl,
     alignItems: "center",
     width: "100%",
   },
   columnWrapper: {
     justifyContent: "space-evenly",
     width: "100%",
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
   },
   profileItemWrapper: {
     alignItems: "center",
     width: 140,
-    marginHorizontal: 10,
-    marginBottom: 20,
+    marginHorizontal: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   profileItem: {
     alignItems: "center",
@@ -311,7 +312,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   profileInitial: {
     width: 100,
@@ -319,7 +320,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   initialText: {
     fontSize: 32,
@@ -333,7 +334,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   managementOptions: {
-    marginTop: 12,
+    marginTop: SPACING.md,
     width: "100%",
     gap: 8,
   },
@@ -341,8 +342,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: COLORS.darkGrey,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
     borderRadius: 8,
     justifyContent: "center",
   },
@@ -366,7 +367,7 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
     backgroundColor: "rgba(255, 255, 255, 0.05)",
   },
   addProfilePlus: {
@@ -379,7 +380,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 28,
     borderRadius: 8,
-    marginTop: 16,
+    marginTop: SPACING.lg,
     alignSelf: "center",
     minWidth: 180,
     alignItems: "center",

@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import LessonCompletedBadge from "./LessonCompletedBadge";
 
 const LessonItem = ({
@@ -71,7 +72,7 @@ const LessonItem = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
     backgroundColor: COLORS.grey,
     borderRadius: 12,
     overflow: "hidden",
@@ -93,17 +94,17 @@ const styles = StyleSheet.create({
   },
   details: {
     flex: 1,
-    padding: 12,
+    padding: SPACING.md,
   },
   titleRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   indexText: {
     color: COLORS.darkWhite,
     fontSize: 12,
-    marginRight: 8,
+    marginRight: SPACING.sm,
   },
   badgeText: {
     // inherits text badge styles
@@ -112,19 +113,19 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 14,
     fontWeight: "500",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   description: {
     color: COLORS.darkWhite,
     fontSize: 12,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   button: {
     alignSelf: "flex-start",
     backgroundColor: COLORS.primary,
     borderRadius: 8,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
   },
   buttonUnlocked: {
     backgroundColor: COLORS.darkBlue,

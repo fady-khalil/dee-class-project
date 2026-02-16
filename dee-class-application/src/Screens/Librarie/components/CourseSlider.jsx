@@ -10,6 +10,7 @@ import {
   Animated,
 } from "react-native";
 import COLORS from "../../../styles/colors";
+import SPACING from "../../../styles/spacing";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import BASE_URL from "../../../config/BASE_URL";
@@ -26,8 +27,18 @@ const getServerUrl = () => {
 // Get thumbnail URL
 const getThumbnailUrl = (item) => {
   const course = item?.course || item;
-  console.log("CourseSlider:", course?.name, "type:", course?.course_type, "thumbnail:", course?.thumbnail, "trailer:", course?.trailer?.assets?.thumbnail);
-  if (course?.trailer?.assets?.thumbnail) return course.trailer.assets.thumbnail;
+  console.log(
+    "CourseSlider:",
+    course?.name,
+    "type:",
+    course?.course_type,
+    "thumbnail:",
+    course?.thumbnail,
+    "trailer:",
+    course?.trailer?.assets?.thumbnail,
+  );
+  if (course?.trailer?.assets?.thumbnail)
+    return course.trailer.assets.thumbnail;
   if (course?.thumbnail) return course.thumbnail;
   const image = course?.image || course?.mobileImage;
   if (image) {
@@ -74,7 +85,9 @@ const CourseCard = ({ item, navigation }) => {
       activeOpacity={1}
       style={styles.cardWrapper}
     >
-      <Animated.View style={[styles.courseCard, { transform: [{ scale: scaleAnim }] }]}>
+      <Animated.View
+        style={[styles.courseCard, { transform: [{ scale: scaleAnim }] }]}
+      >
         {/* Skeleton loader */}
         {!imageLoaded && <View style={styles.skeleton} />}
 
@@ -152,10 +165,10 @@ const CourseSlider = ({ title, data = [] }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   headerContainer: {
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   sectionTitle: {
     color: COLORS.white,
@@ -164,10 +177,10 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   listContent: {
-    paddingRight: 16,
+    paddingRight: SPACING.xs,
   },
   cardWrapper: {
-    marginLeft: 10,
+    marginLeft: SPACING.md,
   },
   courseCard: {
     width: CARD_WIDTH,
@@ -189,11 +202,11 @@ const styles = StyleSheet.create({
   },
   tagBadge: {
     position: "absolute",
-    top: 8,
-    left: 8,
+    top: SPACING.sm,
+    left: SPACING.sm,
     backgroundColor: "rgba(0,0,0,0.75)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
     borderRadius: 4,
   },
   tagText: {
@@ -215,7 +228,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 10,
+    padding: SPACING.md,
   },
   courseTitle: {
     color: COLORS.white,

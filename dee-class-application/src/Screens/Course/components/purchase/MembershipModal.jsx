@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 
 const { width } = Dimensions.get("window");
 
@@ -60,12 +61,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.85)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    padding: SPACING.xl,
   },
   modalContent: {
     backgroundColor: "#2A2A2A",
     borderRadius: 16,
-    padding: 24,
+    padding: SPACING.xl,
     width: width * 0.85,
     maxWidth: 400,
     alignItems: "center",
@@ -84,14 +85,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     color: "#FFFFFF",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
     textAlign: "center",
   },
   modalMessage: {
     fontSize: 16,
     color: "#E0E0E0",
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
     lineHeight: 22,
   },
   modalButtons: {
@@ -101,9 +102,9 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: SPACING.md,
     borderRadius: 8,
-    marginHorizontal: 8,
+    marginHorizontal: SPACING.sm,
     alignItems: "center",
   },
   cancelButton: {

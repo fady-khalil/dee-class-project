@@ -11,6 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 import LessonCompletedBadge from "../../../../components/common/LessonCompletedBadge";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 import PurchaseModal from "../purchase/PurchaseModal";
 
 const SeriesCourse = ({
@@ -147,22 +148,22 @@ const SeriesCourse = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: SPACING.lg,
     backgroundColor: COLORS.backgroundColor,
   },
   courseTitle: {
     color: COLORS.white,
     fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: SPACING.xl,
     lineHeight: 28,
     textAlign: "center",
   },
   seriesList: {
-    paddingBottom: 16,
+    paddingBottom: SPACING.lg,
   },
   seriesItem: {
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   thumbnailContainer: {
     width: "100%",
@@ -181,7 +182,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.grey,
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
-    padding: 16,
+    padding: SPACING.lg,
   },
   seriesTitleContainer: {
     flexDirection: "row",
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
   seriesDescription: {
     color: COLORS.darkWhite,
     fontSize: 14,
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
     textAlign: "left",
   },
   watchButton: {
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     borderRadius: 8,
     paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.lg,
     alignSelf: "flex-start",
   },
   watchButtonText: {
@@ -222,16 +223,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   separator: {
-    height: 16,
+    height: SPACING.lg,
   },
   courseCompletedBadge: {
     alignSelf: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   lessonBadgeIcon: {
     position: "absolute",
-    top: 8,
-    right: 8,
+    top: SPACING.sm,
+    right: SPACING.sm,
   },
   lessonBadgeText: {
     // marginLeft: 8,

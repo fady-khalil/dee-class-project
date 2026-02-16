@@ -13,6 +13,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { Video } from "expo-av";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 import ApiVideoPlayer from "@api.video/react-native-player";
 import useVideoProgress from "../../../../Hooks/useVideoProgress";
 import useVideoHistory from "../../../../Hooks/useVideoHistory";
@@ -617,7 +618,7 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 16,
     textAlign: "center",
-    padding: 20,
+    padding: SPACING.xl,
   },
   // Resume Modal Styles
   modalOverlay: {
@@ -629,8 +630,8 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 24,
-    marginHorizontal: 24,
+    padding: SPACING.xl,
+    marginHorizontal: SPACING.xl,
     maxWidth: 340,
     width: "100%",
   },
@@ -639,13 +640,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   modalMessage: {
     color: COLORS.darkWhite,
     fontSize: 14,
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
     lineHeight: 20,
   },
   modalButtons: {
@@ -654,7 +655,7 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     flex: 1,
-    paddingVertical: 12,
+    paddingVertical: SPACING.md,
     borderRadius: 8,
     alignItems: "center",
   },
@@ -662,7 +663,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderWidth: 1,
     borderColor: COLORS.darkWhite,
-    marginRight: 8,
+    marginRight: SPACING.sm,
   },
   startOverButtonText: {
     color: COLORS.white,
@@ -671,7 +672,7 @@ const styles = StyleSheet.create({
   },
   continueButton: {
     backgroundColor: COLORS.primary,
-    marginLeft: 8,
+    marginLeft: SPACING.sm,
   },
   continueButtonText: {
     color: COLORS.white,

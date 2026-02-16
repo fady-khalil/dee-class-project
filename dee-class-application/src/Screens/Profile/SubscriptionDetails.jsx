@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/Feather";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { GlobalStyle } from "../../styles/GlobalStyle";
 import HeaderBack from "../../components/navigation/HeaderBack";
 import { useAuth } from "../../context/Authentication/LoginAuth";
@@ -325,7 +326,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 16,
+    padding: SPACING.lg,
     paddingBottom: 40,
   },
   emptyContainer: {
@@ -341,25 +342,25 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.05)",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   emptyTitle: {
     color: COLORS.white,
     fontSize: 18,
     fontWeight: "600",
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   emptySubtitle: {
     color: COLORS.darkWhite,
     fontSize: 14,
     textAlign: "center",
     lineHeight: 20,
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   subscribeButton: {
     backgroundColor: COLORS.primary,
-    paddingHorizontal: 32,
+    paddingHorizontal: SPACING.xxl,
     paddingVertical: 14,
     borderRadius: 12,
   },
@@ -371,8 +372,8 @@ const styles = StyleSheet.create({
   planCard: {
     backgroundColor: "rgba(255,255,255,0.08)",
     borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
     borderWidth: 1,
     borderColor: COLORS.primary + "40",
   },
@@ -380,7 +381,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   planName: {
     color: COLORS.white,
@@ -389,7 +390,7 @@ const styles = StyleSheet.create({
   },
   statusBadge: {
     backgroundColor: COLORS.primary + "30",
-    paddingHorizontal: 12,
+    paddingHorizontal: SPACING.md,
     paddingVertical: 4,
     borderRadius: 20,
   },
@@ -405,14 +406,14 @@ const styles = StyleSheet.create({
   detailsCard: {
     backgroundColor: "rgba(255,255,255,0.05)",
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
   },
   detailRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 12,
+    paddingVertical: SPACING.md,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.08)",
   },
@@ -432,20 +433,20 @@ const styles = StyleSheet.create({
   featuresCard: {
     backgroundColor: "rgba(255,255,255,0.05)",
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
   },
   featuresTitle: {
     color: COLORS.white,
     fontSize: 16,
     fontWeight: "600",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   featureRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    paddingVertical: 8,
+    gap: SPACING.md,
+    paddingVertical: SPACING.sm,
   },
   featureText: {
     color: COLORS.lightWhite,
@@ -455,11 +456,11 @@ const styles = StyleSheet.create({
   warningCard: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: SPACING.md,
     backgroundColor: "rgba(245, 158, 11, 0.15)",
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
     borderWidth: 1,
     borderColor: "rgba(245, 158, 11, 0.3)",
   },
@@ -469,16 +470,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   actionsContainer: {
-    marginTop: 8,
-    gap: 12,
+    marginTop: SPACING.sm,
+    gap: SPACING.md,
   },
   manageButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 10,
+    gap: SPACING.md,
     backgroundColor: COLORS.primary,
-    paddingVertical: 16,
+    paddingVertical: SPACING.lg,
     borderRadius: 12,
   },
   manageButtonText: {
@@ -490,9 +491,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 10,
+    gap: SPACING.md,
     backgroundColor: "rgba(239, 68, 68, 0.1)",
-    paddingVertical: 16,
+    paddingVertical: SPACING.lg,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "rgba(239, 68, 68, 0.3)",
@@ -511,7 +512,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "#2A2A2A",
     borderRadius: 16,
-    padding: 24,
+    padding: SPACING.xl,
     width: width * 0.85,
     alignItems: "center",
     borderWidth: 1,
@@ -524,27 +525,27 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(239, 68, 68, 0.15)",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: "600",
     color: "#FFFFFF",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
     textAlign: "center",
   },
   modalMessage: {
     fontSize: 15,
     color: "#E0E0E0",
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
     lineHeight: 22,
   },
   modalButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    gap: 12,
+    gap: SPACING.md,
   },
   modalButton: {
     flex: 1,

@@ -1,76 +1,87 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/Feather";
-
+import { LinearGradient } from "expo-linear-gradient";
 import logo from "../../../Assests/logos/small-logo.png";
 import COLORS from "../../../styles/colors";
+import SPACING from "../../../styles/spacing";
 import { useNavigation } from "@react-navigation/native";
+import { I18nText } from "../../../components/common/I18nComponents";
 
-const JoinUs = ({ isAuthenticated, allowedProfiles, allowedCourses, isVerified, user, joinUs }) => {
+const JoinUs = ({
+  isAuthenticated,
+  allowedProfiles,
+  allowedCourses,
+  isVerified,
+  user,
+  joinUs,
+}) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
-
-  // Check if email is verified
+  const isLoggedIn = !!user;
   const emailVerified = isVerified || user?.verified || user?.email_verified;
 
-  // Scenario 3: Has active plan (allowedProfiles > 0) → Hide section
-  if (allowedProfiles > 0) {
-    return null;
-  }
+  // Hide section if user already has active plan or purchased courses
+  if (allowedProfiles > 0 || allowedCourses?.length > 0) return null;
 
-  // Scenario 2: Has purchased courses → Hide section (they have access)
-  if (allowedCourses?.length > 0) {
-    return null;
-  }
-
-  // Determine what to show based on scenarios
-  const getContent = () => {
-    // Scenario 1: Not verified → Show verify email prompt
-    if (isAuthenticated && !emailVerified) {
+  const getButtonConfig = () => {
+    if (!isLoggedIn) {
       return {
-        title: t("verify_email.title"),
-        description: t("verify_email.description"),
-        buttonText: t("verify_email.verify_button"),
-        buttonIcon: "mail",
-        onPress: () => navigation.navigate("VerifyEmail", { email: user?.email }),
+        text: t("navigation.sign_up"),
+        icon: "user-plus",
+        onPress: () => navigation.navigate("Register"),
       };
     }
-
-    // Scenario 4: Verified but no plan/courses → Show sign up / complete registration
+    if (!emailVerified) {
+      return {
+        text: t("verify_email.verify_button"),
+        icon: "mail",
+        onPress: () =>
+          navigation.navigate("VerifyEmail", { email: user?.email }),
+      };
+    }
     return {
-      title: joinUs?.title || t("general.join_us"),
-      description: joinUs?.text || t("general.join_us_subtitle"),
-      buttonText: isAuthenticated ? t("general.complete_registration") : t("navigation.sign_up"),
-      buttonIcon: null,
+      text: t("general.finish_sign_up"),
+      icon: null,
       onPress: () => navigation.navigate("Plans"),
     };
   };
 
-  const content = getContent();
+  const buttonConfig = getButtonConfig();
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.topLine} />
-
-        <Text style={styles.title}>{content.title}</Text>
-
-        <Text style={styles.description}>{content.description}</Text>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={content.onPress} style={styles.button}>
-            {content.buttonIcon && (
-              <Icon name={content.buttonIcon} size={18} color={COLORS.white} style={styles.buttonIcon} />
+      <LinearGradient
+        colors={["rgba(237,26,77,0.08)", "transparent", "rgba(237,26,77,0.08)"]}
+        style={styles.bgGradient}
+      />
+      <View style={styles.card}>
+        <I18nText style={styles.title}>
+          {joinUs?.title || t("general.join_us")}
+        </I18nText>
+        <I18nText style={styles.description}>
+          {joinUs?.text || t("general.join_us_subtitle")}
+        </I18nText>
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            onPress={buttonConfig.onPress}
+            style={styles.button}
+          >
+            {buttonConfig.icon && (
+              <Icon
+                name={buttonConfig.icon}
+                size={16}
+                color={COLORS.white}
+                style={styles.buttonIcon}
+              />
             )}
-            <Text style={styles.buttonText}>{content.buttonText}</Text>
+            <I18nText style={styles.buttonText}>{buttonConfig.text}</I18nText>
           </TouchableOpacity>
-          <View style={styles.logoContainer}>
+          <View style={styles.logoCircle}>
             <Image source={logo} style={styles.logo} resizeMode="contain" />
           </View>
         </View>
-
-        <View style={styles.bottomLine} />
       </View>
     </View>
   );
@@ -78,79 +89,68 @@ const JoinUs = ({ isAuthenticated, allowedProfiles, allowedCourses, isVerified, 
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 44,
+    marginBottom: SPACING.xl,
+    paddingHorizontal: SPACING.lg,
   },
-  content: {
-    paddingHorizontal: 16,
-    paddingVertical: 24,
-    position: "relative",
+  bgGradient: {
+    ...StyleSheet.absoluteFillObject,
   },
-  topLine: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    height: 2,
-    backgroundColor: COLORS.primary,
-    opacity: 0.5,
-  },
-  bottomLine: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 2,
-    backgroundColor: COLORS.primary,
-    opacity: 0.5,
+  card: {
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+    paddingHorizontal: 20,
+    paddingVertical: 28,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
     color: COLORS.white,
-    marginBottom: 8,
   },
   description: {
     textAlign: "center",
-    marginTop: 16,
-    marginHorizontal: "auto",
+    marginTop: SPACING.md,
     fontSize: 14,
-    color: COLORS.lightWhite,
+    lineHeight: 22,
+    color: COLORS.darkWhite,
   },
-  buttonContainer: {
+  buttonRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 16,
-    marginTop: 32,
+    gap: SPACING.md,
+    marginTop: SPACING.sm,
   },
   button: {
     backgroundColor: COLORS.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
+    paddingHorizontal: 22,
+    paddingVertical: 12,
     borderRadius: 12,
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 2,
     flexDirection: "row",
     alignItems: "center",
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
   },
   buttonIcon: {
-    marginRight: 8,
+    marginRight: SPACING.sm,
   },
   buttonText: {
     color: COLORS.white,
-    fontSize: 16,
-    fontWeight: "500",
+    fontSize: 15,
+    fontWeight: "600",
   },
-  logoContainer: {
+  logoCircle: {
     width: 36,
     height: 36,
-    backgroundColor: COLORS.darkGrey,
-    borderRadius: 9999,
-    padding: 4,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
     alignItems: "center",
     justifyContent: "center",
   },

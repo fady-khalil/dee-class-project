@@ -18,6 +18,8 @@ import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import { usePostData } from "../../Hooks/usePostData";
 import usePostDataNoLang from "../../Hooks/usePostDataNoLang";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
+import HeaderBack from "../../components/navigation/HeaderBack";
 import logo from "../../Assests/logos/dclass.png";
 
 const GiftVerifyEmail = () => {
@@ -99,23 +101,30 @@ const GiftVerifyEmail = () => {
 
         if (redeemResponse.success) {
           // Update auth context with new subscription data
-          const newAllowedProfiles = redeemResponse.data?.subscription?.profilesAllowed || 1;
+          const newAllowedProfiles =
+            redeemResponse.data?.subscription?.profilesAllowed || 1;
 
           loginHandler(
             token,
-            { ...user, verified: true, subscription: redeemResponse.data?.subscription },
+            {
+              ...user,
+              verified: true,
+              subscription: redeemResponse.data?.subscription,
+            },
             newAllowedProfiles,
             [],
-            user?.profiles || []
+            user?.profiles || [],
           );
 
           // Navigate to success
           navigation.reset({
             index: 0,
-            routes: [{
-              name: "GiftSuccess",
-              params: { planInfo: planInfo }
-            }],
+            routes: [
+              {
+                name: "GiftSuccess",
+                params: { planInfo: planInfo },
+              },
+            ],
           });
         } else {
           setErrorMessage(redeemResponse.message || t("gift.redeem_error"));
@@ -155,6 +164,7 @@ const GiftVerifyEmail = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <HeaderBack screenName="verify_email" />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
@@ -170,9 +180,14 @@ const GiftVerifyEmail = () => {
 
         {/* Gift Info Banner */}
         <View style={styles.giftBanner}>
-          <MaterialIcons name="card-giftcard" size={20} color={COLORS.primary} />
+          <MaterialIcons
+            name="card-giftcard"
+            size={20}
+            color={COLORS.primary}
+          />
           <Text style={styles.giftBannerText}>
-            {t("gift.redeeming")}: {isRTL ? planInfo?.plan?.title_ar : planInfo?.plan?.title}
+            {t("gift.redeeming")}:{" "}
+            {isRTL ? planInfo?.plan?.title_ar : planInfo?.plan?.title}
           </Text>
         </View>
 
@@ -215,7 +230,10 @@ const GiftVerifyEmail = () => {
 
           {/* Verify Button */}
           <TouchableOpacity
-            style={[styles.button, (isVerifying || isRedeeming) && styles.buttonDisabled]}
+            style={[
+              styles.button,
+              (isVerifying || isRedeeming) && styles.buttonDisabled,
+            ]}
             onPress={handleVerify}
             disabled={isVerifying || isRedeeming}
           >
@@ -223,11 +241,15 @@ const GiftVerifyEmail = () => {
               <View style={styles.loadingContainer}>
                 <Spinner isSmall={true} isWhite={true} />
                 <Text style={styles.loadingText}>
-                  {isRedeeming ? t("gift.activating") : t("verify_email.verifying")}
+                  {isRedeeming
+                    ? t("gift.activating")
+                    : t("verify_email.verifying")}
                 </Text>
               </View>
             ) : (
-              <Text style={styles.buttonText}>{t("gift.verify_and_activate")}</Text>
+              <Text style={styles.buttonText}>
+                {t("gift.verify_and_activate")}
+              </Text>
             )}
           </TouchableOpacity>
 
@@ -241,7 +263,10 @@ const GiftVerifyEmail = () => {
               <Spinner isSmall={true} />
             ) : (
               <Text style={styles.resendText}>
-                {t("verify_email.didnt_receive")} <Text style={styles.resendLink}>{t("verify_email.resend")}</Text>
+                {t("verify_email.didnt_receive")}{" "}
+                <Text style={styles.resendLink}>
+                  {t("verify_email.resend")}
+                </Text>
               </Text>
             )}
           </TouchableOpacity>
@@ -262,11 +287,11 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: 16,
+    padding: SPACING.sm,
   },
   logoContainer: {
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   logo: {
     height: 48,
@@ -278,9 +303,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "rgba(99, 102, 241, 0.1)",
     borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
-    gap: 8,
+    padding: SPACING.md,
+    marginBottom: SPACING.lg,
+    gap: SPACING.sm,
   },
   giftBannerText: {
     color: COLORS.primary,
@@ -290,13 +315,13 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 24,
+    padding: SPACING.lg,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
   headerContainer: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   iconContainer: {
     width: 80,
@@ -305,13 +330,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(99, 102, 241, 0.1)",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
     textAlign: "center",
   },
   subtitle: {
@@ -324,8 +349,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(239, 68, 68, 0.5)",
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
+    padding: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   errorText: {
     color: "#f87171",
@@ -335,8 +360,8 @@ const styles = StyleSheet.create({
   codeContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 8,
-    marginBottom: 24,
+    gap: SPACING.sm,
+    marginBottom: SPACING.lg,
   },
   codeInput: {
     width: 45,
@@ -368,7 +393,7 @@ const styles = StyleSheet.create({
   loadingContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: SPACING.sm,
   },
   loadingText: {
     color: COLORS.white,
@@ -376,7 +401,7 @@ const styles = StyleSheet.create({
   },
   resendContainer: {
     alignItems: "center",
-    marginTop: 24,
+    marginTop: SPACING.lg,
   },
   resendText: {
     color: COLORS.darkWhite,

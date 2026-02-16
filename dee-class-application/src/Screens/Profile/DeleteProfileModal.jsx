@@ -9,6 +9,7 @@ import {
 } from "../../components/RequestHandler";
 import Spinner from "../../components/RequestHandler/Spinner";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { I18nText } from "../../components/common/I18nComponents";
 
 const DeleteProfileModal = ({ isVisible, onClose, profile }) => {
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: COLORS.backgroundColor,
     borderRadius: 12,
-    padding: 20,
+    padding: SPACING.xl,
     width: "80%",
     alignItems: "center",
     borderWidth: 1,
@@ -122,13 +123,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
     textAlign: "center",
   },
   message: {
     fontSize: 16,
     color: COLORS.darkWhite,
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
     textAlign: "center",
   },
   buttonContainer: {
@@ -138,11 +139,11 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     backgroundColor: COLORS.darkGrey,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
     borderRadius: 6,
     flex: 1,
-    marginRight: 8,
+    marginRight: SPACING.sm,
     alignItems: "center",
   },
   cancelButtonText: {
@@ -152,11 +153,11 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     backgroundColor: COLORS.primary,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
     borderRadius: 6,
     flex: 1,
-    marginLeft: 8,
+    marginLeft: SPACING.sm,
     alignItems: "center",
   },
   deleteButtonText: {

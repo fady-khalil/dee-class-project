@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import BASE_URL from "../../../../config/BASE_URL";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 
 // Get server URL without /api for image paths
 const getServerUrl = () => {
@@ -84,7 +85,7 @@ const Instructor = ({ data }) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: SPACING.lg,
     backgroundColor: COLORS.backgroundColor,
   },
   headerRow: {
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 22,
     fontWeight: "700",
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
   card: {
     flexDirection: "row",
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 16,
+    padding: SPACING.lg,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   instructorImageContainer: {
-    marginRight: 16,
+    marginRight: SPACING.lg,
     flexShrink: 0,
   },
   instructorImage: {
@@ -148,12 +149,12 @@ const styles = StyleSheet.create({
     color: COLORS.darkWhite,
     fontSize: 14,
     lineHeight: 20,
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   viewProfileButton: {
     backgroundColor: COLORS.primary,
     paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.lg,
     borderRadius: 8,
     alignSelf: "flex-start",
     flexDirection: "row",

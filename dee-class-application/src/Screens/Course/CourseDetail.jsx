@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import useFetch from "../../Hooks/useFetch";
 import Spinner from "../../components/RequestHandler/Spinner";
 import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     color: COLORS.white,
-    marginTop: 12,
+    marginTop: SPACING.md,
     fontSize: 16,
   },
   errorContainer: {
@@ -292,7 +293,7 @@ const styles = StyleSheet.create({
   },
   offlineBanner: {
     backgroundColor: COLORS.primary,
-    padding: 8,
+    padding: SPACING.sm,
     alignItems: "center",
   },
   offlineText: {

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import COLORS from "../../../styles/colors";
+import SPACING from "../../../styles/spacing";
 import Icon from "react-native-vector-icons/Ionicons";
 
 /**
@@ -68,7 +69,7 @@ const PasswordInput = ({
 const styles = StyleSheet.create({
   inputContainer: {
     width: "100%",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   inputWrapper: {
     flexDirection: "row",
@@ -80,8 +81,8 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
     fontSize: 14,
     color: COLORS.black,
   },
@@ -94,10 +95,10 @@ const styles = StyleSheet.create({
   errorText: {
     color: COLORS.red,
     fontSize: 12,
-    marginTop: 4,
+    marginTop: SPACING.xs,
   },
   iconButton: {
-    padding: 10,
+    padding: SPACING.md,
   },
 });
 

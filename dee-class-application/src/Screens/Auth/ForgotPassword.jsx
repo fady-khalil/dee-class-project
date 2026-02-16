@@ -16,6 +16,8 @@ import { Ionicons } from "@expo/vector-icons";
 import Spinner from "../../components/RequestHandler/Spinner";
 import { usePostData } from "../../Hooks/usePostData";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
+import HeaderBack from "../../components/navigation/HeaderBack";
 import logo from "../../Assests/logos/dclass.png";
 
 const ForgotPassword = () => {
@@ -68,7 +70,10 @@ const ForgotPassword = () => {
     }
 
     try {
-      const response = await postData("auth/verify-reset-code", { email, code: otp });
+      const response = await postData("auth/verify-reset-code", {
+        email,
+        code: otp,
+      });
 
       if (response.success) {
         setSuccessMessage(t("forgot_password.otp_verified"));
@@ -152,6 +157,7 @@ const ForgotPassword = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <HeaderBack screenName="forgotPassword" />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
@@ -235,7 +241,9 @@ const ForgotPassword = () => {
                 {isLoading ? (
                   <Spinner isSmall={true} isWhite={true} />
                 ) : (
-                  <Text style={styles.buttonText}>{t("forgot_password.send_code")}</Text>
+                  <Text style={styles.buttonText}>
+                    {t("forgot_password.send_code")}
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -263,12 +271,17 @@ const ForgotPassword = () => {
                 {isLoading ? (
                   <Spinner isSmall={true} isWhite={true} />
                 ) : (
-                  <Text style={styles.buttonText}>{t("forgot_password.verify_code")}</Text>
+                  <Text style={styles.buttonText}>
+                    {t("forgot_password.verify_code")}
+                  </Text>
                 )}
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.secondaryButton, isLoading && styles.buttonDisabled]}
+                style={[
+                  styles.secondaryButton,
+                  isLoading && styles.buttonDisabled,
+                ]}
                 onPress={handleRequestOtp}
                 disabled={isLoading}
               >
@@ -282,7 +295,9 @@ const ForgotPassword = () => {
           {/* Step 3: New Password */}
           {step === 3 && (
             <View>
-              <View style={[styles.inputContainer, { marginBottom: 16 }]}>
+              <View
+                style={[styles.inputContainer, { marginBottom: SPACING.lg }]}
+              >
                 <Ionicons
                   name="lock-closed-outline"
                   size={20}
@@ -310,7 +325,9 @@ const ForgotPassword = () => {
                 </TouchableOpacity>
               </View>
 
-              <View style={[styles.inputContainer, { marginBottom: 20 }]}>
+              <View
+                style={[styles.inputContainer, { marginBottom: SPACING.lg }]}
+              >
                 <Ionicons
                   name="lock-closed-outline"
                   size={20}
@@ -319,7 +336,9 @@ const ForgotPassword = () => {
                 />
                 <TextInput
                   style={[styles.input, isRTL && styles.inputRTL]}
-                  placeholder={t("forgot_password.confirm_password_placeholder")}
+                  placeholder={t(
+                    "forgot_password.confirm_password_placeholder",
+                  )}
                   placeholderTextColor={COLORS.darkWhite}
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
@@ -331,7 +350,9 @@ const ForgotPassword = () => {
                   style={styles.eyeIcon}
                 >
                   <Ionicons
-                    name={showConfirmPassword ? "eye-off-outline" : "eye-outline"}
+                    name={
+                      showConfirmPassword ? "eye-off-outline" : "eye-outline"
+                    }
                     size={20}
                     color={COLORS.darkWhite}
                   />
@@ -346,7 +367,9 @@ const ForgotPassword = () => {
                 {isLoading ? (
                   <Spinner isSmall={true} isWhite={true} />
                 ) : (
-                  <Text style={styles.buttonText}>{t("forgot_password.reset_password")}</Text>
+                  <Text style={styles.buttonText}>
+                    {t("forgot_password.reset_password")}
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -383,11 +406,11 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: 16,
+    padding: SPACING.sm,
   },
   logoContainer: {
     alignItems: "center",
-    marginBottom: 32,
+    marginBottom: SPACING.xxl,
   },
   logo: {
     height: 48,
@@ -396,7 +419,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 24,
+    padding: SPACING.lg,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
@@ -408,17 +431,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.lg,
   },
   headerContainer: {
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   subtitle: {
     fontSize: 14,
@@ -428,8 +451,8 @@ const styles = StyleSheet.create({
   progressContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: 8,
-    marginBottom: 24,
+    gap: SPACING.sm,
+    marginBottom: SPACING.lg,
   },
   progressDot: {
     width: 12,
@@ -445,8 +468,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(34, 197, 94, 0.5)",
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
+    padding: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   successText: {
     color: "#4ade80",
@@ -458,8 +481,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(239, 68, 68, 0.5)",
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
+    padding: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   errorText: {
     color: "#f87171",
@@ -473,15 +496,15 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.2)",
-    paddingHorizontal: 12,
-    marginBottom: 20,
+    paddingHorizontal: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   inputIcon: {
-    marginRight: 12,
+    marginRight: SPACING.md,
   },
   inputIconRTL: {
     marginRight: 0,
-    marginLeft: 12,
+    marginLeft: SPACING.md,
   },
   input: {
     flex: 1,
@@ -504,9 +527,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     letterSpacing: 8,
     fontWeight: "600",
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    marginBottom: 20,
+    paddingVertical: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
+    marginBottom: SPACING.lg,
   },
   button: {
     backgroundColor: COLORS.primary,
@@ -526,10 +549,10 @@ const styles = StyleSheet.create({
   secondaryButton: {
     backgroundColor: COLORS.lightGrey,
     borderRadius: 12,
-    paddingVertical: 12,
+    paddingVertical: SPACING.md,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 12,
+    marginTop: SPACING.md,
   },
   secondaryButtonText: {
     color: COLORS.white,
@@ -540,8 +563,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 24,
-    gap: 8,
+    marginTop: SPACING.lg,
+    gap: SPACING.sm,
   },
   backToLoginText: {
     color: COLORS.darkWhite,

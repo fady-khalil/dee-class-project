@@ -9,6 +9,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { useTranslation } from "react-i18next";
 import { GlobalStyle } from "../../styles/GlobalStyle";
 /**
@@ -77,8 +78,8 @@ const styles = StyleSheet.create({
   container: {
     borderBottomWidth: 1,
     borderBottomColor: COLORS.lightGrey,
-    paddingBottom: 6,
-    paddingTop: 12,
+    paddingBottom: SPACING.sm,
+    paddingTop: SPACING.md,
   },
   headerContainer: {
     flexDirection: "row",
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flex: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: SPACING.md,
     alignItems: "flex-start",
   },
   backButton: {
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   homeButton: {
-    padding: 8,
+    padding: SPACING.sm,
   },
 });
 

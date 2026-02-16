@@ -4,8 +4,8 @@ import {
   StatusBar,
   ActivityIndicator,
   View,
-  FlatList,
 } from "react-native";
+import FlatList from "../../components/common/FlatListTop";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useFetch from "../../Hooks/useFetch";
 import { GlobalStyle } from "../../styles/GlobalStyle";
@@ -17,6 +17,7 @@ import Reels from "./components/Reels";
 import { useTranslation } from "react-i18next";
 import CategorySlider from "../../Screens/My Progress/CategorySlider";
 import CourseSlider from "../Librarie/components/CourseSlider";
+import FAQ from "./components/FAQ";
 import { useAuth } from "../../context/Authentication/LoginAuth";
 
 const HomeMainScreen = ({ navigation }) => {
@@ -71,11 +72,13 @@ const HomeMainScreen = ({ navigation }) => {
                 data={home.featured_courses}
                 hero={home?.hero}
                 navigation={navigation}
-                autoScroll={false}
               />
             )}
 
-            {/* 2. Register/JoinUs Section */}
+            {/* 2. Category Slider Section */}
+            <CategorySlider categories={categories} />
+
+            {/* 3. Register/JoinUs Section */}
             <JoinUs
               isAuthenticated={isAuthenticated}
               allowedProfiles={allowedProfiles}
@@ -85,21 +88,24 @@ const HomeMainScreen = ({ navigation }) => {
               joinUs={home?.join_us}
             />
 
-            {/* 3. Reels Section */}
+            {/* 4. Reels Section */}
             <Reels
               isAuthenticated={isAuthenticated}
+              allowedProfiles={allowedProfiles}
+              allowedCourses={allowedCourses}
+              isVerified={isVerified}
+              user={user}
               trending={home?.trending}
             />
 
-            {/* 5. Category Slider Section */}
-            <View style={{ marginTop: 36, marginBottom: 24 }}>
-              <CategorySlider categories={categories} />
-            </View>
-            {/* 4. Latest Courses Section */}
+            {/* 5. Latest Courses Section */}
             <CourseSlider
               title={t("for_you.new_to_master_class")}
               data={home?.newlyAddedCourses}
             />
+
+            {/* 6. FAQ Section */}
+            <FAQ items={home?.faq} />
           </>
         }
         removeClippedSubviews={true}

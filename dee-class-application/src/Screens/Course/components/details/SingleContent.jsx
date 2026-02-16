@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from "react-native";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import LessonCompletedBadge from "../../../../components/common/LessonCompletedBadge";
 
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    padding: 16,
+    padding: SPACING.lg,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255,255,255,0.1)",
   },
@@ -135,7 +136,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   statsText: {
     color: COLORS.darkWhite,
@@ -156,13 +157,13 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   contentList: {
-    padding: 16,
+    padding: SPACING.lg,
   },
   videoCard: {
     flexDirection: "row",
     backgroundColor: "rgba(255,255,255,0.05)",
     borderRadius: 12,
-    marginBottom: 12,
+    marginBottom: SPACING.md,
     overflow: "hidden",
   },
   selectedCard: {
@@ -187,14 +188,14 @@ const styles = StyleSheet.create({
   },
   videoInfo: {
     flex: 1,
-    padding: 12,
+    padding: SPACING.md,
     justifyContent: "center",
   },
   videoHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   videoLabel: {
     color: COLORS.primary,
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 14,
     fontWeight: "600",
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   selectedTitle: {
     color: COLORS.primary,

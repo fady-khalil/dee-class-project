@@ -19,6 +19,7 @@ import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import useFetch from "../../Hooks/useFetch";
 import usePostDataNoLang from "../../Hooks/usePostDataNoLang";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import logo from "../../Assests/logos/dclass.png";
 import BASE_URL from "../../config/BASE_URL";
 
@@ -59,16 +60,13 @@ const GiftPlanScreen = () => {
   const fetchGiftHistory = async () => {
     try {
       setIsLoadingGifts(true);
-      const response = await fetch(
-        `${BASE_URL}/gift/my-gifts`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${BASE_URL}/gift/my-gifts`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const data = await response.json();
       if (data.success) {
         setMyGifts(data.data || []);
@@ -85,7 +83,7 @@ const GiftPlanScreen = () => {
   useFocusEffect(
     useCallback(() => {
       fetchGiftHistory();
-    }, [token])
+    }, [token]),
   );
 
   const onRefresh = () => {
@@ -200,7 +198,11 @@ const GiftPlanScreen = () => {
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.primary} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={COLORS.primary}
+          />
         }
       >
         {/* Header */}
@@ -220,7 +222,11 @@ const GiftPlanScreen = () => {
 
         {/* Title Section */}
         <View style={styles.titleSection}>
-          <MaterialIcons name="card-giftcard" size={48} color={COLORS.primary} />
+          <MaterialIcons
+            name="card-giftcard"
+            size={48}
+            color={COLORS.primary}
+          />
           <Text style={styles.title}>{t("gift_plan.title")}</Text>
           <Text style={styles.subtitle}>{t("gift_plan.subtitle")}</Text>
         </View>
@@ -236,7 +242,12 @@ const GiftPlanScreen = () => {
               size={20}
               color={activeTab === "purchase" ? COLORS.white : COLORS.darkWhite}
             />
-            <Text style={[styles.tabText, activeTab === "purchase" && styles.tabTextActive]}>
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "purchase" && styles.tabTextActive,
+              ]}
+            >
               {t("gift_plan.new_gift")}
             </Text>
           </TouchableOpacity>
@@ -249,7 +260,12 @@ const GiftPlanScreen = () => {
               size={20}
               color={activeTab === "history" ? COLORS.white : COLORS.darkWhite}
             />
-            <Text style={[styles.tabText, activeTab === "history" && styles.tabTextActive]}>
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "history" && styles.tabTextActive,
+              ]}
+            >
               {t("gift_plan.my_gifts")}
             </Text>
             {myGifts.length > 0 && (
@@ -297,7 +313,9 @@ const GiftPlanScreen = () => {
                 </Text>
                 {billingCycle === "yearly" && (
                   <View style={styles.saveBadge}>
-                    <Text style={styles.saveBadgeText}>{t("plans.save")} 20%</Text>
+                    <Text style={styles.saveBadgeText}>
+                      {t("plans.save")} 20%
+                    </Text>
                   </View>
                 )}
               </TouchableOpacity>
@@ -325,29 +343,46 @@ const GiftPlanScreen = () => {
                         />
                       )}
                     </View>
-                    <Text style={styles.planPrice}>{formatPrice(getPrice(plan))}</Text>
+                    <Text style={styles.planPrice}>
+                      {formatPrice(getPrice(plan))}
+                    </Text>
                     <Text style={styles.planDuration}>
-                      / {billingCycle === "yearly" ? t("plans.year") : t("plans.month")}
+                      /{" "}
+                      {billingCycle === "yearly"
+                        ? t("plans.year")
+                        : t("plans.month")}
                     </Text>
                   </View>
 
                   <View style={styles.planFeatures}>
                     <View style={styles.featureRow}>
-                      <Ionicons name="people" size={18} color={COLORS.primary} />
+                      <Ionicons
+                        name="people"
+                        size={18}
+                        color={COLORS.primary}
+                      />
                       <Text style={styles.featureText}>
                         {plan.profilesAllowed} {t("plans.profiles")}
                       </Text>
                     </View>
                     {plan.canDownload && (
                       <View style={styles.featureRow}>
-                        <Ionicons name="download" size={18} color={COLORS.primary} />
+                        <Ionicons
+                          name="download"
+                          size={18}
+                          color={COLORS.primary}
+                        />
                         <Text style={styles.featureText}>
                           {t("plans.download_available")}
                         </Text>
                       </View>
                     )}
                     <View style={styles.featureRow}>
-                      <Ionicons name="infinite" size={18} color={COLORS.primary} />
+                      <Ionicons
+                        name="infinite"
+                        size={18}
+                        color={COLORS.primary}
+                      />
                       <Text style={styles.featureText}>
                         {t("gift.unlimited_access")}
                       </Text>
@@ -359,7 +394,11 @@ const GiftPlanScreen = () => {
 
             {/* Info Box */}
             <View style={styles.infoBox}>
-              <Ionicons name="information-circle" size={20} color={COLORS.primary} />
+              <Ionicons
+                name="information-circle"
+                size={20}
+                color={COLORS.primary}
+              />
               <Text style={styles.infoText}>{t("gift_plan.info_text")}</Text>
             </View>
           </>
@@ -367,23 +406,50 @@ const GiftPlanScreen = () => {
           /* Gift History Tab */
           <View style={styles.historyContainer}>
             {isLoadingGifts ? (
-              <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: 40 }} />
+              <ActivityIndicator
+                size="large"
+                color={COLORS.primary}
+                style={{ marginTop: 40 }}
+              />
             ) : myGifts.length === 0 ? (
               <View style={styles.emptyState}>
-                <MaterialIcons name="card-giftcard" size={64} color={COLORS.darkWhite} />
-                <Text style={styles.emptyStateText}>{t("gift_plan.no_gifts")}</Text>
+                <MaterialIcons
+                  name="card-giftcard"
+                  size={64}
+                  color={COLORS.darkWhite}
+                />
+                <Text style={styles.emptyStateText}>
+                  {t("gift_plan.no_gifts")}
+                </Text>
               </View>
             ) : (
               myGifts.map((gift, index) => (
                 <View key={index} style={styles.giftCard}>
                   <View style={styles.giftHeader}>
                     <View style={styles.giftCodeContainer}>
-                      <Text style={styles.giftCodeLabel}>{t("gift_plan.gift_code")}</Text>
+                      <Text style={styles.giftCodeLabel}>
+                        {t("gift_plan.gift_code")}
+                      </Text>
                       <Text style={styles.giftCode}>{gift.code}</Text>
                     </View>
-                    <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(gift.status)}20` }]}>
-                      <View style={[styles.statusDot, { backgroundColor: getStatusColor(gift.status) }]} />
-                      <Text style={[styles.statusText, { color: getStatusColor(gift.status) }]}>
+                    <View
+                      style={[
+                        styles.statusBadge,
+                        { backgroundColor: `${getStatusColor(gift.status)}20` },
+                      ]}
+                    >
+                      <View
+                        style={[
+                          styles.statusDot,
+                          { backgroundColor: getStatusColor(gift.status) },
+                        ]}
+                      />
+                      <Text
+                        style={[
+                          styles.statusText,
+                          { color: getStatusColor(gift.status) },
+                        ]}
+                      >
                         {getStatusText(gift.status)}
                       </Text>
                     </View>
@@ -391,24 +457,36 @@ const GiftPlanScreen = () => {
 
                   <View style={styles.giftInfo}>
                     <View style={styles.giftInfoRow}>
-                      <Text style={styles.giftInfoLabel}>{t("gift_plan.plan_gifted")}</Text>
+                      <Text style={styles.giftInfoLabel}>
+                        {t("gift_plan.plan_gifted")}
+                      </Text>
                       <Text style={styles.giftInfoValue}>
                         {isRTL ? gift.plan?.title_ar : gift.plan?.title}
                       </Text>
                     </View>
                     <View style={styles.giftInfoRow}>
-                      <Text style={styles.giftInfoLabel}>{t("gift_plan.duration")}</Text>
+                      <Text style={styles.giftInfoLabel}>
+                        {t("gift_plan.duration")}
+                      </Text>
                       <Text style={styles.giftInfoValue}>
-                        {gift.billingCycle === "yearly" ? t("gift.one_year") : t("gift.one_month")}
+                        {gift.billingCycle === "yearly"
+                          ? t("gift.one_year")
+                          : t("gift.one_month")}
                       </Text>
                     </View>
                     <View style={styles.giftInfoRow}>
-                      <Text style={styles.giftInfoLabel}>{t("gift_plan.purchased_on")}</Text>
-                      <Text style={styles.giftInfoValue}>{formatDate(gift.purchasedAt)}</Text>
+                      <Text style={styles.giftInfoLabel}>
+                        {t("gift_plan.purchased_on")}
+                      </Text>
+                      <Text style={styles.giftInfoValue}>
+                        {formatDate(gift.purchasedAt)}
+                      </Text>
                     </View>
                     {gift.status === "redeemed" && gift.redeemedBy && (
                       <View style={styles.giftInfoRow}>
-                        <Text style={styles.giftInfoLabel}>{t("gift_plan.redeemed_by")}</Text>
+                        <Text style={styles.giftInfoLabel}>
+                          {t("gift_plan.redeemed_by")}
+                        </Text>
                         <Text style={styles.giftInfoValue}>
                           {gift.redeemedBy.fullName || gift.redeemedBy.email}
                         </Text>
@@ -416,8 +494,12 @@ const GiftPlanScreen = () => {
                     )}
                     {gift.status === "pending" && (
                       <View style={styles.giftInfoRow}>
-                        <Text style={styles.giftInfoLabel}>{t("gift_plan.expires_on")}</Text>
-                        <Text style={styles.giftInfoValue}>{formatDate(gift.expiresAt)}</Text>
+                        <Text style={styles.giftInfoLabel}>
+                          {t("gift_plan.expires_on")}
+                        </Text>
+                        <Text style={styles.giftInfoValue}>
+                          {formatDate(gift.expiresAt)}
+                        </Text>
                       </View>
                     )}
                   </View>
@@ -425,10 +507,21 @@ const GiftPlanScreen = () => {
                   {gift.status === "pending" && (
                     <TouchableOpacity
                       style={styles.shareButton}
-                      onPress={() => handleShareCode(gift.code, isRTL ? gift.plan?.title_ar : gift.plan?.title)}
+                      onPress={() =>
+                        handleShareCode(
+                          gift.code,
+                          isRTL ? gift.plan?.title_ar : gift.plan?.title,
+                        )
+                      }
                     >
-                      <Ionicons name="share-social" size={18} color={COLORS.white} />
-                      <Text style={styles.shareButtonText}>{t("gift_plan.share_code")}</Text>
+                      <Ionicons
+                        name="share-social"
+                        size={18}
+                        color={COLORS.white}
+                      />
+                      <Text style={styles.shareButtonText}>
+                        {t("gift_plan.share_code")}
+                      </Text>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -453,7 +546,11 @@ const GiftPlanScreen = () => {
               <ActivityIndicator color={COLORS.white} />
             ) : (
               <>
-                <MaterialIcons name="card-giftcard" size={20} color={COLORS.white} />
+                <MaterialIcons
+                  name="card-giftcard"
+                  size={20}
+                  color={COLORS.white}
+                />
                 <Text style={styles.purchaseButtonText}>
                   {t("gift_plan.purchase_button")}
                 </Text>
@@ -503,17 +600,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    padding: 16,
+    padding: SPACING.xs,
     paddingBottom: 100,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   backButton: {
-    padding: 8,
-    marginRight: 16,
+    padding: SPACING.sm,
+    marginRight: SPACING.lg,
   },
   logo: {
     height: 32,
@@ -521,19 +618,19 @@ const styles = StyleSheet.create({
   },
   titleSection: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: COLORS.white,
-    marginTop: 12,
+    marginTop: SPACING.md,
     textAlign: "center",
   },
   subtitle: {
     fontSize: 14,
     color: COLORS.darkWhite,
-    marginTop: 8,
+    marginTop: SPACING.sm,
     textAlign: "center",
   },
   // Tab Styles
@@ -542,14 +639,14 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.grey,
     borderRadius: 12,
     padding: 4,
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   tab: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
+    paddingVertical: SPACING.md,
     borderRadius: 10,
     gap: 6,
   },
@@ -584,14 +681,14 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.grey,
     borderRadius: 12,
     padding: 4,
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   toggleButton: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 12,
+    paddingVertical: SPACING.md,
     borderRadius: 10,
     gap: 6,
   },
@@ -619,12 +716,12 @@ const styles = StyleSheet.create({
   },
   // Plans
   plansContainer: {
-    gap: 12,
+    gap: SPACING.md,
   },
   planCard: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 20,
+    padding: SPACING.lg,
     borderWidth: 2,
     borderColor: "transparent",
   },
@@ -633,13 +730,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(99, 102, 241, 0.1)",
   },
   planHeader: {
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   planTitleRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   planTitle: {
     fontSize: 20,
@@ -660,7 +757,7 @@ const styles = StyleSheet.create({
     gap: 10,
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.1)",
-    paddingTop: 16,
+    paddingTop: SPACING.lg,
   },
   featureRow: {
     flexDirection: "row",
@@ -676,9 +773,9 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     backgroundColor: "rgba(99, 102, 241, 0.1)",
     borderRadius: 12,
-    padding: 16,
-    marginTop: 24,
-    gap: 12,
+    padding: SPACING.lg,
+    marginTop: SPACING.xl,
+    gap: SPACING.md,
   },
   infoText: {
     flex: 1,
@@ -688,7 +785,7 @@ const styles = StyleSheet.create({
   },
   // Gift History
   historyContainer: {
-    gap: 16,
+    gap: SPACING.lg,
   },
   emptyState: {
     alignItems: "center",
@@ -697,13 +794,13 @@ const styles = StyleSheet.create({
   emptyStateText: {
     color: COLORS.darkWhite,
     fontSize: 16,
-    marginTop: 16,
+    marginTop: SPACING.lg,
     textAlign: "center",
   },
   giftCard: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 20,
+    padding: SPACING.lg,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
@@ -711,7 +808,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   giftCodeContainer: {
     flex: 1,
@@ -745,10 +842,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   giftInfo: {
-    gap: 12,
+    gap: SPACING.md,
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.1)",
-    paddingTop: 16,
+    paddingTop: SPACING.lg,
   },
   giftInfoRow: {
     flexDirection: "row",
@@ -770,8 +867,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: COLORS.primary,
     borderRadius: 10,
-    paddingVertical: 12,
-    marginTop: 16,
+    paddingVertical: SPACING.md,
+    marginTop: SPACING.lg,
     gap: 8,
   },
   shareButtonText: {
@@ -785,7 +882,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 16,
+    padding: SPACING.lg,
     backgroundColor: COLORS.backgroundColor,
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.1)",
@@ -793,7 +890,7 @@ const styles = StyleSheet.create({
   purchaseButton: {
     backgroundColor: COLORS.primary,
     borderRadius: 12,
-    paddingVertical: 16,
+    paddingVertical: SPACING.lg,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -813,12 +910,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.7)",
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    padding: SPACING.lg,
   },
   modalContent: {
     backgroundColor: COLORS.grey,
     borderRadius: 20,
-    padding: 24,
+    padding: SPACING.xl,
     width: "100%",
     maxWidth: 320,
     alignItems: "center",
@@ -829,20 +926,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: COLORS.white,
-    marginTop: 16,
-    marginBottom: 8,
+    marginTop: SPACING.lg,
+    marginBottom: SPACING.sm,
   },
   modalMessage: {
     fontSize: 14,
     color: COLORS.darkWhite,
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   modalButton: {
     backgroundColor: COLORS.primary,
     borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 32,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.xxl,
     minWidth: 120,
   },
   modalButtonText: {

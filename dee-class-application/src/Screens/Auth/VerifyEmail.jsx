@@ -17,6 +17,8 @@ import Spinner from "../../components/RequestHandler/Spinner";
 import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import { usePostData } from "../../Hooks/usePostData";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
+import HeaderBack from "../../components/navigation/HeaderBack";
 import logo from "../../Assests/logos/dclass.png";
 
 const VerifyEmail = () => {
@@ -117,6 +119,7 @@ const VerifyEmail = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <HeaderBack screenName="verify_email" />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
@@ -262,11 +265,11 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: 16,
+    padding: SPACING.sm,
   },
   logoContainer: {
     alignItems: "center",
-    marginBottom: 32,
+    marginBottom: SPACING.xxl,
   },
   logo: {
     height: 48,
@@ -275,7 +278,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 24,
+    padding: SPACING.lg,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
@@ -287,32 +290,32 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.lg,
   },
   headerContainer: {
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   subtitle: {
     fontSize: 14,
     color: COLORS.darkWhite,
     textAlign: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.lg,
   },
   emailContainer: {
     backgroundColor: COLORS.backgroundColor,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.2)",
     borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginBottom: 16,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
+    marginBottom: SPACING.lg,
     alignItems: "center",
   },
   emailText: {
@@ -325,8 +328,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(34, 197, 94, 0.5)",
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
+    padding: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   successText: {
     color: "#4ade80",
@@ -338,8 +341,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(239, 68, 68, 0.5)",
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
+    padding: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   errorText: {
     color: "#f87171",
@@ -349,8 +352,8 @@ const styles = StyleSheet.create({
   instructionsContainer: {
     backgroundColor: COLORS.backgroundColor,
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
   },
   instructionsText: {
     color: COLORS.darkWhite,
@@ -358,12 +361,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   otpContainer: {
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
   },
   otpLabel: {
     color: COLORS.darkWhite,
     fontSize: 14,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
     textAlign: "center",
   },
   otpInput: {
@@ -375,11 +378,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     letterSpacing: 8,
     fontWeight: "600",
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+    paddingVertical: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
   },
   buttonsContainer: {
-    gap: 12,
+    gap: SPACING.md,
   },
   button: {
     backgroundColor: COLORS.primary,
@@ -397,7 +400,7 @@ const styles = StyleSheet.create({
   buttonContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: SPACING.sm,
   },
   buttonText: {
     color: COLORS.white,
@@ -411,7 +414,7 @@ const styles = StyleSheet.create({
     color: COLORS.darkWhite,
     fontSize: 12,
     textAlign: "center",
-    marginTop: 20,
+    marginTop: SPACING.lg,
   },
 });
 

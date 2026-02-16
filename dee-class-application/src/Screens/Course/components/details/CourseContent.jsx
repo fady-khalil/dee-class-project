@@ -9,6 +9,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 import VideoPlayer from "../watch/VideoPlayer";
 import { useNetwork } from "../../../../context/NetworkContext";
 
@@ -234,12 +235,12 @@ const styles = StyleSheet.create({
   offlineIndicator: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
+    padding: SPACING.md,
     backgroundColor: COLORS.primary,
   },
   offlineText: {
     color: COLORS.white,
-    marginLeft: 10,
+    marginLeft: SPACING.md,
   },
   playerContainer: {
     flex: 1,
@@ -247,15 +248,15 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    padding: 20,
+    padding: SPACING.xl,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
   },
   videoItem: {
-    padding: 10,
+    padding: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.border,
     borderRadius: 5,
@@ -281,26 +282,26 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
   },
   videoDescription: {
-    marginTop: 5,
+    marginTop: SPACING.xs,
   },
   videoMeta: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 5,
+    marginTop: SPACING.xs,
   },
   videoIndex: {
-    marginRight: 10,
+    marginRight: SPACING.md,
   },
   videoDuration: {
-    marginLeft: 10,
+    marginLeft: SPACING.md,
   },
   seasonSection: {
-    marginBottom: 10,
+    marginBottom: SPACING.md,
   },
   seasonHeader: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
+    padding: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.border,
     borderRadius: 5,

@@ -15,6 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 import { LoginAuthContext } from "../../../../context/Authentication/LoginAuth";
 import { usePostData } from "../../../../Hooks/usePostData";
 
@@ -330,15 +331,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(0,0,0,0.1)",
   },
   headerContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: SPACING.sm,
   },
   modalTitle: {
     fontSize: 18,
@@ -346,7 +347,7 @@ const styles = StyleSheet.create({
     color: COLORS.backgroundColor,
   },
   closeButton: {
-    padding: 8,
+    padding: SPACING.sm,
     borderRadius: 20,
   },
   commentsList: {
@@ -354,13 +355,13 @@ const styles = StyleSheet.create({
     maxHeight: "70%",
   },
   listContent: {
-    padding: 16,
+    padding: SPACING.lg,
   },
   emptyListContent: {
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    padding: SPACING.lg,
   },
   emptyCommentsContainer: {
     alignItems: "center",
@@ -370,18 +371,18 @@ const styles = StyleSheet.create({
   emptyCommentsText: {
     color: COLORS.darkGrey,
     fontSize: 16,
-    marginTop: 16,
+    marginTop: SPACING.lg,
     textAlign: "center",
   },
   emptyCommentsSubtext: {
     color: COLORS.darkWhite,
     fontSize: 14,
-    marginTop: 8,
+    marginTop: SPACING.sm,
     textAlign: "center",
   },
   commentContainer: {
     flexDirection: "row",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
@@ -393,7 +394,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.darkGrey,
     borderRadius: 16,
     borderBottomLeftRadius: 4,
-    padding: 12,
+    padding: SPACING.md,
   },
   myCommentBubble: {
     backgroundColor: COLORS.primary,
@@ -403,13 +404,13 @@ const styles = StyleSheet.create({
   commentHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   commentAuthor: {
     fontSize: 12,
     fontWeight: "500",
     color: COLORS.white,
-    marginRight: 4,
+    marginRight: SPACING.xs,
   },
   myCommentAuthor: {
     color: "rgba(255,255,255,0.9)",
@@ -417,7 +418,7 @@ const styles = StyleSheet.create({
   commentTime: {
     fontSize: 10,
     color: "rgba(255,255,255,0.6)",
-    marginLeft: 4,
+    marginLeft: SPACING.xs,
   },
   myCommentTime: {
     color: "rgba(255,255,255,0.7)",
@@ -432,11 +433,11 @@ const styles = StyleSheet.create({
   },
   loadMoreButton: {
     alignSelf: "center",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
     borderRadius: 16,
     backgroundColor: "rgba(0,0,0,0.05)",
-    marginVertical: 8,
+    marginVertical: SPACING.sm,
   },
   loadMoreText: {
     fontSize: 12,
@@ -447,20 +448,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderTopWidth: 1,
     borderTopColor: "rgba(0,0,0,0.1)",
-    padding: 12,
+    padding: SPACING.md,
   },
   commentInput: {
     flex: 1,
     backgroundColor: "#F0F0F0",
     borderRadius: 20,
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.lg,
     paddingVertical: 10,
     maxHeight: 100,
     color: COLORS.backgroundColor,
     fontSize: 14,
   },
   sendButton: {
-    marginLeft: 8,
+    marginLeft: SPACING.sm,
     width: 44,
     height: 44,
     borderRadius: 22,

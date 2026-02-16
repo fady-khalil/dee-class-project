@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { Video } from "expo-av";
 import LessonCompletedBadge from "../../../../components/common/LessonCompletedBadge";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 import BASE_URL from "../../../../config/BASE_URL";
 import { LoginAuthContext } from "../../../../context/Authentication/LoginAuth";
 import { usePostData } from "../../../../Hooks/usePostData";
@@ -541,9 +542,9 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   courseInfo: {
-    marginTop: 12,
-    marginBottom: 8,
-    paddingHorizontal: 12,
+    marginTop: SPACING.md,
+    marginBottom: SPACING.sm,
+    paddingHorizontal: SPACING.md,
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
@@ -551,7 +552,7 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   descriptionContainer: {
     maxHeight: 120, // Limit height to prevent taking too much space
@@ -590,10 +591,10 @@ const styles = StyleSheet.create({
   badgeContainer: {
     backgroundColor: COLORS.primary,
     alignSelf: "center",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
     borderRadius: 16,
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
@@ -602,7 +603,7 @@ const styles = StyleSheet.create({
   },
   offlineBadge: {
     backgroundColor: COLORS.grey,
-    marginTop: 8,
+    marginTop: SPACING.sm,
   },
   badgeText: {
     color: COLORS.white,
@@ -612,7 +613,7 @@ const styles = StyleSheet.create({
   },
   courseCompletedBadge: {
     alignSelf: "center",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
 });
 

@@ -12,8 +12,11 @@ import {
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
+import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import Icon from "react-native-vector-icons/Feather";
+import HeaderBack from "../../components/navigation/HeaderBack";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 import { useDownload } from "../../context/Download/DownloadContext";
 
@@ -80,13 +83,9 @@ const Profile = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={COLORS.backgroundColor} barStyle="light-content" />
-
-      {/* Header Section */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>{t("screens.settings")}</Text>
-      </View>
+      <HeaderBack screenName="profile" />
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Profile Info Section */}
@@ -253,7 +252,7 @@ const Profile = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -262,24 +261,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.backgroundColor,
   },
-  header: {
-    paddingTop: 60,
-    paddingBottom: 16,
-    paddingHorizontal: 20,
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: COLORS.white,
-  },
   scrollView: {
     flex: 1,
   },
   profileSection: {
     alignItems: "center",
-    paddingVertical: 24,
-    paddingHorizontal: 20,
+    paddingVertical: SPACING.xl,
+    paddingHorizontal: SPACING.lg,
   },
   avatarContainer: {
     width: 80,
@@ -288,7 +276,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   avatarText: {
     fontSize: 36,
@@ -309,16 +297,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(245, 158, 11, 0.15)",
-    marginHorizontal: 16,
-    marginBottom: 16,
-    padding: 16,
+    marginHorizontal: SPACING.lg,
+    marginBottom: SPACING.lg,
+    padding: SPACING.lg,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "rgba(245, 158, 11, 0.3)",
   },
   verifyWarningContent: {
     flex: 1,
-    marginHorizontal: 12,
+    marginHorizontal: SPACING.md,
   },
   verifyWarningTitle: {
     color: "#F59E0B",
@@ -332,8 +320,8 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   section: {
-    marginHorizontal: 16,
-    marginBottom: 20,
+    marginHorizontal: SPACING.lg,
+    marginBottom: SPACING.xl,
   },
   sectionTitle: {
     color: COLORS.darkWhite,
@@ -341,8 +329,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 0.5,
-    marginBottom: 10,
-    marginLeft: 4,
+    marginBottom: SPACING.md,
+    marginLeft: SPACING.xs,
   },
   menuCard: {
     backgroundColor: "rgba(255, 255, 255, 0.05)",
@@ -352,7 +340,7 @@ const styles = StyleSheet.create({
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 16,
+    padding: SPACING.lg,
     borderBottomWidth: 1,
     borderBottomColor: "rgba(255, 255, 255, 0.05)",
   },
@@ -386,7 +374,7 @@ const styles = StyleSheet.create({
   subscribeCard: {
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: 12,
-    padding: 24,
+    padding: SPACING.xl,
     alignItems: "center",
     borderWidth: 1,
     borderColor: COLORS.primary + "30",
@@ -395,19 +383,19 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 16,
     fontWeight: "600",
-    marginTop: 12,
+    marginTop: SPACING.md,
     marginBottom: 6,
   },
   subscribeText: {
     color: COLORS.darkWhite,
     fontSize: 13,
     textAlign: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   subscribeButton: {
     backgroundColor: COLORS.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
     borderRadius: 10,
   },
   subscribeButtonText: {
@@ -416,7 +404,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   versionContainer: {
-    paddingVertical: 16,
+    paddingVertical: SPACING.lg,
     alignItems: "center",
   },
   versionText: {
@@ -433,7 +421,7 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: "#2A2A2A",
     borderRadius: 16,
-    padding: 24,
+    padding: SPACING.xl,
     width: width * 0.85,
     alignItems: "center",
     borderWidth: 1,
@@ -443,13 +431,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     color: "#FFFFFF",
-    marginBottom: 12,
+    marginBottom: SPACING.md,
   },
   modalMessage: {
     fontSize: 16,
     color: "#E0E0E0",
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   modalButtons: {
     flexDirection: "row",
@@ -460,7 +448,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     borderRadius: 8,
-    marginHorizontal: 8,
+    marginHorizontal: SPACING.sm,
   },
   cancelButton: {
     backgroundColor: "rgba(255, 255, 255, 0.15)",

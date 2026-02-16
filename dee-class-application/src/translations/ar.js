@@ -49,6 +49,8 @@ export default {
     edit_profile: "تعديل الملف الشخصي",
     change_password: "تغيير كلمة المرور",
     subscription_details: "اشتراكي",
+    redeem_code: "استرداد الكود",
+    gift_success: "تم استرداد الهدية",
   },
   for_you: {
     title: "مختار لك",
@@ -161,6 +163,8 @@ export default {
     join_us_subtitle:
       "التميز مع دورات فيديو متميزة يمكن الوصول إليها في أي وقت وأي مكان وعلى أي جهاز.",
     categories: "مجالات التميز",
+    coming_soon: "قريباً",
+    courses_count: "دورات",
     hours: "ساعات",
     min: "دقيقة",
     not_specified: "غير محدد",
@@ -168,6 +172,7 @@ export default {
     faq_title: "الأسئلة الشائعة",
     my_courses: "دوراتي",
     check_all_courses: "عرض جميع الدورات",
+    view_all_categories: "عرض جميع الفئات",
     check_our_packages: "عرض باقاتنا",
   },
   forms: {

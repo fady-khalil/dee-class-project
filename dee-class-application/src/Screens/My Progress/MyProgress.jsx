@@ -2,10 +2,10 @@ import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   StyleSheet,
-  ScrollView,
   Text,
   ActivityIndicator,
 } from "react-native";
+import ScrollView from "../../components/common/ScrollViewTop";
 import { useTranslation } from "react-i18next";
 import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import { usePostData } from "../../Hooks/usePostData";
@@ -13,6 +13,7 @@ import CourseSlider from "../Librarie/components/CourseSlider";
 import CompletedCourses from "./CompletedCourses";
 import ContinueWatchingSlider from "./ContinueWatchingSlider";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import AuthExpiredAlert from "../../components/common/AuthExpiredAlert";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../../components/common/Header";
@@ -163,14 +164,14 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingVertical: 20,
-    marginTop: 24,
+    marginTop: SPACING.xl,
   },
   pageTitle: {
     color: COLORS.white,
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 16,
-    paddingHorizontal: 16,
+    marginBottom: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
   },
   text: {
     color: COLORS.white,
@@ -188,20 +189,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: COLORS.backgroundColor,
-    padding: 16,
+    padding: SPACING.lg,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: SPACING.xl,
     paddingTop: 100,
   },
   emptyTitle: {
     color: COLORS.white,
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
     textAlign: "center",
   },
   emptyText: {

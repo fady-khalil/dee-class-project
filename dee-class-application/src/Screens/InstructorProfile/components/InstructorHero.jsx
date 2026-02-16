@@ -12,6 +12,7 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import { I18nText, I18nView } from "../../../components/common/I18nComponents";
 import COLORS from "../../../styles/colors";
+import SPACING from "../../../styles/spacing";
 import { GlobalStyle } from "../../../styles/GlobalStyle";
 import BASE_URL from "../../../config/BASE_URL";
 
@@ -117,8 +118,8 @@ const InstructorHero = ({ data }) => {
 const styles = StyleSheet.create({
   container: {
     ...GlobalStyle.container,
-    paddingTop: 25,
-    paddingBottom: 20,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.lg,
     marginBottom: 0,
     backgroundColor: "rgba(0,0,0,0.05)",
     borderRadius: 12,
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     height: width < 380 ? 110 : 130,
     borderRadius: width < 380 ? 55 : 65,
     overflow: "hidden",
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
     borderWidth: 3,
     borderColor: COLORS.primary,
     shadowColor: COLORS.primary,
@@ -169,14 +170,14 @@ const styles = StyleSheet.create({
   specialty: {
     fontSize: 16,
     color: COLORS.primary,
-    marginBottom: 10,
+    marginBottom: SPACING.md,
     fontWeight: "500",
   },
   bio: {
     fontSize: 15,
     color: COLORS.darkWhite,
     textAlign: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
     lineHeight: 22,
     paddingHorizontal: width < 380 ? 0 : 5,
   },
@@ -193,8 +194,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.grey,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 8,
-    marginBottom: 8,
+    marginHorizontal: SPACING.sm,
+    marginBottom: SPACING.sm,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,

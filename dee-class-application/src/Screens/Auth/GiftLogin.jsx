@@ -18,6 +18,8 @@ import { LoginAuthContext } from "../../context/Authentication/LoginAuth";
 import { usePostData } from "../../Hooks/usePostData";
 import usePostDataNoLang from "../../Hooks/usePostDataNoLang";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
+import HeaderBack from "../../components/navigation/HeaderBack";
 import logo from "../../Assests/logos/dclass.png";
 
 const GiftLogin = () => {
@@ -143,19 +145,12 @@ const GiftLogin = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <HeaderBack screenName="login" />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.contentContainer}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Back Button */}
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="arrow-back" size={24} color={COLORS.white} />
-        </TouchableOpacity>
-
         {/* Logo */}
         <TouchableOpacity
           style={styles.logoContainer}
@@ -290,18 +285,18 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: 16,
+    padding: SPACING.sm,
   },
   backButton: {
     position: "absolute",
     top: 50,
     left: 16,
     zIndex: 10,
-    padding: 8,
+    padding: SPACING.sm,
   },
   logoContainer: {
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   logo: {
     height: 48,
@@ -313,9 +308,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "rgba(99, 102, 241, 0.1)",
     borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
-    gap: 8,
+    padding: SPACING.md,
+    marginBottom: SPACING.lg,
+    gap: SPACING.sm,
   },
   giftBannerText: {
     color: COLORS.primary,
@@ -325,19 +320,19 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.grey,
     borderRadius: 16,
-    padding: 24,
+    padding: SPACING.lg,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.1)",
   },
   headerContainer: {
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   subtitle: {
     fontSize: 14,
@@ -349,8 +344,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(239, 68, 68, 0.5)",
     borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
+    padding: SPACING.md,
+    marginBottom: SPACING.lg,
   },
   errorText: {
     color: "#f87171",
@@ -358,7 +353,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   inputWrapper: {
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   inputContainer: {
     flexDirection: "row",
@@ -367,17 +362,17 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.2)",
-    paddingHorizontal: 12,
+    paddingHorizontal: SPACING.md,
   },
   inputError: {
     borderColor: "#ef4444",
   },
   inputIcon: {
-    marginRight: 12,
+    marginRight: SPACING.md,
   },
   inputIconRTL: {
     marginRight: 0,
-    marginLeft: 12,
+    marginLeft: SPACING.md,
   },
   input: {
     flex: 1,
@@ -393,7 +388,7 @@ const styles = StyleSheet.create({
   },
   eyeIconRTL: {
     marginLeft: 0,
-    marginRight: 8,
+    marginRight: SPACING.sm,
   },
   fieldError: {
     color: "#f87171",
@@ -406,7 +401,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 8,
+    marginTop: SPACING.sm,
   },
   buttonDisabled: {
     opacity: 0.7,
@@ -419,7 +414,7 @@ const styles = StyleSheet.create({
   loadingContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: SPACING.sm,
   },
   loadingText: {
     color: COLORS.white,
@@ -427,7 +422,7 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     alignSelf: "center",
-    marginTop: 20,
+    marginTop: SPACING.lg,
   },
   forgotPasswordText: {
     color: COLORS.primary,

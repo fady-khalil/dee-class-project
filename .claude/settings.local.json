@@ -45,7 +45,14 @@
       "WebFetch(domain:ui.aceternity.com)",
       "WebFetch(domain:www.hover.dev)",
       "Bash(find:*)",
-      "Bash(npx react-scripts build:*)"
+      "Bash(npx react-scripts build:*)",
+      "Bash(ls:*)",
+      "WebFetch(domain:pixabay.com)",
+      "WebFetch(domain:mixkit.co)",
+      "WebFetch(domain:www.avnishparker.com)",
+      "WebFetch(domain:freesound.org)",
+      "WebFetch(domain:orangefreesounds.com)",
+      "Bash(comm:*)"
     ]
   }
 }

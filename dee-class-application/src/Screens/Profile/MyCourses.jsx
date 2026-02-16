@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/Feather";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import { useAuth } from "../../context/Authentication/LoginAuth";
 import { GlobalStyle } from "../../styles/GlobalStyle";
 import HeaderBack from "../../components/navigation/HeaderBack";
@@ -238,12 +239,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 24,
+    paddingHorizontal: SPACING.lg,
+    paddingTop: SPACING.lg,
+    paddingBottom: SPACING.xl,
   },
   cardWrapper: {
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   courseCard: {
     width: CARD_WIDTH,
@@ -302,7 +303,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 12,
+    padding: SPACING.md,
   },
   courseTitle: {
     fontSize: 14,
@@ -318,9 +319,9 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: "column",
-    paddingVertical: 16,
+    paddingVertical: SPACING.lg,
     backgroundColor: COLORS.backgroundColor,
-    paddingHorizontal: 16,
+    paddingHorizontal: SPACING.lg,
     borderTopWidth: 1,
     borderTopColor: "rgba(255,255,255,0.1)",
   },
@@ -330,7 +331,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
+    marginBottom: SPACING.md,
   },
   outlineButton: {
     backgroundColor: "transparent",
@@ -363,14 +364,14 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.05)",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.xl,
   },
   emptyTitle: {
     color: COLORS.white,
     fontSize: 18,
     fontWeight: "600",
     textAlign: "center",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   emptySubtitle: {
     color: COLORS.darkWhite,

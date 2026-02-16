@@ -10,6 +10,8 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
+import HeaderBack from "../../components/navigation/HeaderBack";
 import logo from "../../Assests/logos/dclass.png";
 
 const GiftSuccess = () => {
@@ -28,6 +30,7 @@ const GiftSuccess = () => {
 
   return (
     <View style={styles.container}>
+      <HeaderBack screenName="gift_success" />
       {/* Logo */}
       <Image source={logo} style={styles.logo} resizeMode="contain" />
 
@@ -90,17 +93,17 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.backgroundColor,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    padding: SPACING.sm,
   },
   logo: {
     height: 48,
     width: 150,
-    marginBottom: 32,
+    marginBottom: SPACING.xxl,
   },
   card: {
     backgroundColor: COLORS.grey,
     borderRadius: 20,
-    padding: 32,
+    padding: SPACING.lg,
     width: "100%",
     maxWidth: 400,
     alignItems: "center",
@@ -108,27 +111,27 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.1)",
   },
   iconContainer: {
-    marginBottom: 20,
+    marginBottom: SPACING.lg,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
     textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
     color: COLORS.darkWhite,
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: SPACING.lg,
   },
   planCard: {
     backgroundColor: "rgba(99, 102, 241, 0.1)",
     borderRadius: 16,
-    padding: 20,
+    padding: SPACING.lg,
     width: "100%",
-    marginBottom: 24,
+    marginBottom: SPACING.lg,
     borderWidth: 1,
     borderColor: "rgba(99, 102, 241, 0.3)",
     alignItems: "center",
@@ -138,27 +141,27 @@ const styles = StyleSheet.create({
     color: COLORS.darkWhite,
     textTransform: "uppercase",
     letterSpacing: 1,
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   planTitle: {
     fontSize: 24,
     fontWeight: "bold",
     color: COLORS.white,
-    marginBottom: 4,
+    marginBottom: SPACING.xs,
   },
   planDuration: {
     fontSize: 14,
     color: COLORS.primary,
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   featuresContainer: {
     width: "100%",
-    gap: 12,
+    gap: SPACING.md,
   },
   featureRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: SPACING.md,
   },
   featureText: {
     color: COLORS.darkWhite,
@@ -167,12 +170,12 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: COLORS.primary,
     borderRadius: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
+    paddingVertical: 14,
+    paddingHorizontal: SPACING.xxl,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: SPACING.sm,
     width: "100%",
   },
   buttonText: {

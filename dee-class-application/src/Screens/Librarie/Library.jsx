@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
-  ScrollView,
   StatusBar,
   Text,
 } from "react-native";
+import ScrollView from "../../components/common/ScrollViewTop";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import COLORS from "../../styles/colors";
+import SPACING from "../../styles/spacing";
 import Spinner from "../../components/RequestHandler/Spinner";
 import useFetch from "../../Hooks/useFetch";
 import { useNavigation } from "@react-navigation/native";
@@ -19,6 +20,7 @@ import Header from "../../components/common/Header";
 import CategoryTabs from "./CategoryTabs";
 import CoursesList from "./CoursesList";
 import ForYouSection from "./ForYouSection";
+import NewThisWeek from "./components/NewThisWeek";
 
 // Main Library Component
 const Library = ({ route }) => {
@@ -131,6 +133,7 @@ const Library = ({ route }) => {
           style={styles.coursesScroll}
           contentContainerStyle={styles.coursesScrollContent}
         >
+          <NewThisWeek />
           <CoursesList
             categoryName={coursesData?.category?.title}
             courses={coursesData?.courses || []}
@@ -156,7 +159,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     color: COLORS.white,
-    marginTop: 12,
+    marginTop: SPACING.md,
     fontSize: 16,
   },
   errorContainer: {
@@ -173,7 +176,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   coursesScrollContent: {
-    padding: 16,
+    padding: SPACING.lg,
   },
 });
 

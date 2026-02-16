@@ -15,6 +15,7 @@ import * as Linking from "expo-linking";
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import COLORS from "../../../../styles/colors";
+import SPACING from "../../../../styles/spacing";
 import { I18nText } from "../../../../components/common/I18nComponents";
 import { LoginAuthContext } from "../../../../context/Authentication/LoginAuth";
 import usePayment from "../../../../Hooks/usePayment";
@@ -312,54 +313,54 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.7)",
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: isSmallScreen ? 12 : 16,
+    paddingHorizontal: isSmallScreen ? SPACING.md : SPACING.lg,
   },
   modalContent: {
     width: "100%",
     backgroundColor: COLORS.white,
     borderRadius: 16,
-    padding: isSmallScreen ? 12 : 16,
+    padding: isSmallScreen ? SPACING.md : SPACING.lg,
     maxHeight: isShortScreen ? "90%" : "80%",
   },
   scrollContent: {
-    paddingBottom: 16,
+    paddingBottom: SPACING.lg,
   },
   modalHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   modalTitle: {
     color: COLORS.black,
     fontSize: isSmallScreen ? 16 : 18,
     fontWeight: "bold",
     flex: 1,
-    paddingRight: 8,
+    paddingRight: SPACING.sm,
   },
   closeButton: {
-    padding: 4,
+    padding: SPACING.xs,
   },
   courseInfo: {
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
   },
   courseName: {
     color: COLORS.black,
     fontSize: isSmallScreen ? 16 : 18,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   chooseText: {
     color: COLORS.grey,
     fontSize: isSmallScreen ? 12 : 14,
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   optionCard: {
     borderWidth: 1,
     borderColor: COLORS.lightGrey,
     borderRadius: 8,
-    padding: isSmallScreen ? 12 : 16,
-    marginBottom: 16,
+    padding: isSmallScreen ? SPACING.md : SPACING.lg,
+    marginBottom: SPACING.lg,
   },
   subscriptionCard: {
     backgroundColor: "#f5f5f5",
@@ -367,12 +368,12 @@ const styles = StyleSheet.create({
   optionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: SPACING.lg,
     alignItems: "center",
   },
   optionTextContainer: {
     flex: 3,
-    paddingRight: 8,
+    paddingRight: SPACING.sm,
   },
   optionTitle: {
     color: COLORS.black,
@@ -382,7 +383,7 @@ const styles = StyleSheet.create({
   optionSubtitle: {
     color: COLORS.grey,
     fontSize: isSmallScreen ? 11 : 12,
-    marginTop: 4,
+    marginTop: SPACING.xs,
   },
   priceText: {
     color: COLORS.black,
@@ -397,7 +398,7 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === "ios" ? 12 : 10,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 16,
+    marginTop: SPACING.lg,
     minHeight: 44,
   },
   secondaryButton: {
@@ -420,18 +421,18 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   featureList: {
-    marginBottom: 16,
-    marginTop: 8,
+    marginBottom: SPACING.lg,
+    marginTop: SPACING.sm,
   },
   featureItem: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 8,
+    marginBottom: SPACING.sm,
   },
   featureText: {
     color: COLORS.grey,
     fontSize: isSmallScreen ? 11 : 12,
-    marginLeft: 8,
+    marginLeft: SPACING.sm,
     flex: 1,
   },
 });
