@@ -51,6 +51,7 @@ export default {
     subscription_details: "My Subscription",
     redeem_code: "Redeem Code",
     gift_success: "Gift Redeemed",
+    my_collection: "My Collection",
   },
   for_you: {
     title: "Curated For You",

@@ -58,6 +58,7 @@ import BottomBanner from "Components/BottomBanner/BottomBanner";
 import ManageProfiles from "Pages/Profiles/ManageProfiles";
 import MyAccount from "Pages/Account/MyAccount";
 import MyProgress from "Pages/MyProgress/MyProgress";
+import MyCollection from "Pages/MyCollection/MyCollection";
 
 const App = () => {
   const { i18n } = useTranslation();
@@ -145,6 +146,7 @@ const App = () => {
             <Route index element={<Navigate to="/categories" replace />} />
             <Route path="/my-profiles" element={<ManageProfiles />} />
             <Route path="/my-progress" element={<MyProgress />} />
+            <Route path="/my-collection" element={<MyCollection />} />
             {/* Gift plan purchase - only for authenticated users */}
             <Route path="/gift/plan" element={<GiftPlan />} />
             <Route path="/gift/purchase-success" element={<GiftPurchaseSuccess />} />

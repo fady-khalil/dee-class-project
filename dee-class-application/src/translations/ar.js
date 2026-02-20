@@ -51,6 +51,7 @@ export default {
     subscription_details: "اشتراكي",
     redeem_code: "استرداد الكود",
     gift_success: "تم استرداد الهدية",
+    my_collection: "مجموعتي",
   },
   for_you: {
     title: "مختار لك",

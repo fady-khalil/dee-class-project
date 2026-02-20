@@ -12,6 +12,9 @@ const GetMobileMenuLinks = (isAuthenticated) => {
     isAuthenticated
       ? { name: t("navigation.my_progress"), path: "/my-progress" }
       : { name: t("navigation.my_courses"), path: "/my-courses" },
+    ...(isAuthenticated
+      ? [{ name: t("navigation.my_collection"), path: "/my-collection" }]
+      : []),
     { name: t("navigation.contact"), path: "/contact" },
   ];
 

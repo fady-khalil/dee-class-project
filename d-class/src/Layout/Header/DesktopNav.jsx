@@ -55,6 +55,11 @@ const AuthenticatedLinks = ({ isAuthenticated }) => {
           ? t("navigation.my_progress")
           : t("navigation.my_courses")}
       </Link>
+      {isAuthenticated && (
+        <Link to="/my-collection" className={linkClass}>
+          {t("navigation.my_collection")}
+        </Link>
+      )}
       <Link to="/contact" className={linkClass}>
         {t("navigation.contact")}
       </Link>

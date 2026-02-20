@@ -16,14 +16,16 @@ const WatchSingle = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [courseData, setCourseData] = useState(null);
   const { fetchData } = useFetch(`courses/${slug}`);
-  const { token } = useContext(LoginAuthContext);
+  const { token, selectedUser } = useContext(LoginAuthContext);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [completedVideos, setCompletedVideos] = useState({});
+  const [videoProgress, setVideoProgress] = useState(null);
   const [loadingVideoId, setLoadingVideoId] = useState(null);
 
   const getCourse = async () => {
     try {
-      const response = await fetchData(`courses/${slug}`, token);
+      const profileParam = selectedUser?.id ? `?profile_id=${selectedUser.id}` : "";
+      const response = await fetchData(`courses/${slug}${profileParam}`, token);
       const data = response?.data;
       setCourseData(data);
 
@@ -39,6 +41,11 @@ const WatchSingle = () => {
         });
         setCompletedVideos(completed);
       }
+
+      // Set video progress from API response
+      if (data?.video_progress && mainVideoId && data.video_progress[mainVideoId]) {
+        setVideoProgress(data.video_progress[mainVideoId]);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -48,7 +55,7 @@ const WatchSingle = () => {
 
   useEffect(() => {
     getCourse();
-  }, [slug]);
+  }, [slug, token, selectedUser?.id]);
 
   // Add effect to scroll to top when selected video changes
   useEffect(() => {
@@ -87,6 +94,8 @@ const WatchSingle = () => {
               videoId={selectedVideo}
               courseId={courseData?._id}
               courseSlug={slug}
+              videoProgress={videoProgress}
+              initialIsDone={completedVideos[selectedVideo] || false}
               onProgressUpdate={handleProgressUpdate}
               onVideoCompleted={handleVideoCompleted}
             />

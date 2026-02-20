@@ -71,8 +71,13 @@ const ContinueWatching = ({ data }) => {
           const timeSlap = item.timeSlap || item.time_slap;
           const slug = item.courseSlug || course?.slug;
           const name = course?.name;
-          const trailer = course?.trailer;
-          const image = course?.image;
+          const courseType = course?.course_type || "single";
+
+          // Link directly to the watch page based on course type
+          const watchUrl =
+            courseType === "series" ? `/course/watch-series/${slug}` :
+            courseType === "playlist" ? `/course/watch-playlist/${slug}` :
+            `/course/watch-single/${slug}`;
 
           return (
             <SwiperSlide
@@ -85,12 +90,7 @@ const ContinueWatching = ({ data }) => {
               }}
             >
               <Link
-                state={{
-                  fromContinueWatching: true,
-                  video_id: videoId,
-                  time: timeSlap,
-                }}
-                to={`/course/${slug}`}
+                to={watchUrl}
                 className=""
               >
                 <div className="relative">

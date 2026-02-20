@@ -7,6 +7,7 @@ import HomeMainScreen from "../Screens/Home/HomeMainScreen";
 import MyProgress from "../Screens/My Progress/MyProgress";
 import Library from "../Screens/Librarie/Library";
 import PlansScreen from "../Screens/Plans/PlansScreen";
+import MyCollectionScreen from "../Screens/MyCollection/MyCollectionScreen";
 import { useAuth } from "../context/Authentication/LoginAuth";
 import OfflineIndicator from "../components/common/OfflineIndicator";
 import OfflineScreen from "../components/common/OfflineScreen";
@@ -28,7 +29,7 @@ const TabBarIcon = ({ focused, iconName, iconOutlineName }) => {
 };
 
 const BottomTabNavigator = () => {
-  const { isAuthenticated, allowedCourses } = useAuth();
+  const { isAuthenticated, allowedCourses, allowedProfiles } = useAuth();
   const { isConnected } = useNetwork();
 
   // Define the tabs configuration with their options
@@ -62,8 +63,36 @@ const BottomTabNavigator = () => {
       },
     });
 
-    if (isAuthenticated) {
-      // Add My Progress tab if user is authenticated
+    if (isAuthenticated && Number(allowedProfiles) > 0) {
+      // Add My Collection tab for users with active plan
+      screens.push({
+        name: "MyCollection",
+        component: isConnected ? MyCollectionScreen : OfflineScreen,
+        options: {
+          tabBarIcon: ({ focused }) =>
+            TabBarIcon({
+              focused,
+              iconName: "bookmark",
+              iconOutlineName: "bookmark-outline",
+            }),
+        },
+      });
+
+      // Add My Progress tab
+      screens.push({
+        name: "MyProgress",
+        component: isConnected ? MyProgress : OfflineScreen,
+        options: {
+          tabBarIcon: ({ focused }) =>
+            TabBarIcon({
+              focused,
+              iconName: "person",
+              iconOutlineName: "person-outline",
+            }),
+        },
+      });
+    } else if (isAuthenticated) {
+      // Authenticated but no active plan - just My Progress
       screens.push({
         name: "MyProgress",
         component: isConnected ? MyProgress : OfflineScreen,
@@ -93,7 +122,7 @@ const BottomTabNavigator = () => {
     }
 
     return screens;
-  }, [isAuthenticated, allowedCourses, isConnected]);
+  }, [isAuthenticated, allowedCourses, allowedProfiles, isConnected]);
 
   // Determine the initial route name based on language
   const initialRouteName = useMemo(() => {

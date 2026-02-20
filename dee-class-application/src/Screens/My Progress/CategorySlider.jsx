@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#2a2a2a",
   },
   image: {
+    ...StyleSheet.absoluteFillObject,
     width: "100%",
     height: "100%",
   },
@@ -170,16 +171,19 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: "70%",
+    zIndex: 1,
   },
   blurOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.45)",
+    zIndex: 2,
   },
   comingSoonCenter: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
     gap: SPACING.md,
+    zIndex: 3,
   },
   comingSoonBadge: {
     backgroundColor: "rgba(237,26,77,0.7)",
@@ -202,6 +206,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: SPACING.md,
+    zIndex: 2,
   },
   cardTitle: {
     color: COLORS.white,
